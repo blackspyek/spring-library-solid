@@ -1,0 +1,22 @@
+services:
+  library_database:
+    image: mysql:latest
+    container_name: library_database
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+      MYSQL_DATABASE: library_database
+      MYSQL_USER: library_user
+      MYSQL_PASSWORD: pass
+    ports:
+      - "3370:3306"
+  library_phpmyadmin:
+    image: phpmyadmin
+    container_name: library_phpmyadmin
+    environment:
+      PMA_HOST: library_database
+      PMA_PORT: 3306
+      UPLOAD_LIMIT: 300M
+    ports:
+      - "5550:80"
+    depends_on:
+      - library_database
