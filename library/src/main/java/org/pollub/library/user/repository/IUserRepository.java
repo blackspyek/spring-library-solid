@@ -1,4 +1,4 @@
-package org.pollub.library.user;
+package org.pollub.library.user.repository;
 
 import org.pollub.library.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;

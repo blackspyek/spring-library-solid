@@ -1,16 +1,11 @@
 package org.pollub.library.auth.service;
 
 import lombok.RequiredArgsConstructor;
-import org.pollub.library.auth.model.ApiResponse;
 import org.pollub.library.auth.model.AuthResponse;
 import org.pollub.library.auth.model.LoginUserDto;
 import org.pollub.library.auth.model.RegisterUserDto;
 import org.pollub.library.auth.service.jwt.JwtTokenService;
-import org.pollub.library.user.model.Role;
-import org.pollub.library.user.model.User;
 import org.springframework.stereotype.Service;
-
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor

@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.pollub.library.auth.model.RegisterUserDto;
 import org.pollub.library.exception.DisabledUserException;
 import org.pollub.library.exception.UserAlreadyExistsException;
-import org.pollub.library.user.IUserRepository;
+import org.pollub.library.user.repository.IUserRepository;
 import org.pollub.library.user.model.User;
 import org.springframework.stereotype.Component;
 

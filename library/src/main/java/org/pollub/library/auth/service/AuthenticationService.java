@@ -7,7 +7,7 @@ import org.pollub.library.auth.service.util.AuthenticationStrategy;
 import org.pollub.library.auth.service.util.UserFactory;
 import org.pollub.library.auth.service.util.UserValidator;
 import org.pollub.library.exception.UserNotFoundException;
-import org.pollub.library.user.IUserRepository;
+import org.pollub.library.user.repository.IUserRepository;
 import org.pollub.library.user.model.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
