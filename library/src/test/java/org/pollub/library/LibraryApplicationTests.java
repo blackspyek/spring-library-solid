@@ -8,6 +8,10 @@ class LibraryApplicationTests {
 
     @Test
     void contextLoads() {
+
+        /*
+        There will be tests here in the future
+         */
     }
 
 }

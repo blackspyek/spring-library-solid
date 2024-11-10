@@ -1,12 +1,12 @@
 package org.pollub.library.user.service;
 
 import lombok.RequiredArgsConstructor;
-import org.pollub.library.auth.model.ApiResponse;
+import org.pollub.library.auth.model.ApiTextResponse;
 import org.pollub.library.exception.UserNotFoundException;
 import org.pollub.library.user.model.Role;
 import org.pollub.library.user.model.RoleSetDto;
 import org.pollub.library.user.model.User;
-import org.pollub.library.user.IUserRepository;
+import org.pollub.library.user.repository.IUserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,11 +19,11 @@ public class UserService implements IUserService {
 
     @Override
     @Transactional
-    public ApiResponse updateUserRoles(String username, RoleSetDto roles) {
+    public ApiTextResponse updateUserRoles(String username, RoleSetDto roles) {
         User fetchedUser = userRepository.findByUsername(username)
                 .map(user -> updateRoles(user, roles.getRoles()))
                 .orElseThrow(() -> new UserNotFoundException(username));
-        return new ApiResponse(true, "Roles updated successfully " + fetchedUser.getUsername());
+        return new ApiTextResponse(true, "Roles updated successfully " + fetchedUser.getUsername());
     }
 
     @Override
@@ -31,6 +31,13 @@ public class UserService implements IUserService {
         return userRepository.findByUsername(username.toLowerCase())
                 .orElseThrow(() -> new UserNotFoundException(username));
     }
+
+    @Override
+    public User findById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id.toString()));
+    }
+
     private User updateRoles(User user, Set<Role> roles) {
         user.setRoles(roles);
         return userRepository.save(user);

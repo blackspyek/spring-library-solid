@@ -2,7 +2,7 @@ package org.pollub.library.user.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.pollub.library.auth.model.ApiResponse;
+import org.pollub.library.auth.model.ApiTextResponse;
 import org.pollub.library.user.model.RoleSetDto;
 import org.pollub.library.user.service.IUserService;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +18,9 @@ public class UserController {
 
     @PutMapping("/roles/{username}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse> updateRoles(@PathVariable String username,
-                                                   @Valid @RequestBody RoleSetDto roles) {
-        ApiResponse response = userService.updateUserRoles(username, roles);
+    public ResponseEntity<ApiTextResponse> updateRoles(@PathVariable String username,
+                                                       @Valid @RequestBody RoleSetDto roles) {
+        ApiTextResponse response = userService.updateUserRoles(username, roles);
         return ResponseEntity.ok(response);
     }
 

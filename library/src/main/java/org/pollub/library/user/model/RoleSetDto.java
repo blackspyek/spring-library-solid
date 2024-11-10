@@ -1,6 +1,5 @@
 package org.pollub.library.user.model;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.pollub.library.utils.ValidRoleSet;
 

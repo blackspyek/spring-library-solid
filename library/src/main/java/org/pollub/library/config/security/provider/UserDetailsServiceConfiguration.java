@@ -1,6 +1,6 @@
 package org.pollub.library.config.security.provider;
 
-import org.pollub.library.user.IUserRepository;
+import org.pollub.library.user.repository.IUserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.UserDetailsService;
