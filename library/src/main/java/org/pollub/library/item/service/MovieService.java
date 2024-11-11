@@ -42,6 +42,26 @@ public class MovieService implements IMovieService{
     }
 
     @Override
+    public List<MovieDisc> findByFileFormat(String fileFormat) {
+        return movieRepository.findByFileFormat(fileFormat);
+    }
+
+    @Override
+    public List<MovieDisc> findByResolution(String resolution) {
+        return movieRepository.findByResolution(resolution);
+    }
+
+    @Override
+    public List<MovieDisc> findByDurationBetween(Integer minDuration, Integer maxDuration) {
+        return movieRepository.findByDurationBetween(minDuration, maxDuration);
+    }
+
+    @Override
+    public Optional<MovieDisc> findByTitleAndDirector(String title, String director) {
+        return movieRepository.findByTitleAndAndDirector(title, director);
+    }
+
+    @Override
     public MovieDisc updateMovie(Long id, MovieCreateDto dto) {
         var movie = findById(id);
         mapMovieFromDto(movie, dto);
