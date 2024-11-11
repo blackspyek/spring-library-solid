@@ -37,6 +37,11 @@ public class MovieService implements IMovieService{
     }
 
     @Override
+    public List<MovieDisc> findByTitle(String title) {
+        return movieRepository.findByTitle(title);
+    }
+
+    @Override
     public List<MovieDisc> findByGenre(String genre) {
         return movieRepository.findByGenre(genre);
     }
@@ -58,7 +63,7 @@ public class MovieService implements IMovieService{
 
     @Override
     public Optional<MovieDisc> findByTitleAndDirector(String title, String director) {
-        return movieRepository.findByTitleAndAndDirector(title, director);
+        return movieRepository.findByTitleAndDirector(title, director);
     }
 
     @Override

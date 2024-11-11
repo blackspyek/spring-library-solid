@@ -31,6 +31,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleUserNotFoundException(Exception ex) throws JsonProcessingException {
         return errorResponseGenerator.generateResponse(ERROR_MESSAGE, Collections.singletonMap(ERROR, Collections.singletonList(ex.getMessage())), HttpStatus.NOT_FOUND);
     }
+
     @ExceptionHandler({AccessDeniedException.class})
     public ResponseEntity<String> handleForbiddenException(Exception ex) throws JsonProcessingException {
         return errorResponseGenerator.generateResponse(ERROR_MESSAGE, Collections.singletonMap(ERROR, Collections.singletonList(ex.getMessage())), HttpStatus.FORBIDDEN);
@@ -45,6 +46,5 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleAnyException(Exception ex) throws JsonProcessingException {
         return errorResponseGenerator.generateResponse(ERROR_MESSAGE, Collections.singletonMap(ERROR, Collections.singletonList(ex.getMessage())), HttpStatus.BAD_REQUEST);
     }
-
 
 }

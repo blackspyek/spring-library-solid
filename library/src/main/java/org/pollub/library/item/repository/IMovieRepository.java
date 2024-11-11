@@ -9,9 +9,10 @@ import java.util.Optional;
 @Repository
 public interface IMovieRepository extends ILibraryItemRepository<MovieDisc> {
     List<MovieDisc> findByDirectorContainingIgnoreCase(String director);
+    List<MovieDisc> findByTitle(String title);
     List<MovieDisc> findByGenre(String genre);
     List<MovieDisc> findByFileFormat(String fileFormat);
     List<MovieDisc> findByResolution(String resolution);
     List<MovieDisc> findByDurationBetween(Integer minDuration, Integer maxDuration);
-    Optional<MovieDisc> findByTitleAndAndDirector(String title, String director);
+    Optional<MovieDisc> findByTitleAndDirector(String title, String director);
 }
