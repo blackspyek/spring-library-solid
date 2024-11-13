@@ -1,9 +1,9 @@
 package org.pollub.library.item.service;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.pollub.library.exception.BookNotFoundException;
 import org.pollub.library.item.model.Book;
 import org.pollub.library.item.model.dto.BookCreateDto;
 import org.pollub.library.item.repository.IBookRepository;
@@ -28,7 +28,7 @@ public class BookService implements IBookService {
     @Override
     public Book findById(Long id) {
         return bookRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Book with id " + id + " not found."));
+                .orElseThrow(() -> new BookNotFoundException("Book with id " + id + " not found."));
     }
 
     @Override
@@ -56,7 +56,7 @@ public class BookService implements IBookService {
     @Override
     public void deleteBook(Long id) {
         if (!bookRepository.existsById(id)) {
-            throw new EntityNotFoundException("Book not found");
+            throw new BookNotFoundException("Book not found");
         }
         bookRepository.deleteById(id);
     }

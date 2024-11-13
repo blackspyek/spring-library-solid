@@ -1,9 +1,9 @@
 package org.pollub.library.item.service;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.pollub.library.exception.MovieNotFoundException;
 import org.pollub.library.item.model.MovieDisc;
 import org.pollub.library.item.model.dto.MovieCreateDto;
 import org.pollub.library.item.repository.IMovieRepository;
@@ -28,7 +28,7 @@ public class MovieService implements IMovieService{
     @Override
     public MovieDisc findById(Long id) {
         return movieRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Movie with id " + id + " not found."));
+                .orElseThrow(() -> new MovieNotFoundException("Movie with id " + id + " not found."));
     }
 
     @Override
@@ -76,7 +76,7 @@ public class MovieService implements IMovieService{
     @Override
     public void deleteMovie(Long id) {
         if (!movieRepository.existsById(id)) {
-            throw new EntityNotFoundException("Movie not found");
+            throw new MovieNotFoundException("Movie not found");
         }
         movieRepository.deleteById(id);
     }

@@ -2,7 +2,7 @@ package org.pollub.library.exception.controller.advice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
-import org.pollub.library.exception.UserNotFoundException;
+import org.pollub.library.exception.ResourceNotFoundException;
 import org.pollub.library.exception.util.ErrorResponseGenerator;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.Collections;
-import java.util.logging.Logger;
 
 @RestControllerAdvice
 @Order(1)
@@ -24,11 +23,8 @@ public class GlobalExceptionHandler {
     private static final String ERROR = "error";
 
 
-    private static final Logger LOGGER = Logger.getLogger(GlobalExceptionHandler.class.getName());
-
-
-    @ExceptionHandler({UserNotFoundException.class})
-    public ResponseEntity<String> handleUserNotFoundException(Exception ex) throws JsonProcessingException {
+    @ExceptionHandler({ResourceNotFoundException.class})
+    public ResponseEntity<String> handleResourceNotFoundException(Exception ex) throws JsonProcessingException {
         return errorResponseGenerator.generateResponse(ERROR_MESSAGE, Collections.singletonMap(ERROR, Collections.singletonList(ex.getMessage())), HttpStatus.NOT_FOUND);
     }
 
