@@ -90,6 +90,7 @@ public class MovieService implements IMovieService{
         movie.setGenre(dto.getGenre());
         movie.setShelfNumber(dto.getShelfNumber());
         movie.setDigitalRights(dto.getDigitalRights());
+        movie.setDescription(dto.getDescription());
     }
     private MovieDisc saveOrThrow(MovieDisc movie) {
         MovieDisc savedMovie = movieRepository.save(movie);

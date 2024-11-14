@@ -19,7 +19,6 @@ public abstract class LibraryItem {
     @Column(nullable = false)
     private String title;
 
-    @Column(columnDefinition = "TEXT")
     private String description;
 
     @ManyToOne
