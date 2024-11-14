@@ -1,7 +1,7 @@
 package org.pollub.library.exception;
 
-public class UserNotFoundException extends RuntimeException {
-    public UserNotFoundException(String username) {
-        super("User not found: " + username);
+public class UserNotFoundException extends ResourceNotFoundException {
+    public UserNotFoundException(String message) {
+        super(message);
     }
 }
