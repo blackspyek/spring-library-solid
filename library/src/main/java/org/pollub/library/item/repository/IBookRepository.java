@@ -8,6 +8,7 @@ import java.util.List;
 @Repository
 public interface IBookRepository extends ILibraryItemRepository<Book> {
     List<Book> findByAuthorContainingIgnoreCase(String author);
+    List<Book> findByTitle(String title);
     List<Book> findByGenre(String genre);
     List<Book> findByIsbn(String isbn);
 }

@@ -30,6 +30,11 @@ public class BookController {
         return ResponseEntity.ok(bookService.findByAuthor(author));
     }
 
+    @GetMapping("/title/{title}")
+    public ResponseEntity<List<Book>> getBooksByTitle(@PathVariable String title) {
+        return ResponseEntity.ok(bookService.findByTitle(title));
+    }
+
     @GetMapping("/genre/{genre}")
     public ResponseEntity<List<Book>> getBooksByGenre(@PathVariable String genre) {
         return ResponseEntity.ok(bookService.findByGenre(genre));

@@ -9,6 +9,7 @@ public interface IBookService {
     Book createBook(BookCreateDto dto);
     Book findById(Long id);
     List<Book> findByAuthor(String author);
+    List<Book> findByTitle(String title);
     List<Book> findByGenre(String genre);
     Book updateBook(Long id, BookCreateDto dto);
     void deleteBook(Long id);
