@@ -1,6 +1,5 @@
 package org.pollub.library.unit;
 
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,6 +7,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.pollub.library.item.model.Book;
+import org.pollub.library.exception.BookNotFoundException;
 import org.pollub.library.item.model.dto.BookCreateDto;
 import org.pollub.library.item.repository.IBookRepository;
 import org.pollub.library.item.service.BookService;
@@ -130,11 +130,11 @@ class BookServiceTest {
 
 
     @Test
-    @DisplayName("Throw EntityNotFoundException when deleting non-existing book")
-    void givenNonExistingBook_whenDeleteBook_thenThrowEntityNotFoundException() {
+    @DisplayName("Throw BookNotFoundException when deleting non-existing book")
+    void givenNonExistingBook_whenDeleteBook_thenThrowBookNotFoundException() {
         when(bookRepository.existsById(1L)).thenReturn(false);
 
-        assertThrows(EntityNotFoundException.class, () -> bookService.deleteBook(1L));
+        assertThrows(BookNotFoundException.class, () -> bookService.deleteBook(1L));
     }
 
     @Test
