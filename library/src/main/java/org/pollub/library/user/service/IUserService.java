@@ -7,5 +7,7 @@ import org.pollub.library.user.model.User;
 public interface IUserService {
     ApiTextResponse updateUserRoles(String username, RoleSetDto roles);
     User findByUsername(String username);
+    User findByEmail(String email);
     User findById(Long id);
+    void deleteUserById(Long id);
 }

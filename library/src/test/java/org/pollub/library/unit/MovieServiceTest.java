@@ -1,6 +1,5 @@
 package org.pollub.library.unit;
 
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,6 +7,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.pollub.library.item.model.MovieDisc;
+import org.pollub.library.exception.MovieNotFoundException;
 import org.pollub.library.item.model.dto.MovieCreateDto;
 import org.pollub.library.item.repository.IMovieRepository;
 import org.pollub.library.item.service.MovieService;
@@ -71,10 +71,10 @@ class MovieServiceTest {
     }
 
     @Test
-    @DisplayName("Throw EntityNotFoundException for invalid movie ID")
-    void givenInvalidMovieId_whenFindById_thenThrowEntityNotFoundException() {
+    @DisplayName("Throw MovieNotFoundException for invalid movie ID")
+    void givenInvalidMovieId_whenFindById_thenThrowMovieNotFoundException() {
         when(movieRepository.findById(1L)).thenReturn(Optional.empty());
-        assertThrows(EntityNotFoundException.class, () -> movieService.findById(1L));
+        assertThrows(MovieNotFoundException.class, () -> movieService.findById(1L));
     }
 
     @Test
@@ -120,11 +120,11 @@ class MovieServiceTest {
 
 
     @Test
-    @DisplayName("Throw EntityNotFoundException for non-existing movie in deleteMovie")
-    void givenNonExistingMovie_whenDeleteMovie_thenThrowEntityNotFoundException() {
+    @DisplayName("Throw MovieNotFoundException for non-existing movie in deleteMovie")
+    void givenNonExistingMovie_whenDeleteMovie_thenThrowMovieNotFoundException() {
         when(movieRepository.existsById(1L)).thenReturn(false);
 
-        assertThrows(EntityNotFoundException.class, () -> movieService.deleteMovie(1L));
+        assertThrows(MovieNotFoundException.class, () -> movieService.deleteMovie(1L));
     }
 
     @Test
