@@ -1,4 +1,4 @@
-package org.pollub.library;
+package org.pollub.library.unit;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,6 +32,10 @@ class MovieServiceTest {
 
     @BeforeEach
     void setUp() {
+        createMovieDto();
+    }
+
+    private void createMovieDto() {
         movieCreateDto = new MovieCreateDto();
         movieCreateDto.setTitle("Test Movie");
         movieCreateDto.setDirector("Test Director");
@@ -76,16 +80,7 @@ class MovieServiceTest {
     @Test
     @DisplayName("Ensure correct update with given MovieCreateDto")
     void givenMovieCreateDto_whenUpdateMovie_thenReturnUpdatedMovie() {
-        MovieDisc movieToUpdate = new MovieDisc();
-        movieToUpdate.setId(1L);
-        movieToUpdate.setTitle("Test Movie");
-        movieToUpdate.setDirector("Test Director");
-        movieToUpdate.setResolution("1080p");
-        movieToUpdate.setDuration(120);
-        movieToUpdate.setFileFormat("MP4");
-        movieToUpdate.setGenre("Action");
-        movieToUpdate.setShelfNumber(1);
-        movieToUpdate.setDigitalRights("Test DigitalRights");
+        MovieDisc movieToUpdate = getMovieDisc();
 
         when(movieRepository.findById(1L)).thenReturn(Optional.of(movieToUpdate));
         when(movieRepository.save(any(MovieDisc.class))).thenReturn(movieToUpdate);
@@ -107,6 +102,20 @@ class MovieServiceTest {
         assertEquals("Action", updatedSavedMovie.getGenre());
         assertEquals(1, updatedSavedMovie.getShelfNumber());
         assertEquals("Test DigitalRights", updatedSavedMovie.getDigitalRights());
+    }
+
+    private static MovieDisc getMovieDisc() {
+        MovieDisc movieToUpdate = new MovieDisc();
+        movieToUpdate.setId(1L);
+        movieToUpdate.setTitle("Test Movie");
+        movieToUpdate.setDirector("Test Director");
+        movieToUpdate.setResolution("1080p");
+        movieToUpdate.setDuration(120);
+        movieToUpdate.setFileFormat("MP4");
+        movieToUpdate.setGenre("Action");
+        movieToUpdate.setShelfNumber(1);
+        movieToUpdate.setDigitalRights("Test DigitalRights");
+        return movieToUpdate;
     }
 
 

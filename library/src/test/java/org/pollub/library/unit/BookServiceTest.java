@@ -1,7 +1,6 @@
-package org.pollub.library;
+package org.pollub.library.unit;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.PersistenceException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +13,6 @@ import org.pollub.library.item.repository.IBookRepository;
 import org.pollub.library.item.service.BookService;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,6 +33,10 @@ class BookServiceTest {
 
     @BeforeEach
     void setUp() {
+        createBookDto();
+    }
+
+    private void createBookDto() {
         bookCreateDto = new BookCreateDto();
         bookCreateDto.setTitle("Test Book");
         bookCreateDto.setAuthor("Test Author");
