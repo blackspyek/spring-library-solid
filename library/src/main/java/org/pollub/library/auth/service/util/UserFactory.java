@@ -24,4 +24,14 @@ public class UserFactory {
         user.setEnabled(true);
         return user;
     }
+
+    public User createUser(String username, String email, Set<Role> roles, String password) {
+        User user = new User();
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setPassword(passwordEncoder.encode(password));
+        user.setRoles(roles);
+        user.setEnabled(true);
+        return user;
+    }
 }

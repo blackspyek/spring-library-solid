@@ -1,4 +1,4 @@
-package org.pollub.library.unit;
+package org.pollub.library.item.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -10,13 +10,11 @@ import org.pollub.library.item.model.Book;
 import org.pollub.library.exception.BookNotFoundException;
 import org.pollub.library.item.model.dto.BookCreateDto;
 import org.pollub.library.item.repository.IBookRepository;
-import org.pollub.library.item.service.BookService;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest

@@ -1,4 +1,4 @@
-package org.pollub.library.integration;
+package org.pollub.library.item.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -22,6 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@SuppressWarnings("ALL")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -60,6 +62,7 @@ class MovieControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = "LIBRARIAN")
     void givenMovieCreateDto_whenCreateMovie_thenStatus200() throws Exception {
         MovieCreateDto movieCreateDto = getCreateDto();
 
@@ -108,6 +111,7 @@ class MovieControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = "LIBRARIAN")
     void givenMovieId_whenUpdateMovie_thenStatus200() throws Exception {
         testMovie = createTestMovie();
         MovieCreateDto updatedMovieDto = getMovieCreateDto();
@@ -142,6 +146,7 @@ class MovieControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = "LIBRARIAN")
     void givenMovieId_whenDeleteMovie_thenStatus200() throws Exception {
         testMovie = createTestMovie();
         mockMvc.perform(delete("/api/movie/{id}", testMovie.getId()))

@@ -6,10 +6,10 @@ import org.pollub.library.item.model.MovieDisc;
 import org.pollub.library.item.model.dto.MovieCreateDto;
 import org.pollub.library.item.service.IMovieService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/movie")
@@ -18,6 +18,7 @@ public class MovieController {
     private final IMovieService movieService;
 
     @PostMapping
+    @PreAuthorize("hasRole('LIBRARIAN')")
     public ResponseEntity<MovieDisc> createMovie(@Valid @RequestBody MovieCreateDto dto) {
         return ResponseEntity.ok(movieService.createMovie(dto));
     }
@@ -60,12 +61,12 @@ public class MovieController {
     @GetMapping("/titleAndDirector")
     public ResponseEntity<MovieDisc> getMovieByTitleAndDirector(
             @RequestParam String title, @RequestParam String director) {
-        Optional<MovieDisc> movie = movieService.findByTitleAndDirector(title, director);
-        return movie.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        MovieDisc movie = movieService.findByTitleAndDirector(title, director);
+        return ResponseEntity.ok(movie);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('LIBRARIAN')")
     public ResponseEntity<MovieDisc> updateMovie(
             @PathVariable Long id,
             @Valid @RequestBody MovieCreateDto dto
@@ -74,6 +75,7 @@ public class MovieController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('LIBRARIAN')")
     public ResponseEntity<String> deleteMovie(@PathVariable Long id) {
         movieService.deleteMovie(id);
         return ResponseEntity.ok("Movie deleted");
