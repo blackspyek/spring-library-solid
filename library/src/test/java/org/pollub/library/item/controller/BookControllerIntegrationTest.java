@@ -1,4 +1,4 @@
-package org.pollub.library.integration;
+package org.pollub.library.item.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -60,6 +61,7 @@ class BookControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = "LIBRARIAN")
     void givenBookCreateDto_whenCreateBook_thenStatus200() throws Exception {
         BookCreateDto bookCreateDto = getCreateDto();
 
@@ -109,6 +111,7 @@ class BookControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = "LIBRARIAN")
     void givenBookId_whenUpdateBook_thenStatus200() throws Exception {
         testBook = createTestBook();
         BookCreateDto updatedBookDto = getBookCreateDto();
@@ -143,6 +146,7 @@ class BookControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = "LIBRARIAN")
     void givenBookId_whenDeleteBook_thenStatus200() throws Exception {
         testBook = createTestBook();
         mockMvc.perform(delete("/api/book/{id}", testBook.getId()))

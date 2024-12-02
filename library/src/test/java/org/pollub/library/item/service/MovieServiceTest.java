@@ -1,4 +1,4 @@
-package org.pollub.library.unit;
+package org.pollub.library.item.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -10,13 +10,11 @@ import org.pollub.library.item.model.MovieDisc;
 import org.pollub.library.exception.MovieNotFoundException;
 import org.pollub.library.item.model.dto.MovieCreateDto;
 import org.pollub.library.item.repository.IMovieRepository;
-import org.pollub.library.item.service.MovieService;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest

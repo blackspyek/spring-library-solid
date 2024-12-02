@@ -62,8 +62,8 @@ public class MovieService implements IMovieService{
     }
 
     @Override
-    public Optional<MovieDisc> findByTitleAndDirector(String title, String director) {
-        return movieRepository.findByTitleAndDirector(title, director);
+    public MovieDisc findByTitleAndDirector(String title, String director) {
+        return movieRepository.findByTitleAndDirector(title, director).orElseThrow(() -> new MovieNotFoundException("Movie with title " + title + "and director: " + director + " not found."));
     }
 
     @Override

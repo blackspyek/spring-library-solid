@@ -1,6 +1,7 @@
-package org.pollub.library.integration;
+package org.pollub.library.item.controller;
 
 import org.junit.jupiter.api.Test;
+import org.pollub.library.auth.service.UserInitializationService;
 import org.pollub.library.config.TestSecurityConfig;
 import org.pollub.library.item.model.Book;
 import org.pollub.library.item.model.ItemStatus;
@@ -12,8 +13,10 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -26,12 +29,16 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@SuppressWarnings("ALL")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @EnableAutoConfiguration(exclude = SecurityAutoConfiguration.class)
 @Import(TestSecurityConfig.class)
 class RentalControllerIntegrationTest {
+
+    @MockBean
+    private UserInitializationService userInitializationService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -41,6 +48,7 @@ class RentalControllerIntegrationTest {
 
     @Autowired
     private IUserRepository userRepository;
+
 
     @Test
     void givenAvailableItems_whenGetAvailableItems_thenStatus200() throws Exception {
@@ -57,17 +65,18 @@ class RentalControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = "LIBRARIAN")
     void givenBook_whenRentBook_thenStatus200() throws Exception {
         createTestBook(1L, "Book to Rent", "Description", ItemStatus.AVAILABLE, "1234567891111", "Author", 150, "Paperback", "Publisher", 2, "Non-fiction", null, null, null);
 
         createTestUser(1L, "user@example.com", "password", "user123");
 
         String rentDtoJson = """
-        {
-            "userId": 1,
-            "libraryItemId": 1
-        }
-        """;
+                {
+                    "userId": 1,
+                    "libraryItemId": 1
+                }
+                """;
 
         mockMvc.perform(post("/api/rentals/rent")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -93,6 +102,7 @@ class RentalControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = "LIBRARIAN")
     void givenRentedItem_whenReturnItem_thenStatus200() throws Exception {
         createTestUser(1L, "user@example.com", "password", "user123");
         User user = userRepository.findById(1L).orElseThrow(() -> new RuntimeException("User not found"));

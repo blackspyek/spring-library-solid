@@ -6,6 +6,7 @@ import org.pollub.library.item.model.Book;
 import org.pollub.library.item.model.dto.BookCreateDto;
 import org.pollub.library.item.service.IBookService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class BookController {
     private final IBookService bookService;
 
     @PostMapping
+    @PreAuthorize("hasRole('LIBRARIAN')")
     public ResponseEntity<Book> createBook(@Valid @RequestBody BookCreateDto dto) {
         return ResponseEntity.ok(bookService.createBook(dto));
     }
@@ -46,6 +48,7 @@ public class BookController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('LIBRARIAN')")
     public ResponseEntity<Book> updateBook(
             @PathVariable Long id,
             @Valid @RequestBody BookCreateDto dto
@@ -54,6 +57,7 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('LIBRARIAN')")
     public ResponseEntity<String> deleteBook(@PathVariable Long id) {
         bookService.deleteBook(id);
         return ResponseEntity.ok("Book deleted");
