@@ -7,6 +7,7 @@ import org.pollub.library.item.model.ItemStatus;
 import org.pollub.library.item.model.LibraryItem;
 import org.pollub.library.item.repository.ILibraryItemRepository;
 import org.pollub.library.rental.model.dto.RentDto;
+import org.pollub.library.rental.utils.IRentalPolicy;
 import org.pollub.library.user.model.User;
 import org.pollub.library.user.service.IUserService;
 import org.springframework.stereotype.Service;
