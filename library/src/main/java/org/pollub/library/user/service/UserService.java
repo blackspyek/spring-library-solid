@@ -7,7 +7,6 @@ import org.pollub.library.user.model.Role;
 import org.pollub.library.user.model.RoleSetDto;
 import org.pollub.library.user.model.User;
 import org.pollub.library.user.repository.IUserRepository;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +16,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class UserService implements IUserService {
     private final IUserRepository userRepository;
+    private final IUserContextService userContextService;
 
     @Override
     @Transactional
@@ -52,7 +52,7 @@ public class UserService implements IUserService {
 
     @Override
     public void deleteUserById(Long id) {
-        if (id.equals(getCurrentUserId())) {
+        if (userContextService.isThisSameUser(id)) {
             throw new IllegalArgumentException("You cannot delete yourself");
         }
 
@@ -60,10 +60,6 @@ public class UserService implements IUserService {
             throw new UserNotFoundException("User with ID " + id + " not found");
         }
         userRepository.deleteById(id);
-    }
-
-    private Long getCurrentUserId() {
-        return ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
     }
 
 }

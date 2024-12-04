@@ -3,7 +3,6 @@ package org.pollub.library.rental.utils;
 import lombok.RequiredArgsConstructor;
 import org.pollub.library.item.model.LibraryItem;
 import org.pollub.library.item.repository.ILibraryItemRepository;
-import org.pollub.library.rental.service.IRentalPolicy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
