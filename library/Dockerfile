@@ -1,7 +1,7 @@
 # Build Stage
 FROM maven:3.9.9-amazoncorretto-23-alpine AS build
 WORKDIR /app
-COPY pom.xml .
+COPY pomdocker.xml pom.xml
 COPY src ./src
 RUN mvn clean package -DskipTests
 
