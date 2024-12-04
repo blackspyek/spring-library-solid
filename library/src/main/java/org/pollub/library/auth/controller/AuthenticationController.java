@@ -17,7 +17,7 @@ public class AuthenticationController {
     private final IAuthenticationServiceFacade authServiceFacade;
 
     @PostMapping("/register")
-    @PreAuthorize("hasRole('LIBRARIAN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN')")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterUserDto request) {
         AuthResponse response = authServiceFacade.register(request);
         return ResponseEntity.ok(response);
