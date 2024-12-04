@@ -18,7 +18,7 @@ public class MovieController {
     private final IMovieService movieService;
 
     @PostMapping
-    @PreAuthorize("hasRole('LIBRARIAN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN')")
     public ResponseEntity<MovieDisc> createMovie(@Valid @RequestBody MovieCreateDto dto) {
         return ResponseEntity.ok(movieService.createMovie(dto));
     }
@@ -66,7 +66,7 @@ public class MovieController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('LIBRARIAN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN')")
     public ResponseEntity<MovieDisc> updateMovie(
             @PathVariable Long id,
             @Valid @RequestBody MovieCreateDto dto
@@ -75,7 +75,7 @@ public class MovieController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('LIBRARIAN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN')")
     public ResponseEntity<String> deleteMovie(@PathVariable Long id) {
         movieService.deleteMovie(id);
         return ResponseEntity.ok("Movie deleted");
