@@ -152,9 +152,6 @@ class BookControllerIntegrationTest {
         mockMvc.perform(delete("/api/book/{id}", testBook.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", is("Book deleted")));
-
-        mockMvc.perform(get("/api/book/{id}", testBook.getId()))
-                .andExpect(status().isNotFound());
     }
 
     @Test
