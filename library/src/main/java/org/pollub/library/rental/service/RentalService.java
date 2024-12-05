@@ -6,8 +6,8 @@ import org.pollub.library.exception.RentalException;
 import org.pollub.library.item.model.ItemStatus;
 import org.pollub.library.item.model.LibraryItem;
 import org.pollub.library.item.repository.ILibraryItemRepository;
+import org.pollub.library.rental.utils.IRentalValidator;
 import org.pollub.library.rental.model.dto.RentDto;
-import org.pollub.library.rental.utils.IRentalPolicy;
 import org.pollub.library.user.model.User;
 import org.pollub.library.user.service.IUserService;
 import org.springframework.stereotype.Service;
@@ -22,14 +22,25 @@ import java.util.Optional;
 public class RentalService implements IRentalService{
     private final ILibraryItemRepository<LibraryItem> libraryItemRepository;
     private final IUserService userService;
-    private final IRentalPolicy rentalPolicy;
+    private final IRentalValidator rentalValidator;
+
+    @Override
+    public List<LibraryItem> getRentedItems(long userId) {
+        userService.findById(userId);
+        return libraryItemRepository.findByRentedByUserId(userId);
+    }
+
+    @Override
+    public List<LibraryItem> getAvailableItems() {
+        return libraryItemRepository.findByStatus(ItemStatus.AVAILABLE);
+    }
 
     @Override
     public LibraryItem rentItem(RentDto rentDto) {
         LibraryItem libraryItem = getLibraryItemOrThrow(rentDto.getLibraryItemId());
 
         User user = userService.findById(rentDto.getUserId());
-        validateAbilityToRentOrThrow(user.getId(), libraryItem);
+        this.rentalValidator.validateAbilityToRentOrThrow(user.getId(), libraryItem);
         setLibraryItemToBeRentedByUser(libraryItem, user);
 
         return saveOrThrow(libraryItem);
@@ -53,28 +64,11 @@ public class RentalService implements IRentalService{
         libraryItem.setDueDate(libraryItem.calculateDueTime());
     }
 
-    private void validateAbilityToRentOrThrow(long userId, LibraryItem libraryItem) {
-        throwIfNotAvailableToRent(libraryItem);
-        throwIfUserCannotRent(userId);
-    }
-
-    private void throwIfUserCannotRent(long userId) {
-        if (!rentalPolicy.canUserRentItem(userId)) {
-            throw new RentalException("User cannot rent more items");
-        }
-    }
-
-    private void throwIfNotAvailableToRent(LibraryItem libraryItem) {
-        if (libraryItem.getStatus() != ItemStatus.AVAILABLE) {
-            throw new RentalException("LibraryItem is not available");
-        }
-    }
-
     @Override
     public LibraryItem returnItem(long itemId) {
         LibraryItem libraryItem = getLibraryItemOrThrow(itemId);
 
-        checkAbilityToReturnOrThrow(libraryItem);
+        this.rentalValidator.checkAbilityToReturnOrThrow(libraryItem);
 
         updateBookToBeAvailableToRent(libraryItem);
 
@@ -82,27 +76,10 @@ public class RentalService implements IRentalService{
 
     }
 
-    private static void checkAbilityToReturnOrThrow(LibraryItem libraryItem) {
-        if (libraryItem.getStatus() != ItemStatus.RENTED) {
-            throw new RentalException("Item is not currently rented");
-        }
-    }
-
     private static void updateBookToBeAvailableToRent(LibraryItem libraryItem) {
         libraryItem.setRentedByUser(null);
         libraryItem.setStatus(ItemStatus.AVAILABLE);
         libraryItem.setRentedAt(null);
         libraryItem.setDueDate(null);
-    }
-
-    @Override
-    public List<LibraryItem> getRentedItems(long userId) {
-        userService.findById(userId);
-        return libraryItemRepository.findByRentedByUserId(userId);
-    }
-
-    @Override
-    public List<LibraryItem> getAvailableItems() {
-        return libraryItemRepository.findByStatus(ItemStatus.AVAILABLE);
     }
 }

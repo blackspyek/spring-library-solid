@@ -38,6 +38,4 @@ public class RentalController {
     public ResponseEntity<LibraryItem> returnItem(@PathVariable Long itemId) {
         return ResponseEntity.ok(rentalService.returnItem(itemId));
     }
-
-
 }
