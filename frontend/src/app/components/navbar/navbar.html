@@ -1,9 +1,9 @@
 <!-- Mobile Navbar Component -->
 <header class="md:hidden bg-[var(--base-blue-dark)] p-2 mt-8 mb-8s ml-24 mr-24 rounded-xl">
-  <div class="flex flex-row items-center gap-3 justify-center">
+  <a [routerLink]="['/']" class="flex flex-row cursor-pointer items-center gap-3 justify-center">
     <img src="/logo.svg" alt="Logo w kształcie książki" class="h-auto object-cover w-20 md:w-24" />
     <span class="text-white text-base font-bold tracking-widest font-[Inter]">BIBLIOTEKA</span>
-  </div>
+  </a>
 </header>
 
 <footer
@@ -18,7 +18,7 @@
   </div>
   @for (item of mobileNavItems; track item.label) {
     <a
-      href="#"
+      [routerLink]="[item.link]"
       class="flex flex-col items-center text-xs text-white p-2 transition duration-150"
       [class.active-mobile-link]="item.label === currentPage()"
     >
@@ -34,16 +34,16 @@
   class="hidden md:flex bg-[var(--base-blue-dark)] text-white h-16 shadow-lg px-8 items-center justify-between font-[Inter]"
 >
   <div class="flex items-center gap-8 justify-center">
-    <div class="flex items-center gap-4">
+    <a [routerLink]="['/']" class="flex items-center gap-4">
       <img src="/logo.svg" alt="Logo w kształcie książki" class="h-auto object-cover md:w-12" />
       <span class="text-white text-base font-bold tracking-widest font-[Inter]">BIBLIOTEKA</span>
-    </div>
+    </a>
 
     <nav class="flex h-full gap-4">
       @for (item of desktopNavItems; track item.label) {
         <a
-          [href]="item.link"
-          class="flex flex-col justify-center hover:text-blue-300 transition duration-150 text-base font-light font-[Inter] tracking-wide"
+          [routerLink]="[item.link]"
+          class="flex flex-col justify-center cursor-pointer hover:text-blue-300 transition duration-150 text-base font-light font-[Inter] tracking-wide"
           [class.active-link]="item.label === currentPage()"
         >
           {{ item.label }}
@@ -52,7 +52,7 @@
     </nav>
   </div>
   <a
-    href="/account"
+    [routerLink]="['/profil']"
     class="flex items-center hover:text-blue-300 transition duration-150 text-base font-light font-[Inter] tracking-wide gap-1"
   >
     <mat-icon

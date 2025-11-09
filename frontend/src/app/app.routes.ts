@@ -1,7 +1,9 @@
 import { Routes } from '@angular/router';
-import { App } from './app';
 import { Login } from './pages/login/login';
 import { Layout } from './components/layout/layout';
+import { ResendEmail } from './pages/resend-email/resend-email';
+import { Profile } from './pages/profile/profile';
+import { authGuard } from './guards/auth-guard';
 
 export const routes: Routes = [
   {
@@ -9,8 +11,17 @@ export const routes: Routes = [
     component: Layout,
     children: [
       {
-        path: 'login',
+        path: 'zaloguj-sie',
         component: Login,
+      },
+      {
+        path: 'zweryfikuj-email',
+        component: ResendEmail,
+      },
+      {
+        path: 'profil',
+        component: Profile,
+        canActivate: [authGuard],
       },
     ],
   },

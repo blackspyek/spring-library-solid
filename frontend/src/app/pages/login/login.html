@@ -2,10 +2,10 @@
   class="flex flex-col justify-center items-center w-full max-w-sm rounded-2xl font-[Roboto] bg-white p-8 shadow-xl"
 >
   <div class="text-center">
-    <h1 class="text-4xl mb-4 text-[var(--base-gray-darker)] font-black tracking-wide">
+    <h1 class="text-3xl mb-4 text-[var(--base-gray-darker)] font-black tracking-wide">
       Zaloguj się do Biblioteki
     </h1>
-    <p class="text-lg font-normal text-[#8C8989] tracking-wide">
+    <p class="text-lg font-normal text-[var(--base-gray-lighter)] tracking-wide">
       Witaj z powrotem! Uzyskaj dostep do swojej cyfrowej półki.
     </p>
   </div>
@@ -19,7 +19,7 @@
         type="email"
         formControlName="email"
         placeholder="wpisz@swój.email"
-        class="w-full px-4 py-2 text-base tracking-wide text-[#8B8989] border border-[rgba(var(--base-gray-darker-rgb),0.26)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+        class="w-full px-4 py-2 text-base tracking-wide text-[var(--placeholder-gray)] border border-[rgba(var(--base-gray-darker-rgb),0.26)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
         [class.border-red-500]="email?.invalid && (email?.dirty || email?.touched)"
       />
       @if (email?.invalid && (email?.dirty || email?.touched)) {
@@ -42,7 +42,7 @@
         type="password"
         formControlName="password"
         placeholder="********"
-        class="w-full px-4 py-2 text-base tracking-wide text-[#8B8989] border border-[rgba(var(--base-gray-darker-rgb),0.26)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+        class="w-full px-4 py-2 text-base tracking-wide text-[var(--placeholder-gray)] border border-[rgba(var(--base-gray-darker-rgb),0.26)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
         [class.border-red-500]="password?.invalid && (password?.dirty || password?.touched)"
       />
       @if (password?.invalid && (password?.dirty || password?.touched)) {
@@ -65,7 +65,7 @@
     <a href="#" class="font-medium text-sm text-[#1D4ED8]"> Zapomniałeś hasła? </a>
     <p class="font-medium text-sm text-black">
       Nie masz jeszcze aktywnego konta?
-      <a href="#" class="text-[#1D4ED8]"> Ponów e-mail aktywacyjny! </a>
+      <a [routerLink]="['/zweryfikuj-email']" class="text-[#1D4ED8]"> Ponów e-mail aktywacyjny! </a>
     </p>
   </div>
 </div>

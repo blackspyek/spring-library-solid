@@ -1,0 +1,65 @@
+<div
+  class="flex flex-col justify-center items-center w-full max-w-sm rounded-2xl font-[Roboto] bg-white p-8 shadow-xl"
+>
+  <div class="text-center w-full mb-6">
+    <h1 class="text-2xl mb-4 text-[var(--base-gray-darker)] font-black tracking-wide">
+      Aktywuj dostęp do aplikacji
+    </h1>
+    <p class="text-base font-normal text-[var(--base-gray-lighter)] tracking-wide">
+      Umożliwia to korzystanie z cyfrowych rezerwacji i katalogu online
+    </p>
+  </div>
+  <div
+    class="w-full bg-blue-50 border-l-4 border-blue-500 text-blue-800 p-4 mb-6 rounded-r-lg"
+    role="alert"
+  >
+    <p class="text-base">
+      Jeśli założyłeś konto w swojej lokalnej bibliotece, musisz teraz stworzyć do niego hasło. W
+      tym celu kliknij w <strong class="font-medium">link aktywacyjny</strong> wysłany na email
+      podany podczas rejestracji.
+    </p>
+  </div>
+  <form class="w-full" [formGroup]="resendEmailForm" (ngSubmit)="onSubmit()" novalidate>
+    <div class="">
+      <label for="email" class="block text-lg font-medium text-[var(--base-gray-darker)] mb-1">
+        Adres Email (podany w bibliotece)
+      </label>
+      <input
+        id="email"
+        type="email"
+        formControlName="email"
+        placeholder="wpisz@swój.email"
+        class="w-full px-4 py-2 text-base tracking-wide text-[var(--placeholder-gray)] border border-[rgba(var(--base-gray-darker-rgb),0.26)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+        [class.border-red-500]="email?.invalid && (email?.dirty || email?.touched)"
+      />
+
+      @if (email?.invalid && (email?.dirty || email?.touched)) {
+        <div class="text-red-600 text-xs mt-1">
+          @if (email?.errors?.['required']) {
+            <div>Adres email jest wymagany.</div>
+          }
+          @if (email?.errors?.['email']) {
+            <div>Proszę podać poprawny adres email.</div>
+          }
+        </div>
+      }
+    </div>
+
+    <p class="w-full text-sm text-center text-[var(--base-gray-lighter)] py-4">
+      Nie znalazłeś linku aktywacyjnego? Podaj adres email, aby ponowić jego wysłanie!
+    </p>
+
+    <button
+      type="submit"
+      [disabled]="resendEmailForm.invalid"
+      class="w-full bg-[#1E3A8A] text-white py-3 rounded-lg text-base font-bold tracking-wide shadow-md hover:bg-[#2a368a] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      WYŚLIJ PONOWNIE
+    </button>
+  </form>
+  <div class="text-center mt-6">
+    <a [routerLink]="['/login']" class="text-sm font-medium text-blue-700 hover:underline">
+      Wróć do strony logowania
+    </a>
+  </div>
+</div>
