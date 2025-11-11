@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { Login } from './pages/login/login';
+import { Catalog } from './pages/catalog/catalog';
 import { Layout } from './components/layout/layout';
 import { ResendEmail } from './pages/resend-email/resend-email';
 import { Profile } from './pages/profile/profile';
@@ -23,6 +24,10 @@ export const routes: Routes = [
         component: Profile,
         canActivate: [authGuard],
       },
+      {
+        path: 'catalog',
+        component: Catalog
+      }
     ],
   },
 ];
