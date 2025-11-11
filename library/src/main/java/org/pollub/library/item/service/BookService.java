@@ -5,18 +5,36 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.pollub.library.exception.BookNotFoundException;
 import org.pollub.library.item.model.Book;
+import org.pollub.library.item.model.ItemStatus;
 import org.pollub.library.item.model.dto.BookCreateDto;
 import org.pollub.library.item.repository.IBookRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class BookService implements IBookService {
     private final IBookRepository bookRepository;
+
+    @Override
+    public List<Book> findAll() {
+        return bookRepository.findAll();
+    }
+
+    @Override
+    public Page<Book> getBooksPaginated(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+        return bookRepository.findAll(pageable);
+    }
 
     @Override
     public Book createBook(BookCreateDto dto) {
@@ -83,4 +101,51 @@ public class BookService implements IBookService {
                 .orElseThrow(() -> new PersistenceException("Failed to save the book."));
     }
 
+    @Override
+    public Page<Book> searchBooks(String query, ItemStatus status, String publisher, String genres, int page, int size, String sort) {
+
+        Sort sortSpec;
+        if ("TITLE_ASC".equals(sort)) {
+            sortSpec = Sort.by("title").ascending();
+        } else if ("TITLE_DESC".equals(sort)) {
+            sortSpec = Sort.by("title").descending();
+        } else if ("AUTHOR_ASC".equals(sort)) {
+            sortSpec = Sort.by("author").ascending();
+        } else if ("AUTHOR_DESC".equals(sort)) {
+            sortSpec = Sort.by("author").descending();
+        } else {
+            sortSpec = Sort.by("id").ascending();
+        }
+
+        Pageable pageable = PageRequest.of(page, size, sortSpec);
+
+        String queryParam = (query != null && !query.isBlank()) ? query : null;
+        String publisherParam = (publisher != null && !publisher.isBlank()) ? publisher : null;
+        String genresParam = (genres != null && !genres.isEmpty()) ? genres : null;
+
+        return bookRepository.searchBooks(queryParam, status, publisherParam, genresParam, pageable);
+    }
+
+    @Override
+    public List<String> getTopGenres() {
+        return bookRepository.findTop4Genres();
+    }
+
+    @Override
+    public List<String> getOtherGenres() {
+        return bookRepository.findOtherGenres();
+    }
+
+    @Override
+    public List<String> getAllPublishers() {
+        return bookRepository.findAllPublishers();
+    }
+
+    @Override
+    public List<String> getAllStatuses() {
+        return Arrays.stream(ItemStatus.values())
+                .map(Enum::name)
+                .sorted()
+                .collect(Collectors.toList());
+    }
 }

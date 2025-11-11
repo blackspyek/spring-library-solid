@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "dev": "nodemon --watch src --exec ng serve",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint"
@@ -23,6 +24,7 @@
   },
   "private": true,
   "dependencies": {
+    "@angular/animations": "^20.3.10",
     "@angular/cdk": "^20.2.12",
     "@angular/common": "^20.3.0",
     "@angular/compiler": "^20.3.0",
@@ -53,6 +55,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "nodemon": "^3.1.11",
     "prettier": "^3.6.2",
     "typescript": "~5.9.2",
     "typescript-eslint": "8.46.3"

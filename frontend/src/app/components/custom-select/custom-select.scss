@@ -1,0 +1,26 @@
+.select-options {
+  transition: all 0.2s ease-in-out;
+  transform-origin: top;
+  opacity: 0;
+  transform: scaleY(0.95);
+  display: none;
+}
+
+.select-options.hidden {
+  display: none;
+}
+
+.select-options.visible {
+  opacity: 1;
+  transform: scaleY(1);
+  display: block;
+  pointer-events: auto;
+}
+.select-button {
+
+  &.active {
+    border-color: transparent;
+    box-shadow: 0 0 0 2px #1A365B;
+  }
+}
+

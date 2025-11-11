@@ -1,81 +1,83 @@
-<div
-  class="flex flex-col justify-center items-center w-full max-w-sm rounded-2xl font-[Roboto] bg-white p-8 shadow-xl"
->
-  <div class="md:hidden bg-[var(--base-blue-dark)] pr-4 pl-4 mt-4 mb-8 rounded-xl">
-    <a [routerLink]="['/']" class="flex flex-row cursor-pointer items-center gap-3 justify-center">
-      <img
-        src="/logo.svg"
-        alt="Logo w kształcie książki"
-        class="h-auto object-cover w-20 md:w-24"
-      />
-      <span class="text-white text-base font-bold tracking-widest font-[Inter]">BIBLIOTEKA</span>
-    </a>
-  </div>
-  <div class="text-center">
-    <h1 class="text-3xl mb-4 text-[var(--base-gray-darker)] font-black tracking-wide">
-      Zaloguj się do Biblioteki
-    </h1>
-    <p class="text-lg font-normal text-[var(--base-gray-lighter)] tracking-wide">
-      Witaj z powrotem! Uzyskaj dostep do swojej cyfrowej półki.
-    </p>
-  </div>
-  <form class="w-full" [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
-    <div class="my-4">
-      <label for="email" class="block text-lg font-medium text-[var(--base-gray-darker)] mb-1">
-        Adres Email
-      </label>
-      <input
-        id="email"
-        type="email"
-        formControlName="email"
-        placeholder="wpisz@swój.email"
-        class="w-full px-4 py-2 text-base tracking-wide text-[var(--placeholder-gray)] border border-[rgba(var(--base-gray-darker-rgb),0.26)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-        [class.border-red-500]="email?.invalid && (email?.dirty || email?.touched)"
-      />
-      @if (email?.invalid && (email?.dirty || email?.touched)) {
-        <div class="text-red-600 text-xs mt-1">
-          @if (email?.errors?.['required']) {
-            <div>Adres email jest wymagany.</div>
-          }
-          @if (email?.errors?.['email']) {
-            <div>Proszę podać poprawny adres email.</div>
-          }
-        </div>
-      }
+<div class="min-h-screen flex items-center justify-center -mt-16 md:mt-0">
+  <div
+    class="flex flex-col justify-center items-center w-full max-w-sm rounded-2xl font-[Roboto] bg-white p-8 shadow-xl"
+  >
+    <div class="md:hidden bg-[var(--base-blue-dark)] pr-4 pl-4 mt-4 mb-8 rounded-xl">
+      <a [routerLink]="['/']" class="flex flex-row cursor-pointer items-center gap-3 justify-center">
+        <img
+          src="/logo.svg"
+          alt="Logo w kształcie książki"
+          class="h-auto object-cover w-20 md:w-24"
+        />
+        <span class="text-white text-base font-bold tracking-widest font-[Inter]">BIBLIOTEKA</span>
+      </a>
     </div>
-    <div class="my-4">
-      <label for="email" class="block text-lg font-medium text-[var(--base-gray-darker)] mb-1">
-        Hasło
-      </label>
-      <input
-        id="password"
-        type="password"
-        formControlName="password"
-        placeholder="********"
-        class="w-full px-4 py-2 text-base tracking-wide text-[var(--placeholder-gray)] border border-[rgba(var(--base-gray-darker-rgb),0.26)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-        [class.border-red-500]="password?.invalid && (password?.dirty || password?.touched)"
-      />
-      @if (password?.invalid && (password?.dirty || password?.touched)) {
-        <div class="text-red-600 text-xs mt-1">
-          @if (password?.errors?.['required']) {
-            <div>Hasło jest wymagane.</div>
-          }
-        </div>
-      }
+    <div class="text-center">
+      <h1 class="text-3xl mb-4 text-[var(--base-gray-darker)] font-black tracking-wide">
+        Zaloguj się do Biblioteki
+      </h1>
+      <p class="text-lg font-normal text-[var(--base-gray-lighter)] tracking-wide">
+        Witaj z powrotem! Uzyskaj dostęp do swojej cyfrowej półki.
+      </p>
     </div>
-    <button
-      type="submit"
-      [disabled]="loginForm.invalid"
-      class="w-full bg-[var(--base-blue-darker)] p-2 rounded-sm text-white font-bold text-base tracking-wide"
-    >
-      ZALOGUJ SIĘ
-    </button>
-  </form>
-  <div class="text-center mt-6">
-    <a href="#" class="font-medium text-sm text-[#1D4ED8]"> Zapomniałeś hasła? </a>
-    <p class="font-medium text-sm text-black">
-      Nie masz jeszcze aktywnego konta?
-      <a [routerLink]="['/zweryfikuj-email']" class="text-[#1D4ED8]"> Ponów e-mail aktywacyjny! </a>
-    </p>
+    <form class="w-full" [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+      <div class="my-4">
+        <label for="email" class="block text-lg font-medium text-[var(--base-gray-darker)] mb-1">
+          Adres Email
+        </label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="wpisz@swój.email"
+          class="w-full px-4 py-2 text-base tracking-wide text-[var(--placeholder-gray)] border border-[rgba(var(--base-gray-darker-rgb),0.26)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+          [class.border-red-500]="email?.invalid && (email?.dirty || email?.touched)"
+        />
+        @if (email?.invalid && (email?.dirty || email?.touched)) {
+          <div class="text-red-600 text-xs mt-1">
+            @if (email?.errors?.['required']) {
+              <div>Adres email jest wymagany.</div>
+            }
+            @if (email?.errors?.['email']) {
+              <div>Proszę podać poprawny adres email.</div>
+            }
+          </div>
+        }
+      </div>
+      <div class="my-4">
+        <label for="email" class="block text-lg font-medium text-[var(--base-gray-darker)] mb-1">
+          Hasło
+        </label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="********"
+          class="w-full px-4 py-2 text-base tracking-wide text-[var(--placeholder-gray)] border border-[rgba(var(--base-gray-darker-rgb),0.26)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+          [class.border-red-500]="password?.invalid && (password?.dirty || password?.touched)"
+        />
+        @if (password?.invalid && (password?.dirty || password?.touched)) {
+          <div class="text-red-600 text-xs mt-1">
+            @if (password?.errors?.['required']) {
+              <div>Hasło jest wymagane.</div>
+            }
+          </div>
+        }
+      </div>
+      <button
+        type="submit"
+        [disabled]="loginForm.invalid"
+        class="w-full bg-[var(--base-blue-darker)] p-2 rounded-sm text-white font-bold text-base tracking-wide"
+      >
+        ZALOGUJ SIĘ
+      </button>
+    </form>
+    <div class="text-center mt-6">
+      <a href="#" class="font-medium text-sm text-[#1D4ED8]"> Zapomniałeś hasła? </a>
+      <p class="font-medium text-sm text-black">
+        Nie masz jeszcze aktywnego konta?
+        <a [routerLink]="['/zweryfikuj-email']" class="text-[#1D4ED8]"> Ponów e-mail aktywacyjny! </a>
+      </p>
+    </div>
   </div>
 </div>
