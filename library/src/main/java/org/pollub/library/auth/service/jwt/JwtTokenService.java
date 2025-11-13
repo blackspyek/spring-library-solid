@@ -7,6 +7,7 @@ import org.pollub.library.auth.service.util.TokenConfig;
 import org.pollub.library.auth.service.util.TokenGenerator;
 import org.pollub.library.auth.service.util.TokenValidator;
 import org.pollub.library.user.model.User;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -33,6 +34,8 @@ public class JwtTokenService implements ITokenService {
         claims.put("id", user.getId());
         return tokenGenerator.generate(claims, user, tokenConfig.getExpirationTime());
     }
+
+
 
     @Override
     public String extractUsername(String token) {

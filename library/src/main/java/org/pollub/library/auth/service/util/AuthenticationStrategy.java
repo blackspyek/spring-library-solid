@@ -5,6 +5,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Component;
 
+import java.util.logging.Logger;
+
 @Component
 public class AuthenticationStrategy {
     private final AuthenticationManager authenticationManager;
@@ -13,9 +15,10 @@ public class AuthenticationStrategy {
         this.authenticationManager = authenticationManager;
     }
     public void authenticate(LoginUserDto loginUserDto) {
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        loginUserDto.getUsername(),
+                        loginUserDto.getEmail(),
                         loginUserDto.getPassword()
                 )
         );

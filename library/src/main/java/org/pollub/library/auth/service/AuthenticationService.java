@@ -30,8 +30,8 @@ public class AuthenticationService implements IAuthenticationService {
 
     @Override
     public User authenticateUser(LoginUserDto loginUserDto) {
-        User user = userRepository.findByUsername(loginUserDto.getUsername())
-                .orElseThrow(() -> new UserNotFoundException(loginUserDto.getUsername()));
+        User user = userRepository.findByEmail(loginUserDto.getEmail())
+                .orElseThrow(() -> new UserNotFoundException(loginUserDto.getEmail()));
 
         userValidator.validateUserStatus(user);
         authenticationStrategy.authenticate(loginUserDto);

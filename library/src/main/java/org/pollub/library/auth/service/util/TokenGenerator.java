@@ -16,10 +16,11 @@ public class TokenGenerator {
     public String generate(Map<String, Object> claims, User user, long expiration) {
         return Jwts.builder()
                 .claims(claims)
-                .subject(user.getUsername())
+                .subject(user.getEmail())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(tokenConfig.getSigningKey(), Jwts.SIG.HS256)
                 .compact();
     }
+
 }

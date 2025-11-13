@@ -13,8 +13,8 @@ public class TokenValidator {
     private final TokenClaimsExtractor claimsExtractor;
 
     public boolean isValid(String token, User user) {
-        String username = claimsExtractor.extractClaim(token, Claims::getSubject);
-        return username.equals(user.getUsername()) && !isExpired(token);
+        String email = claimsExtractor.extractClaim(token, Claims::getSubject);
+        return email.equals(user.getEmail()) && !isExpired(token);
     }
 
     public boolean isExpired(String token) {

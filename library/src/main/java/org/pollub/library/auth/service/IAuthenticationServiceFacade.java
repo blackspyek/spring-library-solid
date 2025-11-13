@@ -7,7 +7,7 @@ import org.pollub.library.auth.model.RegisterUserDto;
 
 public interface IAuthenticationServiceFacade {
 
-    AuthResponse register(RegisterUserDto request);
+    Boolean register(RegisterUserDto request);
 
     AuthResponse login(LoginUserDto request);
 

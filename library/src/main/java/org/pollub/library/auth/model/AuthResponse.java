@@ -1,10 +1,11 @@
 package org.pollub.library.auth.model;
 
+import org.pollub.library.user.model.Role;
 
-public record AuthResponse(String token, String responseType, String username) {
+public record AuthResponse(String token, Role[] roles, String responseType, String username) {
     private static final String RESPONSE_TYPE = "Bearer";
 
-    public AuthResponse(String token, String username) {
-        this(token, RESPONSE_TYPE, username);
+    public AuthResponse(String token, Role[] roles, String username) {
+        this(token, roles, RESPONSE_TYPE, username);
     }
 }

@@ -1,0 +1,45 @@
+<section
+  class="relative bg-cover w-full flex justify-center items-center min-h-screen md:min-h-[calc(100vh-4rem)] bg-center p-8"
+  style="background-image: url('/background.jpg')"
+>
+  <div class="absolute inset-0 bg-[#1A365B] opacity-40"></div>
+
+  <div
+    class="relative z-10 h-full flex flex-col justify-center items-center text-center text-white px-4"
+  >
+    <h1 class="text-4xl md:text-6xl font-medium mb-4 drop-shadow-lg font-[Roboto]">
+      Szukasz dobrej książki?
+    </h1>
+    <p class="text-lg md:text-xl max-w-3xl drop-shadow-md font-light">
+      Niezależnie od tego, czy szukasz bestsellera, czy niszowego dzieła -
+      <span class="font-bold">mamy to!</span>
+      Sprawdź dostępność i zarezerwuj książkę w jednej z naszych placówek. Łatwo i szybko.
+    </p>
+
+    <div class="w-full max-w-2xl gap-2 flex rounded-lg shadow-2xl overflow-hidden mt-8">
+      <div class="relative flex-grow bg-white">
+        <div
+          class="absolute inset-y-0 left-0 pl-4 text-[#8B8989] flex items-center pointer-events-none"
+        >
+          <mat-icon
+            class="material-icons-outlined scale-[0.85]"
+            fontIcon="search"
+            aria-hidden="true"
+          ></mat-icon>
+        </div>
+        <input
+          type="text"
+          placeholder="Wyszukaj tytuł, autora lub ISBN..."
+          class="w-full font-normal px-4 py-4 pl-12 text-[#8B8989] focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+      <button
+        class="bg-[var(--base-blue-darker)] hover:bg-blue-700 text-white px-8 py-4 font-semibold uppercase tracking-wider transition-colors cursor-pointer"
+      >
+        Katalog
+      </button>
+    </div>
+  </div>
+</section>
+<app-popular-list></app-popular-list>
+<app-recent-list></app-recent-list>

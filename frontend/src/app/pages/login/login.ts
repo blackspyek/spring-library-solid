@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../services/auth-service';
 
 @Component({
   selector: 'app-login',
@@ -11,6 +12,7 @@ import { RouterLink } from '@angular/router';
 })
 export class Login {
   private fb = inject(FormBuilder);
+  private authService = inject(AuthService);
   loginForm: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', Validators.required],
@@ -20,7 +22,14 @@ export class Login {
     this.loginForm.markAllAsTouched();
 
     if (this.loginForm.valid) {
-      console.log(this.loginForm.valid);
+      this.authService.login(this.loginForm.value).subscribe({
+        next: (response) => {
+          console.log('Logowanie udane:', response.username);
+        },
+        error: (error) => {
+          console.error('Błąd logowania:', error);
+        },
+      });
     } else {
       console.log('Form is invalid');
     }

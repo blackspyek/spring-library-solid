@@ -17,3 +17,10 @@ export interface AuthResponse {
   token: string;
   user: User;
 }
+
+export interface Book {
+  id: number;
+  title: string;
+  author: string;
+  coverUrl: string;
+}

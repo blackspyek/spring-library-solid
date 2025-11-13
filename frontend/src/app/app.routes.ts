@@ -4,12 +4,17 @@ import { Layout } from './components/layout/layout';
 import { ResendEmail } from './pages/resend-email/resend-email';
 import { Profile } from './pages/profile/profile';
 import { authGuard } from './guards/auth-guard';
+import { Home } from './pages/home/home';
 
 export const routes: Routes = [
   {
     path: '',
     component: Layout,
     children: [
+      {
+        path: '',
+        component: Home,
+      },
       {
         path: 'zaloguj-sie',
         component: Login,

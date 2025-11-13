@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.pollub.library.auth.service.jwt.JwtTokenService;
 import org.pollub.library.user.model.User;
 import org.springframework.lang.NonNull;
@@ -22,6 +23,7 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenService tokenService;
     private final UserDetailsService userDetailsService;
@@ -68,16 +70,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String username = tokenService.extractUsername(jwt);
-        if (!isValidAuthenticationContext(username)) {
+        String email = tokenService.extractUsername(jwt);
+
+
+        if (!isValidAuthenticationContext(email)) {
             errorResponseBuilder.buildAndSendErrorResponse(response, "Invalid authentication context");
             return;
         }
-
-        User user = loadAndValidateUser(jwt, username, response);
+        log.debug("1 Authenticating user with email {}", email);
+        User user = loadAndValidateUser(jwt, email, response);
+        log.debug("2 Authenticated user with email {}", user);
         if (user == null) {
             return;
         }
+        log.debug("3 Authenticated user with email {}", email);
+
 
         createSecurityContext(user, request);
         filterChain.doFilter(request, response);
@@ -85,10 +92,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private User loadAndValidateUser(
             String jwt,
-            String username,
+            String email,
             HttpServletResponse response
     ) throws IOException {
-        User user = (User) userDetailsService.loadUserByUsername(username);
+        User user = (User) userDetailsService.loadUserByUsername(email);
         if (!tokenService.isTokenValid(jwt, user)) {
             errorResponseBuilder.buildAndSendErrorResponse(response, "Token is not valid");
             return null;
@@ -111,6 +118,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 user.getAuthorities()
         );
         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
         SecurityContextHolder.getContext().setAuthentication(authToken);
     }
 }

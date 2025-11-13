@@ -1,6 +1,16 @@
 <div
   class="flex flex-col justify-center items-center w-full max-w-sm rounded-2xl font-[Roboto] bg-white p-8 shadow-xl"
 >
+  <div class="md:hidden bg-[var(--base-blue-dark)] pr-4 pl-4 mt-4 mb-8 rounded-xl">
+    <a [routerLink]="['/']" class="flex flex-row cursor-pointer items-center gap-3 justify-center">
+      <img
+        src="/logo.svg"
+        alt="Logo w kształcie książki"
+        class="h-auto object-cover w-20 md:w-24"
+      />
+      <span class="text-white text-base font-bold tracking-widest font-[Inter]">BIBLIOTEKA</span>
+    </a>
+  </div>
   <div class="text-center">
     <h1 class="text-3xl mb-4 text-[var(--base-gray-darker)] font-black tracking-wide">
       Zaloguj się do Biblioteki
