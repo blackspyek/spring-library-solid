@@ -2,11 +2,13 @@ package org.pollub.library.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.pollub.library.auth.model.ApiTextResponse;
+import org.pollub.library.auth.model.ChangePasswordDto;
 import org.pollub.library.exception.UserNotFoundException;
 import org.pollub.library.user.model.Role;
 import org.pollub.library.user.model.RoleSetDto;
 import org.pollub.library.user.model.User;
 import org.pollub.library.user.repository.IUserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +19,7 @@ import java.util.Set;
 public class UserService implements IUserService {
     private final IUserRepository userRepository;
     private final IUserContextService userContextService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -61,5 +64,24 @@ public class UserService implements IUserService {
         }
         userRepository.deleteById(id);
     }
+    @Override
+    @Transactional
+    public ApiTextResponse changePassword(String username, ChangePasswordDto passwordDto) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(username));
 
+        if (passwordEncoder.matches(passwordDto.getNewPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("Nowe hasło nie może być takie samo jak dotychczasowe.");
+        }
+
+        if (!passwordEncoder.matches(passwordDto.getOldPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("Błąd przy zmianie hasła. Proszę zweryfikuj wpisane hasło.");
+        }
+
+        String encodedPassword = passwordEncoder.encode(passwordDto.getNewPassword());
+        user.setPassword(encodedPassword);
+
+        userRepository.save(user);
+        return new ApiTextResponse(true, "Password for user " + username + " changed successfully");
+    }
 }

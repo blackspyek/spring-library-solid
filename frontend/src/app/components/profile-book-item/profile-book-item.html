@@ -1,0 +1,45 @@
+<div
+  class="bg-[color:var(--base-gray-light)] rounded-xl p-3 border border-[color:var(--base-border-gray)] flex justify-between items-center mb-3 transition-shadow duration-300 hover:shadow-md"
+>
+  <div class="flex items-center">
+    @if (imageUrl) {
+      <div
+        class="w-16 h-20 rounded-md mr-4 relative overflow-hidden bg-[color:var(--base-gray-lighter)]"
+      >
+        <img
+          [src]="imageUrl"
+          alt="Okładka książki {{ title }}"
+          class="object-cover w-full h-full"
+          onerror="this.style.display='none'; this.closest('div').classList.add('flex', 'items-center', 'justify-center'); this.closest('div').style.backgroundColor = 'var(--base-gray-light)'; this.closest('div').innerHTML = '<span class=\'text-[color:var(--base-gray-darker)] text-xs font-light absolute whitespace-nowrap\'>' + this.closest('div').parentElement.querySelector('p').innerText.slice(0, 4) + '</span>';"
+        />
+      </div>
+    } @else {
+      <div
+        [style.backgroundColor]="coverColor()"
+        class="w-16 h-20 rounded-md flex items-center justify-center mr-4 relative"
+      >
+        <span
+          class="text-[color:var(--base-white)] text-xs font-light absolute whitespace-nowrap rotate-90"
+        >
+          {{ coverText }}
+        </span>
+      </div>
+    }
+    <div class="flex flex-col">
+      <p class="font-bold text-[color:var(--base-gray-darker)] text-base">{{ title }}</p>
+      <p class="text-sm text-[color:var(--base-gray-lighter)] mb-1">Aut. {{ author }}</p>
+
+      <p class="text-xs {{ statusTextColorClass() }}">
+        {{ statusLabel() }}: <span class="font-bold">{{ date | date: 'dd.MM.yyyy' }}</span>
+      </p>
+    </div>
+  </div>
+
+  <button
+    (click)="onButtonClick()"
+    [class]="buttonClasses()"
+    class="font-semibold text-sm py-2 px-4 rounded-lg transition duration-150 border ml-4 whitespace-nowrap"
+  >
+    {{ buttonLabel() }}
+  </button>
+</div>

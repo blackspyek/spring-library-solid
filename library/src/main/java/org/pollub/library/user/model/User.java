@@ -26,6 +26,15 @@ public class User implements IUser {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    private String name;
+
+    private String surname;
+
+    @Column(unique = true)
+    private String readerId;
+
+    private String phone;
+
     @Column(unique = true, nullable = false)
     private String username;
 

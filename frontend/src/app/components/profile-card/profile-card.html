@@ -1,0 +1,19 @@
+@if (userProfile$ | async; as profile) {
+  <div
+    style="background-color: var(--base-blue-lighter)"
+    class="text-[color:var(--base-white)] py-4 pr-4 pl-4 rounded-lg w-full sm:w-auto min-h-[200px] flex flex-col justify-center shadow-xl h-full"
+  >
+    <p class="text-sm">Imię i Nazwisko:</p>
+    <p class="font-semibold text-lg mb-5">{{ profile.name }} {{ profile.surname }}</p>
+
+    <p class="text-sm">Adres E-Mail:</p>
+    <p class="font-semibold text-lg mb-5">{{ profile.email }}</p>
+
+    <p class="text-sm">Numer telefonu:</p>
+    <p class="font-semibold text-lg mb-5">{{ profile.phone }}</p>
+  </div>
+} @else {
+  <div class="p-4 bg-gray-100 rounded-lg text-gray-500 w-full animate-pulse">
+    Ładowanie danych profilu...
+  </div>
+}

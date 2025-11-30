@@ -3,11 +3,14 @@ package org.pollub.library.user.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.pollub.library.auth.model.ApiTextResponse;
+import org.pollub.library.auth.model.ChangePasswordDto;
 import org.pollub.library.user.model.RoleSetDto;
 import org.pollub.library.user.model.User;
 import org.pollub.library.user.service.IUserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -53,4 +56,11 @@ public class UserController {
         return ResponseEntity.ok(new ApiTextResponse(true, "User deleted successfully"));
     }
 
+    @PutMapping("/password")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiTextResponse> changePassword(@Valid @RequestBody ChangePasswordDto passwordDto, @AuthenticationPrincipal UserDetails userDetails) {
+        String username = userDetails.getUsername();
+        ApiTextResponse response = userService.changePassword(username, passwordDto);
+        return ResponseEntity.ok(response);
+    }
 }

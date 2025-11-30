@@ -1,0 +1,29 @@
+@if (loading) {
+  <div>Ładowanie zarezerwowanych książek...</div>
+} @else {
+  @if (reservedItems.length === 0) {
+    <p class="text-[color:var(--base-gray-lighter)] text-lg text-center my-6">
+      Brak aktywnych rezerwacji.
+    </p>
+  } @else {
+    @for (item of itemsToDisplay; track item.id) {
+      <profile-book-item
+        [title]="item.title"
+        [author]="item.author"
+        [coverText]="item.title"
+        [date]="item.dueDate!"
+        [statusType]="'reservation'"
+        [imageUrl]="item.imageUrl"
+      ></profile-book-item>
+    }
+
+    @if (reservedItems.length > 2) {
+      <button
+        class="w-full py-2 px-4 mt-2 bg-transparent border border-[color:var(--base-gray-lighter)] text-[color:var(--base-gray-darker)] font-normal rounded-lg hover:bg-gray-100 transition duration-150"
+        (click)="openBooksDialog()"
+      >
+        Zobacz wszystkie rezerwacje
+      </button>
+    }
+  }
+}

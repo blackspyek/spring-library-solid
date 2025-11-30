@@ -1,0 +1,43 @@
+<h2
+  class="text-2xl font-bold text-[color:var(--base-blue-darker)] flex justify-between items-center px-6 pt-8 pb-2"
+>
+  {{ dialogType === 'rent' ? 'Aktywne wypożyczenia' : 'Aktywne rezerwacje' }}
+  <button (click)="onNoClick()" aria-label="Zamknij okno" class="p-1 focus:outline-none">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      class="w-6 h-6 text-gray-400 hover:text-gray-600 transition"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z"
+        clip-rule="evenodd"
+      />
+    </svg>
+  </button>
+</h2>
+<div class="px-6">
+  <hr class="border-[color:var(--base-gray-light)]" />
+</div>
+
+<div class="px-6 p-2 mb-6 mr-6 h-[400px] overflow-y-auto">
+  @if (loading) {
+    <p class="text-center text-[color:var(--base-gray-lighter)] text-lg my-6">Ładowanie...</p>
+  } @else {
+    @for (item of activeItems; track item.id) {
+      <profile-book-item
+        [title]="item.title"
+        [author]="item.author"
+        [date]="item.dueDate || item.rentedAt || 'Brak daty'"
+        [coverText]="item.title"
+        [imageUrl]="item.imageUrl"
+        [statusType]="dialogType === 'rent' ? 'rent' : 'reservation'"
+      ></profile-book-item>
+    } @empty {
+      <p class="text-[color:var(--base-gray-lighter)] text-lg text-center my-6">
+        Brak aktywnych książek do wyświetlenia.
+      </p>
+    }
+  }
+</div>
