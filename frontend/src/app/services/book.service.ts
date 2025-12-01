@@ -8,6 +8,7 @@ import { environment } from '../../environments/environment';
   providedIn: 'root',
 })
 export class BookService {
+  // Nowoczesne wstrzykiwanie zależności (Code A)
   private http = inject(HttpClient);
 
   private apiUrl = environment.apiUrl + 'book';

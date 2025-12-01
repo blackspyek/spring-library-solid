@@ -1,11 +1,9 @@
-<!-- Mobile Navbar Component -->
-
 <footer
   class="md:hidden bg-[var(--base-blue-dark)] h-16 flex items-center justify-around fixed bottom-0 left-0 right-0 z-10"
 >
   <div class="absolute inset-x-0 -top-8 flex justify-center">
     <button
-      class="w-[65px] h-[65px] bg-[#173152] text-white rounded-full flex items-center justify-center cursor-pointer"
+      class="w-[65px] h-[65px] bg-[#173152] text-white rounded-full flex items-center justify-center cursor-pointer shadow-lg"
     >
       <mat-icon class="scale-[1.875]" fontIcon="qr_code" aria-hidden="true"></mat-icon>
     </button>
@@ -18,27 +16,27 @@
       [routerLinkActiveOptions]="{ exact: item.link === '/' }"
     >
       <mat-icon fontIcon="{{ item.icon }}" aria-hidden="true"></mat-icon>
-
       <span class="mt-1">{{ item.label }}</span>
     </a>
   }
 </footer>
 
-<!-- Desktop Navbar Component -->
 <header
-  class="hidden md:flex bg-[var(--base-blue-dark)] text-white h-16 shadow-lg px-8 items-center justify-between font-[Inter]"
+  class="hidden md:flex bg-[var(--base-blue-dark)] text-[var(--nav-base-color)] h-16 shadow-lg px-8 items-center justify-between font-[Inter]"
 >
   <div class="flex items-center gap-8 justify-center">
     <a [routerLink]="['/']" class="flex items-center gap-4 cursor-pointer">
       <img
-        ngSrc="/logo.svg"
+        [ngSrc]="highContrast ? '/logo_high.svg' : '/logo.svg'"
         width="48"
         height="48"
         alt="Logo w kształcie książki"
         priority
         class="object-cover"
       />
-      <span class="text-white text-base font-bold tracking-widest font-[Inter]">BIBLIOTEKA</span>
+      <span class="text-[var(--nav-base-color)] text-base font-bold tracking-widest font-[Inter]">
+        BIBLIOTEKA
+      </span>
     </a>
 
     <nav class="flex h-full gap-4">
@@ -54,53 +52,94 @@
       }
     </nav>
   </div>
-  @if (isLoggedIn()) {
-    <div class="group flex items-center gap-0 rounded-full p-1 transition-all duration-300">
+
+  <div class="flex items-center gap-6">
+
+    <div class="flex items-center gap-4 text-sm font-medium">
+      <div class="flex items-center cursor-pointer hover:text-gray-300 transition-colors">
+        <span class="material-icons text-xl mr-1"> error_outline </span>
+        <span class="hidden lg:inline">Zgłoś uwagę</span>
+      </div>
+
+      <div class="flex items-center gap-3 border-l border-white/20 pl-4">
+        <button
+          type="button"
+          class="contrast-toggle flex items-center cursor-pointer hover:text-gray-300 transition-colors"
+          (click)="toggleHighContrast()"
+          [attr.aria-pressed]="highContrast"
+          aria-label="Przełącz wysoki kontrast"
+        >
+          <span class="material-icons text-xl mr-1"> contrast </span>
+        </button>
+
+        <button
+          type="button"
+          (click)="decreaseRootFontSize()"
+          aria-label="Zmniejsz czcionkę"
+          class="hover:text-gray-300 transition-colors font-bold px-1"
+        >
+          A-
+        </button>
+
+        <button
+          type="button"
+          (click)="increaseRootFontSize()"
+          aria-label="Zwiększ czcionkę"
+          class="hover:text-gray-300 transition-colors font-bold px-1"
+        >
+          A+
+        </button>
+      </div>
+    </div>
+
+    @if (isLoggedIn()) {
+      <div class="group flex items-center gap-0 rounded-full p-1 transition-all duration-300 border border-transparent hover:border-white/10 hover:bg-white/5">
+        <a
+          [routerLink]="['/profil']"
+          class="flex items-center gap-1 px-2 py-1 cursor-pointer transition-all duration-150"
+        >
+          <mat-icon
+            class="material-icons-outlined scale-[0.85]"
+            fontIcon="person"
+            aria-hidden="true"
+          ></mat-icon>
+          <span
+            routerLinkActive="active-link-account"
+            class="text-base font-light font-[Inter] tracking-wide"
+          >
+            Moje konto
+          </span>
+        </a>
+
+        <div
+          class="flex items-center overflow-hidden max-w-0 opacity-0 group-hover:max-w-[120px] group-hover:opacity-100 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+        >
+          <div class="h-5 w-[1px] bg-white/30 mx-1"></div>
+          <button
+            (click)="logout()"
+            class="logout-btn flex items-center gap-1 px-2 py-1 text-sm text-[var(--nav-base-color)]/70 whitespace-nowrap hover:text-[var(--nav-base-color)] rounded-full transition-colors cursor-pointer"
+          >
+            <span>Wyloguj</span>
+            <mat-icon
+              class="scale-[0.7] transition-transform duration-300"
+              fontIcon="logout"
+              aria-hidden="true"
+            ></mat-icon>
+          </button>
+        </div>
+      </div>
+    } @else {
       <a
-        [routerLink]="['/profil']"
-        class="flex items-center gap-1 px-2 py-1 cursor-pointer transition-all duration-150"
+        [routerLink]="['/zaloguj-sie']"
+        class="flex items-center hover:text-blue-300 transition duration-150 text-base font-light font-[Inter] tracking-wide gap-1 cursor-pointer ml-2"
       >
         <mat-icon
           class="material-icons-outlined scale-[0.85]"
           fontIcon="person"
           aria-hidden="true"
         ></mat-icon>
-        <span
-          routerLinkActive="active-link-account"
-          class="text-base font-light font-[Inter] tracking-wide"
-          >Moje konto</span
-        >
+        <span>Zaloguj</span>
       </a>
-
-      <!-- Logout section - hidden, appears on group hover -->
-      <div
-        class="flex items-center overflow-hidden max-w-0 opacity-0 group-hover:max-w-[120px] group-hover:opacity-100 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
-      >
-        <div class="h-5 w-[1px] bg-white/30 mx-1"></div>
-        <button
-          (click)="logout()"
-          class="logout-btn flex items-center gap-1 px-2 py-1 text-sm text-white/70 whitespace-nowrap hover:text-white rounded-full transition-colors cursor-pointer"
-        >
-          <span>Wyloguj</span>
-          <mat-icon
-            class="scale-[0.7] transition-transform duration-300"
-            fontIcon="logout"
-            aria-hidden="true"
-          ></mat-icon>
-        </button>
-      </div>
-    </div>
-  } @else {
-    <a
-      [routerLink]="['/zaloguj-sie']"
-      class="flex items-center hover:text-blue-300 transition duration-150 text-base font-light font-[Inter] tracking-wide gap-1 cursor-pointer"
-    >
-      <mat-icon
-        class="material-icons-outlined scale-[0.85]"
-        fontIcon="person"
-        aria-hidden="true"
-      ></mat-icon>
-      <span>Zaloguj</span>
-    </a>
-  }
+    }
+  </div>
 </header>

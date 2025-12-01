@@ -1,3 +1,29 @@
 :host {
-  display: contents;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 4rem);
+  padding: 2rem 1rem;
+}
+:host-context(html.high-contrast) .form-card {
+  border: 1px solid var(--placeholder-gray);
+  border-radius: 15px;
+  transition:
+    box-shadow 160ms ease-in-out,
+    border-color 160ms ease-in-out;
+}
+:host-context(html.high-contrast) .btn-secondary {
+  border: 1px solid #ffed00;
+  border-radius: 5px;
+  color: var(--base-gray-darker);
+  transition:
+    box-shadow 160ms ease-in-out,
+    border-color 160ms ease-in-out;
+}
+:host-context(html.high-contrast) input {
+  border: 1px solid var(--placeholder-gray);
+  border-radius: 5px;
+  transition:
+    box-shadow 160ms ease-in-out,
+    border-color 160ms ease-in-out;
 }

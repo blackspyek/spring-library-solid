@@ -1,5 +1,7 @@
 <section class="container mx-auto p-4 max-w-full py-8">
-  <h2 class="font-roboto font-semibold text-2xl tracking-wide mb-6">NOWOŚCI</h2>
+  <h2 class="font-roboto font-semibold text-2xl tracking-wide mb-6 text-[var(--base-font-color)]">
+    NOWOŚCI
+  </h2>
 
   @if (isLoading) {
     <div class="flex flex-col lg:flex-row gap-4 w-full justify-center">
@@ -28,7 +30,7 @@
       @if (featuredBook) {
         <div>
           <div class="w-full max-w-[400px] mx-auto lg:mx-0 pb-3">
-            <span class="bg-[var(--base-blue-darker)] text-white text-2xl font-base px-4 py-1">
+            <span class="bg-[var(--base-blue-darker)] text-[var(--base-white)] text-2xl font-base px-4 py-1">
               Polecane
             </span>
           </div>

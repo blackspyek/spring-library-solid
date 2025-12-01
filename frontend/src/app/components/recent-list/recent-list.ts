@@ -13,7 +13,7 @@ export class RecentList implements OnInit {
 
   readonly placeholder = 'assets/book-placeholder.svg';
 
-  popularBooks: SingleBook[] = [];
+  recentBooks: SingleBook[] = [];
   featuredBook: SingleBook | null = null;
   gridBooks: SingleBook[] = [];
 
@@ -22,16 +22,15 @@ export class RecentList implements OnInit {
   gridImageLoading = new Map<number, boolean>();
 
   ngOnInit(): void {
-    this.loadPopularBooks();
+    this.loadRecentBooks();
   }
 
-  private loadPopularBooks(): void {
-    this.bookService.getPopularBooks(10).subscribe({
+  private loadRecentBooks(): void {
+    this.bookService.getRecentBooks(10).subscribe({
       next: (books) => {
-        this.popularBooks = books;
+        this.recentBooks = books;
 
-        const bestseller = books.find((book) => book.bestseller);
-        this.featuredBook = bestseller || books[0] || null;
+        this.featuredBook = books[0] || null;
 
         this.gridBooks = books.filter((book) => book.id !== this.featuredBook?.id).slice(0, 6);
 

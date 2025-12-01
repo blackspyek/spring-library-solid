@@ -4,8 +4,9 @@
 
 .active-link {
   position: relative;
-  color: white;
+  color: inherit;
   font-weight: 400 !important;
+
   &::after {
     content: '';
     position: absolute;
@@ -14,7 +15,7 @@
     transform: translateX(-50%);
     width: 50%;
     height: 3px;
-    background-color: #6e9fe0;
+    background-color: var(--nav-underline-active);
   }
 }
 
@@ -37,8 +38,9 @@
   position: relative;
   border-radius: 9999px;
   padding: 0.25rem 0.5rem;
-  background-color: rgba(255, 255, 255, 0.1); /* Bardzo subtelne, jasne tło */
+  background-color: rgba(255, 255, 255, 0.1); /* Subtelne tło */
 }
+
 
 .account-dropdown {
   &:hover {
@@ -63,4 +65,26 @@
       transform: translateX(3px) scale(0.7);
     }
   }
+}
+
+
+.contrast-toggle {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: inherit;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  align-items: center;
+  transition: all 0.2s ease-in-out;
+}
+
+.contrast-toggle:focus {
+  outline: 3px solid #ffed00;
+  outline-offset: 2px;
+}
+
+.contrast-toggle[aria-pressed='true'] {
+  color: var(--base-gray-light); /* Lub inny kolor wyróżnienia */
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
 }

@@ -12,13 +12,13 @@
   --base-blue-dark: #1a365b;
   --base-blue-darker: #1e3a8a;
   --base-blue-lighter: #1f549a;
-  --base-blue-lighter80: rgb(31, 84, 154, 0.8);
   --base-gray-light: #f2f2f2;
-  --qr-gray-light: #F7F7F7;
   --base-gray-lighter: #8c8989;
   --base-gray-darker: #4a4a4a;
-  --gray-dark: #262727;
   --placeholder-gray: #8b8989;
+  --base-blue-lighter80: rgb(31, 84, 154, 0.8);
+  --qr-gray-light: #F7F7F7;
+  --gray-dark: #262727;
   --base-border-gray: #4A4A4A14;
   --base-white: #ffffff;
   --base-green: #0F7E03;
@@ -29,6 +29,78 @@
   --base-purple: #5F4377;
   --books-container-bg: #F7F7F7;
   --base-gray-darker-rgb: 74, 74, 74;
+  --nav-base-color: white;
+  --base-font-color: black;
+  --base-arrow-color: rgba(255, 255, 255, 0.8);
+  --base-form-bg: white;
+  --base-btn-secondary-bg: #1e3a8a;
+  --base-form-lighter-text: #4a4a4a;
+  --base-eye-catching-link: #1d4ed8;
+
+  --blue-50: #eff6ff;
+  --blue-500: #3b82f6;
+  --blue-800: #1e40af;
+  --search-bar-catalog: white;
+  --base-gray-darker-catalog: #4a4a4a;
+  --purple-50: #faf5ff;
+  --purple-700: #8200db;
+  --base-input-bg: white;
+  --book-bg: white;
+  --details-bt: #1f549a;
+  --availability-bt: white;
+  --base-blue-lighter-catalog: #1f549a;
+  --availability-green: #00c950;
+  --availability-red: #fb2c36;
+  --availability-orange: #f0b100;
+  --hover-pagination: #e5e7eb;
+  --hover-reserve: #eff6ff;
+  --mobile-bg: #f9fafb;
+  --bg-x: #ffffff80;
+  --white-to-yellow: white;
+  --nav-underline-active: #6e9fe0;
+  --form-btn-hover: #2a368a;
+}
+
+/* High-contrast overrides (black / yellow) — toggled by adding `high-contrast` to <html> */
+html.high-contrast {
+  --base-white: black;
+  --base-blue-dark: #ffed00; /* near-black for primary surfaces */
+  --base-blue-darker: rgba(255, 237, 0, 0.7); /* deepest black for active/pressed */
+  --base-blue-lighter: rgba(255, 237, 0, 0.95); /* slightly lighter black for hover */
+  --base-gray-light: black; /* page background */
+  --base-gray-lighter: rgba(255, 237, 0, 0.76); /* secondary text / accents */
+  --base-gray-darker: #ffed00; /* primary text/highlights */
+  --placeholder-gray: #ffed00; /* placeholders */
+  --base-gray-darker-rgb: 11, 16, 22; /* rgb for rgba(...) usage */
+  --nav-base-color: #0b1016; /* yellow for nav text/icons */
+  --base-input-bg: #000000; /* darker input backgrounds */
+  --base-font-color: #ffed00; /* primary font color */
+  --base-arrow-color: #ffed00c6; /* yellow for arrows/icons */
+  --base-form-bg: black;
+  --base-btn-secondary-bg: black;
+  --base-form-lighter-text: rgba(255, 237, 0, 0.76);
+  --base-eye-catching-link: #ffff00;
+  --blue-50: rgba(255, 237, 0, 0.26);
+  --blue-500: #ffed00;
+  --blue-800: #ffed00;
+  --search-bar-catalog: #FFED00;
+  --base-gray-darker-catalog: #0b1016;
+  --purple-50: #bdbd71;
+  --purple-700: #0b1016;
+  --book-bg: #262727;
+  --details-bt: rgba(255, 237, 0, 0.76);
+  --availability-bt: rgba(11,16,22,0.76);
+  --base-blue-lighter-catalog: #0b1016;
+  --availability-green: #0b1016;
+  --availability-red: #0b1016;
+  --availability-orange: #0b1016;
+  --hover-pagination: #bdbd71;
+  --hover-reserve: #bdbd71;
+  --mobile-bg: #FFED00;
+  --bg-x: rgba(227, 220, 95, 0);
+  --white-to-yellow: #FFED00;
+  --nav-underline-active: black;
+  --form-btn-hover: #40403d
 }
 
 html {

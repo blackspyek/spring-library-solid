@@ -1,7 +1,7 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage, isPlatformBrowser } from '@angular/common';
 import { AuthService } from '../../services/auth-service';
 
 export interface NavItem {
@@ -9,6 +9,7 @@ export interface NavItem {
   icon?: string;
   link?: string;
 }
+
 @Component({
   selector: 'app-navbar',
   standalone: true,
@@ -16,10 +17,17 @@ export interface NavItem {
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss',
 })
-export class Navbar {
+export class Navbar implements OnInit {
   private authService = inject(AuthService);
+  private platformId = inject(PLATFORM_ID);
 
   isLoggedIn = this.authService.isLoggedIn;
+
+  highContrast = false;
+  private currentScale = 100;
+  private minScale = 50;
+  private maxScale = 200;
+
 
   mobileNavItems = computed<NavItem[]>(() => [
     { label: 'Start', icon: 'home', link: '/' },
@@ -35,10 +43,67 @@ export class Navbar {
 
   desktopNavItems = [
     { label: 'Strona główna', link: '/' },
-    { label: 'Katalog', link: '/catalog' },
+    { label: 'Katalog', link: '/katalog' },
   ];
+
+
+  ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      try {
+        const stored = localStorage.getItem('highContrast');
+        this.highContrast = stored === 'true';
+        this.applyHighContrast(this.highContrast);
+
+      } catch (e) {
+        console.warn('LocalStorage niedostępny', e);
+      }
+    }
+  }
+
 
   logout(): void {
     this.authService.logout();
+  }
+
+
+  toggleHighContrast(): void {
+    this.highContrast = !this.highContrast;
+    if (isPlatformBrowser(this.platformId)) {
+      try {
+        localStorage.setItem('highContrast', String(this.highContrast));
+      } catch (e) {}
+      this.applyHighContrast(this.highContrast);
+    }
+  }
+
+  private applyHighContrast(enabled: boolean): void {
+    if (isPlatformBrowser(this.platformId)) {
+      const root = document.documentElement;
+      if (enabled) {
+        root.classList.add('high-contrast');
+      } else {
+        root.classList.remove('high-contrast');
+      }
+    }
+  }
+
+  increaseRootFontSize(): void {
+    if (this.currentScale < this.maxScale) {
+      this.currentScale += 12.5;
+      this.updateFontSize();
+    }
+  }
+
+  decreaseRootFontSize(): void {
+    if (this.currentScale > this.minScale) {
+      this.currentScale -= 12.5;
+      this.updateFontSize();
+    }
+  }
+
+  private updateFontSize(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      document.documentElement.style.fontSize = `${this.currentScale}%`;
+    }
   }
 }

@@ -9,10 +9,10 @@
     <button
       type="button"
       (click)="toggle()"
-      class="select-button cursor-pointer w-full bg-white border border-slate-200 rounded-md py-[3px] px-3 shadow-md outline-none pr-10 text-left text-sm hover:shadow-md focus:outline-none transition-all duration-200 flex items-center gap-3 group"
+      class="select-button cursor-pointer w-full bg-[color:var(--search-bar-catalog)] border border-[color:var(--search-bar-catalog)] rounded-md py-[3px] px-3 shadow-md outline-none pr-10 text-left text-sm hover:shadow-md focus:outline-none transition-all duration-200 flex items-center gap-3 group "
       [class.active]="isOpen()"
     >
-      <span class="icon-slot flex-shrink-0 text-[color:var(--base-gray-darker)]">
+      <span class="icon-slot flex-shrink-0 text-[color:var(--base-gray-darker-catalog)]">
         @if (selected()?.iconPath) {
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -42,7 +42,7 @@
         }
       </span>
 
-      <span class="block truncate text-[color:var(--base-gray-darker)]">
+      <span class="block truncate text-[color:var(--base-gray-darker-catalog)]">
         {{ selected()?.label || placeholder() }}
       </span>
 
@@ -66,16 +66,16 @@
     </button>
 
     <ul
-      class="select-options absolute z-50 mt-2 w-full bg-white rounded-xl shadow-xl border border-slate-100 max-h-60 overflow-auto py-1 ring-1 ring-black ring-opacity-5 focus:outline-none"
+      class="select-options absolute z-50 mt-2 w-full bg-[color:var(--search-bar-catalog)] rounded-xl shadow-xl border border-[color:var(--search-bar-catalog)] max-h-60 overflow-auto py-1 ring-1 ring-black ring-opacity-5 focus:outline-none"
       [class.hidden]="!isVisible()"
       [class.visible]="isOpen()"
     >
       @for (option of options(); track option.value) {
         <li
           (click)="selectOption(option)"
-          class="cursor-pointer select-none relative py-3 pl-2 pr-1 transition-colors hover:bg-purple-50 hover:text-purple-700 text-slate-700"
-          [class.bg-purple-50]="isOptionActive(option)"
-          [class.text-purple-700]="isOptionActive(option)"
+          class="cursor-pointer select-none relative py-3 pl-2 pr-1 transition-colors hover:bg-[color:var(--purple-50)] hover:text-[color:var(--purple-700)] text-[color:var(--base-gray-darker-catalog)]"
+          [class.bg-[color:var(--purple-50)]]="isOptionActive(option)"
+          [class.text-[color:var(--purple-700)]]="isOptionActive(option)"
         >
           <div class="flex items-center gap-3 overflow-hidden">
             @if (option.iconPath) {
@@ -86,7 +86,7 @@
                 stroke-width="1.5"
                 stroke="currentColor"
                 class="w-5 h-5 flex-shrink-0"
-                [class.text-purple-700]="selected()?.value === option.value"
+                [class.text-[color:var(--purple-700)]]="selected()?.value === option.value"
                 [class.text-slate-400]="selected()?.value !== option.value && !selected()"
               >
                 <path stroke-linecap="round" stroke-linejoin="round" [attr.d]="option.iconPath" />
@@ -102,7 +102,7 @@
 
           @if (isOptionActive(option)) {
             <span
-              class="absolute inset-y-0 right-0 flex items-center center pr-1 text-purple-600 flex-shrink-0"
+              class="absolute inset-y-0 right-0 flex items-center center pr-1 text-[color:var(--purple-700)] flex-shrink-0"
             >
               <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path

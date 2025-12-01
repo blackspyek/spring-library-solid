@@ -7,10 +7,18 @@ import { BookService } from '../../services/book.service';
 import { FormsModule } from '@angular/forms';
 import { debounceTime, Subject, forkJoin } from 'rxjs';
 import { SortSelectComponent } from '../../components/sort-select/sort-select';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-catalog',
-  imports: [CommonModule, CustomSelect, SingleBookComponent, FormsModule, SortSelectComponent],
+  imports: [
+    CommonModule,
+    CustomSelect,
+    SingleBookComponent,
+    FormsModule,
+    SortSelectComponent,
+    MatIconModule,
+  ],
   templateUrl: './catalog.html',
   styleUrl: './catalog.scss',
   changeDetection: ChangeDetectionStrategy.Default,
@@ -135,7 +143,7 @@ export class Catalog implements OnInit {
         this.selectedGenre ? [this.selectedGenre] : undefined,
         this.currentPage,
         this.pageSize,
-        this.sortBy || undefined
+        this.sortBy || undefined,
       )
       .subscribe({
         next: (response) => {
