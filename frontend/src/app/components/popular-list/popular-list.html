@@ -1,5 +1,7 @@
 <section class="container mx-auto p-4 max-w-full py-8">
-  <h2 class="font-roboto font-semibold text-2xl tracking-wide mb-6">POPULARNE</h2>
+  <h2 class="font-roboto font-semibold text-2xl tracking-wide mb-6 text-[var(--base-font-color)]">
+    POPULARNE
+  </h2>
   <div class="relative group px-16">
     <div #bookList class="flex justify-start overflow-x-auto scroll-smooth gap-4 scrollbar-hide">
       @for (book of popularBooks(); track book.id; let i = $index) {
@@ -8,8 +10,8 @@
             <img
               [ngSrc]="book.coverUrl"
               [priority]="i < 3"
-              width="243"
-              height="300"
+              width="224"
+              height="336"
               [alt]="book.title"
               class="w-full h-auto object-cover aspect-[2/3]"
             />
@@ -19,7 +21,7 @@
     </div>
     <button
       (click)="scrollLeft(bookList)"
-      class="absolute left-2 top-1/2 -translate-y-1/2 -translate-x-2 z-10 bg-white/80 hover:bg-white text-gray-900 rounded-full w-10 h-10 flex items-center justify-center cursor-pointer shadow-lg"
+      class="absolute left-2 top-1/2 -translate-y-1/2 -translate-x-2 z-10 bg-[var(--base-arrow-color)] hover:bg-white text-gray-900 rounded-full w-10 h-10 flex items-center justify-center cursor-pointer shadow-lg"
       aria-label="Scroll left"
     >
       <mat-icon
@@ -31,7 +33,7 @@
 
     <button
       (click)="scrollRight(bookList)"
-      class="absolute right-2 top-1/2 bg-white/80 hover:bg-white text-gray-900 rounded-full w-10 h-10 flex items-center justify-center cursor-pointer shadow-lg"
+      class="absolute right-2 top-1/2 bg-[var(--base-arrow-color)] hover:bg-white text-gray-900 rounded-full w-10 h-10 flex items-center justify-center cursor-pointer shadow-lg"
       aria-label="Scroll right"
     >
       <mat-icon

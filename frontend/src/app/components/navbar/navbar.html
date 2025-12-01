@@ -25,12 +25,19 @@
 
 <!-- Desktop Navbar Component -->
 <header
-  class="hidden md:flex bg-[var(--base-blue-dark)] text-white h-16 shadow-lg px-8 items-center justify-between font-[Inter]"
+  class="hidden md:flex bg-[var(--base-blue-dark)] text-[var(--nav-base-color)] h-16 shadow-lg px-8 items-center justify-between font-[Inter]"
 >
   <div class="flex items-center gap-8 justify-center">
     <a [routerLink]="['/']" class="flex items-center gap-4">
-      <img src="/logo.svg" alt="Logo w kształcie książki" class="h-auto object-cover md:w-12" />
-      <span class="text-white text-base font-bold tracking-widest font-[Inter]">BIBLIOTEKA</span>
+      <img
+        [src]="highContrast ? '/logo_high.svg' : '/logo.svg'"
+        alt="Logo w kształcie książki"
+        class="h-auto object-cover md:w-12"
+      />
+
+      <span class="text-[var(--nav-base-color)] text-base font-bold tracking-widest font-[Inter]"
+        >BIBLIOTEKA</span
+      >
     </a>
 
     <nav class="flex h-full gap-4">
@@ -45,15 +52,51 @@
       }
     </nav>
   </div>
-  <a
-    [routerLink]="['/profil']"
-    class="flex items-center hover:text-blue-300 transition duration-150 text-base font-light font-[Inter] tracking-wide gap-1"
-  >
-    <mat-icon
-      class="material-icons-outlined scale-[0.85]"
-      fontIcon="person"
-      aria-hidden="true"
-    ></mat-icon>
-    <span>Moje konto</span>
-  </a>
+  <div class="flex justify-between gap-4 font-[Inter] font-medium text-regular">
+    <div class="flex items-center cursor-pointer hover:text-gray-300 transition-colors">
+      <span class="material-icons text-xl mr-1"> error_outline </span>
+      <span>Zgłoś uwagę</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <button
+        type="button"
+        class="contrast-toggle flex items-center cursor-pointer hover:text-gray-300 transition-colors"
+        (click)="toggleHighContrast()"
+        [attr.aria-pressed]="highContrast"
+        aria-label="Toggle high contrast"
+      >
+        <span class="material-icons text-xl mr-2"> contrast </span>
+        <span class="sr-only">Toggle high contrast</span>
+      </button>
+
+      <button
+        type="button"
+        (click)="decreaseRootFontSize()"
+        aria-label="Decrease font size"
+        class="hover:text-gray-300 transition-colors mr-2"
+      >
+        A-
+      </button>
+
+      <button
+        type="button"
+        (click)="increaseRootFontSize()"
+        aria-label="Increase font size"
+        class="hover:text-gray-300 transition-colors"
+      >
+        A+
+      </button>
+    </div>
+    <a
+      [routerLink]="['/profil']"
+      class="flex items-center hover:text-blue-300 transition duration-150 text-base font-light font-[Inter] tracking-wide gap-1"
+    >
+      <mat-icon
+        class="material-icons-outlined scale-[0.85]"
+        fontIcon="person"
+        aria-hidden="true"
+      ></mat-icon>
+      <span>Moje konto</span>
+    </a>
+  </div>
 </header>

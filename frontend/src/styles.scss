@@ -1,4 +1,3 @@
-
 // Include theming for Angular Material with `mat.theme()`.
 // This Sass mixin will define CSS variables that are used for styling Angular Material
 // components according to the Material 3 design spec.
@@ -6,28 +5,64 @@
 // custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
-@import url("https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined");
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined');
 
 :root {
-  --base-blue-dark: #1A365B;
-  --base-blue-darker: #1E3A8A;
-  --base-blue-lighter: #1F549A;
-  --base-gray-light: #F2F2F2;
-  --base-gray-lighter: #8C8989;
-  --base-gray-darker: #4A4A4A;
-  --placeholder-gray: #8B8989;
+  --base-blue-dark: #1a365b;
+  --base-blue-darker: #1e3a8a;
+  --base-blue-lighter: #1f549a;
+  --base-gray-light: #f2f2f2;
+  --base-gray-lighter: #8c8989;
+  --base-gray-darker: #4a4a4a;
+  --placeholder-gray: #8b8989;
   --base-gray-darker-rgb: 74, 74, 74;
+  --nav-base-color: white;
+  --base-font-color: black;
+  --base-arrow-color: rgba(255, 255, 255, 0.8);
+  --base-form-bg: white;
+  --base-btn-secondary-bg: #1e3a8a;
+  --base-form-lighter-text: #4a4a4a;
+  --base-eye-catching-link: #1d4ed8;
+
+  --blue-50: #eff6ff;
+  --blue-500: #3b82f6;
+  --blue-800: #1e40af;
+}
+
+/* High-contrast overrides (black / yellow) — toggled by adding `high-contrast` to <html> */
+html.high-contrast {
+  --base-blue-dark: #ffed00; /* near-black for primary surfaces */
+  --base-blue-darker: rgba(255, 237, 0, 0.7); /* deepest black for active/pressed */
+  --base-blue-lighter: rgba(255, 237, 0, 0.95); /* slightly lighter black for hover */
+  --base-gray-light: black; /* page background */
+  --base-gray-lighter: rgba(255, 237, 0, 0.76); /* secondary text / accents */
+  --base-gray-darker: #ffed00; /* primary text/highlights */
+  --placeholder-gray: #ffed00; /* placeholders */
+  --base-gray-darker-rgb: 11, 16, 22; /* rgb for rgba(...) usage */
+  --nav-base-color: #0b1016; /* yellow for nav text/icons */
+  --base-input-bg: #0b1016; /* darker input backgrounds */
+  --base-font-color: #ffed00; /* primary font color */
+  --base-arrow-color: #ffed00c6; /* yellow for arrows/icons */
+  --base-form-bg: black;
+  --base-btn-secondary-bg: black;
+  --base-form-lighter-text: rgba(255, 237, 0, 0.76);
+  --base-eye-catching-link: #ffff00;
+  --blue-50: rgba(255, 237, 0, 0.26);
+  --blue-500: #ffed00;
+  --blue-800: #ffed00;
 }
 
 html {
-  @include mat.theme((
-    color: (
-      primary: mat.$azure-palette,
-      tertiary: mat.$blue-palette,
-    ),
-    typography: Roboto,
-    density: 0,
-  ));
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$azure-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
 }
 
 body {
@@ -48,5 +83,11 @@ body {
 }
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+}

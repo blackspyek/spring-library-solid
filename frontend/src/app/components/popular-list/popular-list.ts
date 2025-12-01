@@ -48,19 +48,19 @@ export class PopularList {
       coverUrl: 'https://placehold.co/224x336/222222/ffffff?text=Behawiorysta',
     },
     {
-      id: 6,
+      id: 7,
       title: 'Behawiorysta',
       author: 'Remigiusz Mróz',
       coverUrl: 'https://placehold.co/224x336/222222/ffffff?text=Behawiorysta',
     },
     {
-      id: 6,
+      id: 8,
       title: 'Behawiorysta',
       author: 'Remigiusz Mróz',
       coverUrl: 'https://placehold.co/224x336/222222/ffffff?text=Behawiorysta',
     },
     {
-      id: 6,
+      id: 9,
       title: 'Behawiorysta',
       author: 'Remigiusz Mróz',
       coverUrl: 'https://placehold.co/224x336/222222/ffffff?text=Behawiorysta',

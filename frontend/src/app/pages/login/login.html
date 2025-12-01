@@ -1,5 +1,5 @@
 <div
-  class="flex flex-col justify-center items-center w-full max-w-sm rounded-2xl font-[Roboto] bg-white p-8 shadow-xl"
+  class="form-card flex flex-col justify-center items-center w-full max-w-sm rounded-2xl font-[Roboto] bg-[var(--base-form-bg)] p-8 shadow-xl"
 >
   <div class="md:hidden bg-[var(--base-blue-dark)] pr-4 pl-4 mt-4 mb-8 rounded-xl">
     <a [routerLink]="['/']" class="flex flex-row cursor-pointer items-center gap-3 justify-center">
@@ -15,7 +15,7 @@
     <h1 class="text-3xl mb-4 text-[var(--base-gray-darker)] font-black tracking-wide">
       Zaloguj się do Biblioteki
     </h1>
-    <p class="text-lg font-normal text-[var(--base-gray-lighter)] tracking-wide">
+    <p class="text-lg font-normal text-[var(--base-form-lighter-text)] tracking-wide">
       Witaj z powrotem! Uzyskaj dostep do swojej cyfrowej półki.
     </p>
   </div>
@@ -29,7 +29,7 @@
         type="email"
         formControlName="email"
         placeholder="wpisz@swój.email"
-        class="w-full px-4 py-2 text-base tracking-wide text-[var(--placeholder-gray)] border border-[rgba(var(--base-gray-darker-rgb),0.26)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+        class="w-full px-4 py-2 text-base tracking-wide text-[var(--base-gray-lighter)] border border-[rgba(var(--base-gray-darker-rgb),0.26)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
         [class.border-red-500]="email?.invalid && (email?.dirty || email?.touched)"
       />
       @if (email?.invalid && (email?.dirty || email?.touched)) {
@@ -52,7 +52,7 @@
         type="password"
         formControlName="password"
         placeholder="********"
-        class="w-full px-4 py-2 text-base tracking-wide text-[var(--placeholder-gray)] border border-[rgba(var(--base-gray-darker-rgb),0.26)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+        class="w-full px-4 py-2 text-base tracking-wide text-[var(--base-gray-lighter)] border border-[rgba(var(--base-gray-darker-rgb),0.26)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
         [class.border-red-500]="password?.invalid && (password?.dirty || password?.touched)"
       />
       @if (password?.invalid && (password?.dirty || password?.touched)) {
@@ -66,16 +66,20 @@
     <button
       type="submit"
       [disabled]="loginForm.invalid"
-      class="w-full bg-[var(--base-blue-darker)] p-2 rounded-sm text-white font-bold text-base tracking-wide"
+      class="btn-secondary w-full bg-[var(--base-btn-secondary-bg)] mt-8 p-2 rounded-sm text-white font-bold text-base tracking-wide transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
     >
       ZALOGUJ SIĘ
     </button>
   </form>
   <div class="text-center mt-6">
-    <a href="#" class="font-medium text-sm text-[#1D4ED8]"> Zapomniałeś hasła? </a>
-    <p class="font-medium text-sm text-black">
+    <a href="#" class="font-medium text-sm text-[var(--base-eye-catching-link)]">
+      Zapomniałeś hasła?
+    </a>
+    <p class="font-medium text-sm text-[var(--base-form-lighter-text)]">
       Nie masz jeszcze aktywnego konta?
-      <a [routerLink]="['/zweryfikuj-email']" class="text-[#1D4ED8]"> Ponów e-mail aktywacyjny! </a>
+      <a [routerLink]="['/zweryfikuj-email']" class="text-[var(--base-eye-catching-link)]">
+        Ponów e-mail aktywacyjny!
+      </a>
     </p>
   </div>
 </div>
