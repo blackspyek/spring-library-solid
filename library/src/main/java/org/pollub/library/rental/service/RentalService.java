@@ -112,4 +112,26 @@ public class RentalService implements IRentalService{
         libraryItem.setRentedAt(null);
         libraryItem.setDueDate(null);
     }
+
+    @Override
+    public LibraryItem extendLoan(long itemId, int days) {
+        LibraryItem libraryItem = getLibraryItemOrThrow(itemId);
+
+        if (libraryItem.getStatus() != ItemStatus.RENTED) {
+            throw new RentalException("Item is not currently rented");
+        }
+
+        if (libraryItem.getDueDate() == null) {
+            throw new RentalException("Item has no due date set");
+        }
+
+        libraryItem.setDueDate(libraryItem.getDueDate().plusDays(days));
+
+        return saveOrThrow(libraryItem);
+    }
+
+    @Override
+    public List<LibraryItem> getAllRentedItems() {
+        return libraryItemRepository.findByStatus(ItemStatus.RENTED);
+    }
 }

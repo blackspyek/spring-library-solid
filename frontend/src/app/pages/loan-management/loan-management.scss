@@ -1,0 +1,52 @@
+:host {
+  display: contents;
+}
+
+/* Scrollbar styling */
+.overflow-y-auto {
+  scrollbar-width: thin;
+  scrollbar-color: var(--base-blue-lighter) transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--base-blue-lighter);
+    border-radius: 3px;
+  }
+}
+
+/* High contrast adjustments */
+:host-context(html.high-contrast) {
+  .bg-gray-50 {
+    background-color: var(--book-bg);
+  }
+
+  .bg-red-50 {
+    background-color: rgba(255, 0, 0, 0.15);
+  }
+
+  .border-gray-200,
+  .border-gray-300 {
+    border-color: var(--base-font-color);
+  }
+
+  .bg-green-600 {
+    background-color: var(--base-font-color);
+    color: var(--nav-base-color);
+  }
+
+  .bg-red-600 {
+    background-color: #ff0000;
+  }
+
+  .text-red-500,
+  .text-red-600 {
+    color: #ff6666;
+  }
+}

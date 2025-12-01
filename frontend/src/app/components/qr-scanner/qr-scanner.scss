@@ -1,0 +1,40 @@
+:host {
+  display: contents;
+}
+
+/* Scanner line animation */
+@keyframes scan-line {
+  0% {
+    top: 0;
+  }
+  50% {
+    top: calc(100% - 2px);
+  }
+  100% {
+    top: 0;
+  }
+}
+
+.scanner-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+  animation: scan-line 2s ease-in-out infinite;
+}
+
+/* High contrast mode */
+:host-context(html.high-contrast) {
+  .bg-black\/70 {
+    background-color: rgba(0, 0, 0, 0.9);
+  }
+
+  .border-gray-200 {
+    border-color: var(--base-font-color);
+  }
+
+  .hover\:bg-gray-100:hover {
+    background-color: var(--book-bg);
+  }
+}

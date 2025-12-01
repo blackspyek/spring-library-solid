@@ -50,6 +50,19 @@
           {{ item.label }}
         </a>
       }
+      @if (isLibrarian()) {
+        <a
+          [routerLink]="['/zarzadzanie-wypozyczeniami']"
+          class="flex items-center hover:text-blue-300 transition duration-150 text-base font-light font-[Inter] tracking-wide gap-1"
+        >
+          <mat-icon
+            class="material-icons-outlined scale-[0.85]"
+            fontIcon="library_books"
+            aria-hidden="true"
+          ></mat-icon>
+          <span>Wypożyczenia</span>
+        </a>
+      }
     </nav>
   </div>
 
@@ -92,7 +105,7 @@
       </div>
     </div>
 
-    @if (isLoggedIn()) {
+@if (isLoggedIn()) {
       <div class="group flex items-center gap-0 rounded-full p-1 transition-all duration-300 border border-transparent hover:border-white/10 hover:bg-white/5">
         <a
           [routerLink]="['/profil']"

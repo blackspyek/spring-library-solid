@@ -1,0 +1,112 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+  <div
+    class="bg-[color:var(--base-form-bg)] rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden"
+  >
+    <!-- Header -->
+    <div class="flex items-center justify-between p-4 border-b border-gray-200">
+      <h2 class="text-lg font-semibold text-[color:var(--base-blue-dark)]">
+        Skanuj kod QR czytelnika
+      </h2>
+      <button
+        (click)="close()"
+        class="p-1 rounded-full hover:bg-gray-100 transition-colors"
+        aria-label="Zamknij"
+      >
+        <mat-icon class="text-[color:var(--base-gray-darker)]">close</mat-icon>
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div class="p-4">
+      @if (isLoading()) {
+        <div class="flex flex-col items-center justify-center py-12">
+          <div
+            class="animate-spin h-12 w-12 border-4 border-blue-500 border-t-transparent rounded-full mb-4"
+          ></div>
+          <p class="text-[color:var(--base-gray-lighter)]">Uruchamianie kamery...</p>
+        </div>
+      }
+
+      @if (error()) {
+        <div class="text-center py-4">
+          <mat-icon class="text-red-500 text-4xl mb-2">videocam_off</mat-icon>
+          <p class="text-red-500 mb-4">{{ error() }}</p>
+        </div>
+      }
+
+      <!-- Camera View -->
+      @if (hasCamera() && !showManualInput()) {
+        <div class="relative aspect-square bg-black rounded-lg overflow-hidden mb-4">
+          <video
+            #videoElement
+            class="w-full h-full object-cover"
+            playsinline
+            autoplay
+            muted
+          ></video>
+
+          <!-- Scanner overlay -->
+          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div class="w-48 h-48 border-2 border-white rounded-lg relative">
+              <div
+                class="absolute top-0 left-0 w-6 h-6 border-t-4 border-l-4 border-blue-500 rounded-tl"
+              ></div>
+              <div
+                class="absolute top-0 right-0 w-6 h-6 border-t-4 border-r-4 border-blue-500 rounded-tr"
+              ></div>
+              <div
+                class="absolute bottom-0 left-0 w-6 h-6 border-b-4 border-l-4 border-blue-500 rounded-bl"
+              ></div>
+              <div
+                class="absolute bottom-0 right-0 w-6 h-6 border-b-4 border-r-4 border-blue-500 rounded-br"
+              ></div>
+            </div>
+          </div>
+
+          <canvas #canvasElement class="hidden"></canvas>
+        </div>
+
+        <p class="text-center text-sm text-[color:var(--base-gray-lighter)] mb-4">
+          Skieruj kamerę na kod QR karty czytelnika
+        </p>
+      }
+
+      <!-- Manual Input -->
+      @if (showManualInput()) {
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-[color:var(--base-gray-darker)] mb-2">
+            Wprowadź ID czytelnika ręcznie:
+          </label>
+          <div class="flex gap-2">
+            <input
+              type="text"
+              [(ngModel)]="manualInput"
+              (keyup.enter)="submitManualCode()"
+              placeholder="ID czytelnika..."
+              class="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-[color:var(--base-input-bg)] text-[color:var(--base-font-color)] outline-none focus:border-blue-500"
+            />
+            <button
+              (click)="submitManualCode()"
+              [disabled]="!manualInput.trim()"
+              class="px-4 py-2 bg-[color:var(--base-blue-dark)] text-white rounded-lg hover:opacity-90 disabled:opacity-50 transition-opacity"
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- Toggle Manual Input -->
+      <button
+        (click)="toggleManualInput()"
+        class="w-full py-2 text-sm text-[color:var(--base-blue-lighter)] hover:underline"
+      >
+        @if (showManualInput()) {
+          Użyj kamery
+        } @else {
+          Wprowadź ID ręcznie
+        }
+      </button>
+    </div>
+  </div>
+</div>
