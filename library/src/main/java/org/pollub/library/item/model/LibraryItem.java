@@ -21,6 +21,8 @@ public abstract class LibraryItem {
 
     private String description;
 
+    private String imageUrl;
+
     @ManyToOne
     @JoinColumn(name = "rented_by_user_id")
     @JsonBackReference
