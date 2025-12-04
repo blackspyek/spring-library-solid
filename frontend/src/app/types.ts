@@ -6,7 +6,11 @@ export interface User {
   phone_number: string;
   roles: Role[];
 }
-
+export interface SelectOption {
+  label: string;
+  value: string | number;
+  iconPath?: string;
+}
 export enum Role {
   ROLE_ADMIN,
   ROLE_READER,
@@ -23,4 +27,40 @@ export interface Book {
   title: string;
   author: string;
   coverUrl: string;
+}
+
+export interface SingleBook {
+  id: number;
+  title: string;
+  description: string;
+  imageUrl: string;
+  rentedAt?: string;
+  dueDate?: string;
+  status: string;
+  pageCount: number;
+  isbn: string;
+  paperType: string;
+  publisher: string;
+  shelfNumber: number;
+  author: string;
+  genre: string;
+  libraryLocation?: string;
+}
+
+export interface PageResponse<T> {
+  content: T[];
+  pageable: {
+    pageNumber: number;
+    pageSize: number;
+  };
+  totalPages: number;
+  totalElements: number;
+  last: boolean;
+  first: boolean;
+  numberOfElements: number;
+}
+
+export interface Option {
+  value: string;
+  label: string;
 }

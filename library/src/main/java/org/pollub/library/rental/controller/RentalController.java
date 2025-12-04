@@ -2,6 +2,7 @@ package org.pollub.library.rental.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.pollub.library.item.model.ItemStatus;
 import org.pollub.library.item.model.LibraryItem;
 import org.pollub.library.rental.model.dto.RentDto;
 import org.pollub.library.rental.service.IRentalService;
@@ -26,6 +27,7 @@ public class RentalController {
     public ResponseEntity<List<LibraryItem>> getAvailableItems() {
         return ResponseEntity.ok(rentalService.getAvailableItems());
     }
+
 
     @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN')")
     @PostMapping("/rent")
