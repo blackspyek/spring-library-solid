@@ -19,6 +19,7 @@ public abstract class LibraryItem {
     @Column(nullable = false)
     private String title;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     private String imageUrl;
@@ -32,6 +33,7 @@ public abstract class LibraryItem {
     private LocalDateTime dueDate;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 50)
     private ItemStatus status = ItemStatus.AVAILABLE;
 
     public abstract LocalDateTime calculateDueTime();
