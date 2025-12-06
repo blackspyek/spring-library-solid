@@ -1,9 +1,15 @@
 @if (profile) {
   <div
-    class="bg-[color:var(--base-gray-light)] w-full sm:w-auto p-6 rounded-lg flex flex-col items-center justify-center self-stretch h-full"
+    class="bg-[color:var(--qr-gray-light)] w-full sm:w-auto p-6 rounded-lg flex flex-col items-center justify-center self-stretch h-full"
   >
-    <canvas #qrCodeContainer class="w-24 h-24 rounded-lg overflow-hidden shadow-lg"></canvas>
+    <canvas #qrCodeContainer class="g"></canvas>
 
-    <p class="font-semibold text-md mt-3 text-black tracking-wider">{{ profile.readerId }}</p>
+    <p class="font-bold text-md mt-3 text-black tracking-wide">{{ profile.readerId }}</p>
+  </div>
+} @else {
+  <div
+    class="bg-[color:var(--qr-gray-light)] w-full sm:w-auto p-6 rounded-lg flex flex-col items-center justify-center self-stretch h-full min-h-[150px]"
+  >
+    <mat-spinner diameter="40"></mat-spinner>
   </div>
 }

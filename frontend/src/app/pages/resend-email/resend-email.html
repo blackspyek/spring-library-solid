@@ -52,13 +52,16 @@
     <button
       type="submit"
       [disabled]="resendEmailForm.invalid"
-      class="w-full bg-[#1E3A8A] text-white py-3 rounded-lg text-base font-bold tracking-wide shadow-md hover:bg-[#2a368a] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+      class="w-full bg-[#1E3A8A] text-white py-3 rounded-lg text-base font-bold tracking-wide shadow-md hover:bg-[#2a368a] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
     >
       WYŚLIJ PONOWNIE
     </button>
   </form>
   <div class="text-center mt-6">
-    <a [routerLink]="['/zaloguj-sie']" class="text-sm font-medium text-blue-700 hover:underline">
+    <a
+      [routerLink]="['/zaloguj-sie']"
+      class="text-sm font-medium text-blue-700 hover:underline cursor-pointer"
+    >
       Wróć do strony logowania
     </a>
   </div>

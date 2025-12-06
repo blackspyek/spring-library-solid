@@ -1,32 +1,39 @@
-<link rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=close"/>
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=close"
+/>
 
-<div class="relative w-full max-w-[800px] bg-white rounded-xl shadow-2xl flex flex-col md:flex-row max-h-[90vh] md:max-h-none overflow-y-auto md:overflow-visible">
-
+<div
+  class="relative w-full max-w-[800px] bg-white rounded-xl shadow-2xl flex flex-col md:flex-row max-h-[90vh] md:max-h-none overflow-y-auto md:overflow-visible"
+>
   <button
     (click)="close()"
-    class="absolute top-3 right-3 z-10 text-[color:var(--base-gray-darker)] transition-colors p-2 bg-white/50 rounded-full md:bg-transparent md:p-0">
+    class="absolute top-3 right-3 z-10 text-[color:var(--base-gray-darker)] transition-colors p-2 bg-white/50 rounded-full md:bg-transparent md:p-0 cursor-pointer"
+  >
     <span class="material-symbols-outlined"> close </span>
   </button>
 
-  <div class="w-full md:w-[40%] flex items-center justify-center p-4 md:p-6 bg-gray-50 md:bg-transparent">
-    <div class="shadow-lg rounded-lg overflow-hidden w-[160px] md:w-full md:max-w-[250px] aspect-[2/3]">
-      <img
-        [src]="data.imageUrl"
-        [alt]="data.title"
-        class="w-full h-full object-cover"
-      />
+  <div
+    class="w-full md:w-[40%] flex items-start justify-center p-4 md:p-6 bg-gray-50 md:bg-transparent"
+  >
+    <div
+      class="shadow-lg rounded-lg overflow-hidden w-[160px] h-[240px] md:w-[200px] md:h-[300px] relative flex-shrink-0"
+    >
+      <img [ngSrc]="data.imageUrl" [alt]="data.title" fill class="object-cover" />
     </div>
   </div>
 
   <div class="w-full md:w-[60%] p-6 md:p-8 flex flex-col text-[color:var(--base-gray-darker)]">
-
     <h2 class="text-2xl md:text-3xl font-bold mb-1 md:mb-0 leading-tight">{{ data.title }}</h2>
     <h3 class="text-base md:text-lg font-semibold mb-3 md:mb-1 text-gray-600">{{ data.author }}</h3>
 
     <div class="text-sm space-y-1 mb-4 md:mb-6">
-      <p>Wydawnictwo: <span class="font-medium">{{ data.publisher || 'Brak danych' }}</span></p>
-      <p>Liczba stron: <span class="font-medium">{{ data.pageCount || '---' }}</span></p>
+      <p>
+        Wydawnictwo: <span class="font-medium">{{ data.publisher || 'Brak danych' }}</span>
+      </p>
+      <p>
+        Liczba stron: <span class="font-medium">{{ data.pageCount || '---' }}</span>
+      </p>
     </div>
 
     <p class="text-sm leading-relaxed mb-6 md:mb-8 flex-grow">
@@ -34,8 +41,12 @@
     </p>
 
     <div class="mt-auto">
-      <p class="text-xs mb-3 md:mb-2 w-full md:max-w-[260px] leading-snug text-[color:var(--base-gray-darker)] break-normal whitespace-normal opacity-80">
-        {{ data.libraryLocation || 'Miejska Biblioteka Publiczna im. H. Łopacińskiego Filia nr 12' }}
+      <p
+        class="text-xs mb-3 md:mb-2 w-full md:max-w-[260px] leading-snug text-[color:var(--base-gray-darker)] break-normal whitespace-normal opacity-80"
+      >
+        {{
+          data.libraryLocation || 'Miejska Biblioteka Publiczna im. H. Łopacińskiego Filia nr 12'
+        }}
       </p>
 
       <div class="flex items-center justify-between mt-2 pt-2 border-t md:border-0 border-gray-100">
@@ -45,8 +56,9 @@
             [ngClass]="{
               'bg-green-500': data.status === 'AVAILABLE',
               'bg-red-500': data.status === 'RENTED' || data.status === 'LOST',
-              'bg-yellow-500': data.status === 'MAINTENANCE'
-            }">
+              'bg-yellow-500': data.status === 'MAINTENANCE',
+            }"
+          >
           </span>
           <span class="text-xs font-bold whitespace-nowrap">
             {{ getStatusLabel(data.status) }}
@@ -54,11 +66,11 @@
         </div>
 
         <button
-          class="ml-2 px-4 py-1.5 rounded bg-white text-[color:var(--base-blue-lighter)] border border-[color:var(--base-blue-lighter)] text-xs font-bold uppercase tracking-wider hover:bg-blue-50 transition-colors whitespace-nowrap">
+          class="ml-2 px-4 py-1.5 rounded bg-white text-[color:var(--base-blue-lighter)] border border-[color:var(--base-blue-lighter)] text-xs font-bold uppercase tracking-wider hover:bg-blue-50 transition-colors whitespace-nowrap cursor-pointer"
+        >
           DOSTĘPNOŚĆ
         </button>
       </div>
     </div>
-
   </div>
 </div>

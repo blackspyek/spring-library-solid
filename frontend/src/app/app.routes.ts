@@ -6,6 +6,7 @@ import { ResendEmail } from './pages/resend-email/resend-email';
 import { Profile } from './pages/profile/profile';
 import { authGuard } from './guards/auth-guard';
 import { Home } from './pages/home/home';
+import { LibraryTest } from './pages/library-test/library-test';
 
 export const routes: Routes = [
   {
@@ -31,8 +32,12 @@ export const routes: Routes = [
       },
       {
         path: 'catalog',
-        component: Catalog
-      }
+        component: Catalog,
+      },
+      {
+        path: 'test-library',
+        component: LibraryTest,
+      },
     ],
   },
 ];

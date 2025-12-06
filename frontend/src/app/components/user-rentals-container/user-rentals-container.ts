@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RentalService } from '../../services/rental-service';
 import { UserService } from '../../services/user-service';
 import { SingleBook } from '../../types';
@@ -9,16 +9,17 @@ import { MatDialog } from '@angular/material/dialog';
 import { filter, switchMap, take } from 'rxjs';
 
 @Component({
-  selector: 'user-rentals-container',
+  selector: 'app-user-rentals-container',
   standalone: true,
-  imports: [CommonModule, ProfileBookItemComponent],
+  imports: [ProfileBookItemComponent],
   templateUrl: './user-rentals-container.html',
   styleUrl: './user-rentals-container.scss',
 })
 export class UserRentalsContainer implements OnInit {
+  dialog = inject(MatDialog);
+
   private rentalService = inject(RentalService);
   private userService = inject(UserService);
-  constructor(public dialog: MatDialog) {}
 
   rentedItems: SingleBook[] = [];
   loading = true;
@@ -33,7 +34,7 @@ export class UserRentalsContainer implements OnInit {
         switchMap((userId) => {
           return this.rentalService.getRentedItems(userId);
         }),
-        take(1),
+        take(1)
       )
       .subscribe({
         next: (items) => {

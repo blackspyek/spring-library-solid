@@ -24,6 +24,17 @@ public class AuthenticationController {
     private final IAuthenticationServiceFacade authServiceFacade;
     private final JwtTokenService jwtTokenService;
 
+    @GetMapping("/me")
+    public ResponseEntity<AuthResponse> getCurrentUser(@org.springframework.security.core.annotation.AuthenticationPrincipal org.springframework.security.core.userdetails.UserDetails userDetails) {
+        if (userDetails == null) {
+            return ResponseEntity.status(401).build();
+        }
+        var roles = userDetails.getAuthorities().stream()
+                .map(auth -> org.pollub.library.user.model.Role.valueOf(auth.getAuthority()))
+                .toArray(org.pollub.library.user.model.Role[]::new);
+        return ResponseEntity.ok(new AuthResponse(null, roles, userDetails.getUsername()));
+    }
+
 
     @PostMapping("/register")
     @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN')")
@@ -54,5 +65,18 @@ public class AuthenticationController {
                 .maxAge(expirationSeconds)
                 .build();
 
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout() {
+        ResponseCookie cookie = ResponseCookie.from("jwt-token", "")
+                .httpOnly(true)
+                .path("/")
+                .maxAge(0)
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .build();
     }
 }

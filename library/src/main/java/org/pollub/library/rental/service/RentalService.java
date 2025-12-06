@@ -7,7 +7,9 @@ import org.pollub.library.item.model.ItemStatus;
 import org.pollub.library.item.model.LibraryItem;
 import org.pollub.library.item.repository.ILibraryItemRepository;
 import org.pollub.library.rental.utils.IRentalValidator;
+import org.pollub.library.rental.model.RentalHistory;
 import org.pollub.library.rental.model.dto.RentDto;
+import org.pollub.library.rental.repository.IRentalHistoryRepository;
 import org.pollub.library.user.model.User;
 import org.pollub.library.user.service.IUserService;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ public class RentalService implements IRentalService{
     private final ILibraryItemRepository<LibraryItem> libraryItemRepository;
     private final IUserService userService;
     private final IRentalValidator rentalValidator;
+    private final IRentalHistoryRepository rentalHistoryRepository;
 
     @Override
     public List<LibraryItem> getRentedItems(long userId) {
@@ -70,10 +73,25 @@ public class RentalService implements IRentalService{
 
         this.rentalValidator.checkAbilityToReturnOrThrow(libraryItem);
 
+        // Save rental history before clearing rental data
+        saveRentalHistory(libraryItem);
+
         updateBookToBeAvailableToRent(libraryItem);
 
         return saveOrThrow(libraryItem);
 
+    }
+
+    private void saveRentalHistory(LibraryItem libraryItem) {
+        if (libraryItem.getRentedByUser() != null && libraryItem.getRentedAt() != null) {
+            RentalHistory history = RentalHistory.builder()
+                    .item(libraryItem)
+                    .user(libraryItem.getRentedByUser())
+                    .rentedAt(libraryItem.getRentedAt())
+                    .returnedAt(LocalDateTime.now())
+                    .build();
+            rentalHistoryRepository.save(history);
+        }
     }
 
     private static void updateBookToBeAvailableToRent(LibraryItem libraryItem) {

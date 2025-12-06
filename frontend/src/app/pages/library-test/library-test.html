@@ -1,0 +1,45 @@
+<div class="test-container">
+  <h1>Library Selector Dialog Test</h1>
+
+  <mat-card class="test-card">
+    <mat-card-header>
+      <mat-card-title>Favourite Library Mode</mat-card-title>
+      <mat-card-subtitle>Test selecting user's favourite library branch</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      @if (selectedFavouriteBranch()) {
+        <p><strong>Selected:</strong> Filia nr {{ selectedFavouriteBranch()!.branchNumber }}</p>
+        <p>{{ selectedFavouriteBranch()!.address }}, {{ selectedFavouriteBranch()!.city }}</p>
+      } @else {
+        <p>No favourite branch selected</p>
+      }
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-flat-button color="primary" (click)="openFavouriteSelector()">
+        Wybierz Ulubioną Bibliotekę
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
+  <mat-card class="test-card">
+    <mat-card-header>
+      <mat-card-title>Book Availability Mode</mat-card-title>
+      <mat-card-subtitle>Test viewing book availability and making reservation</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      @if (selectedAvailabilityBranch()) {
+        <p>
+          <strong>Reserved at:</strong> Filia nr {{ selectedAvailabilityBranch()!.branchNumber }}
+        </p>
+        <p>{{ selectedAvailabilityBranch()!.address }}, {{ selectedAvailabilityBranch()!.city }}</p>
+      } @else {
+        <p>No reservation made</p>
+      }
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-flat-button color="primary" (click)="openAvailabilitySelector()">
+        Sprawdź Dostępność Książki
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>
