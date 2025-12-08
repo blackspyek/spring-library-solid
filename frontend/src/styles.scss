@@ -27,6 +27,23 @@
   --blue-50: #eff6ff;
   --blue-500: #3b82f6;
   --blue-800: #1e40af;
+  --search-bar-catalog: white;
+  --base-gray-darker-catalog: #4a4a4a;
+  --purple-50: #faf5ff;
+  --purple-700: #8200db;
+  --base-input-bg: white;
+  --book-bg: white;
+  --details-bt: #1f549a;
+  --availability-bt: white;
+  --base-blue-lighter-catalog: #1f549a;
+  --availability-green: #00c950;
+  --availability-red: #fb2c36;
+  --availability-orange: #f0b100;
+  --hover-pagination: #e5e7eb;
+  --hover-reserve: #eff6ff;
+  --mobile-bg: #f9fafb;
+  --bg-x: #ffffff80;
+  --white-to-yellow: white;
 }
 
 /* High-contrast overrides (black / yellow) — toggled by adding `high-contrast` to <html> */
@@ -40,7 +57,7 @@ html.high-contrast {
   --placeholder-gray: #ffed00; /* placeholders */
   --base-gray-darker-rgb: 11, 16, 22; /* rgb for rgba(...) usage */
   --nav-base-color: #0b1016; /* yellow for nav text/icons */
-  --base-input-bg: #0b1016; /* darker input backgrounds */
+  --base-input-bg: #000000; /* darker input backgrounds */
   --base-font-color: #ffed00; /* primary font color */
   --base-arrow-color: #ffed00c6; /* yellow for arrows/icons */
   --base-form-bg: black;
@@ -50,6 +67,22 @@ html.high-contrast {
   --blue-50: rgba(255, 237, 0, 0.26);
   --blue-500: #ffed00;
   --blue-800: #ffed00;
+  --search-bar-catalog: #FFED00;
+  --base-gray-darker-catalog: #0b1016;
+  --purple-50: #bdbd71;
+  --purple-700: #0b1016;
+  --book-bg: #262727;
+  --details-bt: rgba(255, 237, 0, 0.76);
+  --availability-bt: rgba(11,16,22,0.76);
+  --base-blue-lighter-catalog: #0b1016;
+  --availability-green: #0b1016;
+  --availability-red: #0b1016;
+  --availability-orange: #0b1016;
+  --hover-pagination: #bdbd71;
+  --hover-reserve: #bdbd71;
+  --mobile-bg: #FFED00;
+  --bg-x: rgba(227, 220, 95, 0);
+  --white-to-yellow: #FFED00;
 }
 
 html {

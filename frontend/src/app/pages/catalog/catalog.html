@@ -3,13 +3,13 @@
 
 <div class="flex flex-col text-[color:var(--base-gray-darker)] w-full px-8 items-center justify-center">
   <div class="w-full max-w-[1400px] mx-auto px-4">
-    <div class="mt-10 flex items-center gap-2.5 bg-white w-full rounded-lg shadow-md p-3 px-[18px] text-lg">
-      <span class="material-symbols-outlined text-2xl">search</span>
+    <div class="mt-10 flex items-center gap-2.5 bg-[color:var(--search-bar-catalog)] w-full rounded-lg shadow-md p-3 px-[18px] text-lg">
+      <span class="material-symbols-outlined text-2xl text-[color:var(--base-gray-darker-catalog)]">search</span>
       <input
         type="text"
         [(ngModel)]="searchQuery"
         (ngModelChange)="onSearchChange()"
-        class="w-full bg-transparent outline-none text-lg"
+        class="w-full bg-transparent outline-none text-lg text-[color:var(--base-gray-darker-catalog)]"
         placeholder="Wyszukaj..."/>
     </div>
 
@@ -35,8 +35,8 @@
             [ngClass]="
               'flex items-center text-sm rounded-md py-[3px] px-2 shadow-md outline-none transition-colors ' +
               (isGenreSelected(category)
-                ? 'bg-[color:var(--base-blue-lighter)] text-white'
-                : 'bg-white text-[color:var(--base-gray-darker)]')
+                ? 'bg-[color:var(--base-blue-lighter-catalog)] border-1 border-[color:var(--base-blue-lighter)] text-[color:var(--white-to-yellow)]'
+                : 'bg-[color:var(--search-bar-catalog)] text-[color:var(--base-gray-darker-catalog)]')
             "
           >
             {{ category }}
@@ -68,7 +68,7 @@
   </div>
 </div>
 
-<div class="w-full rounded-[10px] bg-white px-4 py-2 mb-2">
+<div class="w-full rounded-[10px] bg-[color:var(--base-input-bg)] px-4 py-2 mb-2">
   <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-8 gap-3 justify-items-center">
     @for (book of books; track book) {
       <single-book
@@ -87,7 +87,7 @@
       (click)="previousPage()"
       [disabled]="currentPage === 0"
       type="button"
-      class="px-3 py-1 rounded-full bg-white text-[color:var(--base-gray-darker)] font-bold hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed transition-opacity select-none">
+      class="px-3 py-1 rounded-full bg-[color:var(--search-bar-catalog)] text-[color:var(--base-gray-darker-catalog)] font-bold hover:bg-[color:var(--hover-pagination)] disabled:cursor-not-allowed transition-opacity select-none">
       &lt;
     </button>
 
@@ -97,8 +97,8 @@
         [disabled]="pageNum === currentPage"
         type="button"
         [class]="pageNum === currentPage
-          ? 'px-3 py-1 rounded-full bg-[color:var(--base-blue-lighter)] text-white font-bold shadow select-none cursor-default'
-          : 'px-3 py-1 rounded-full text-[color:var(--base-gray-darker)] font-bold hover:bg-gray-200 disabled:opacity-50 select-none'">
+          ? 'px-3 py-1 rounded-full bg-[color:var(--base-blue-lighter)] text-[color:var(--nav-base-color)] font-bold shadow select-none cursor-default'
+          : 'px-3 py-1 rounded-full text-[color:var(--base-gray-darker)] font-bold hover:bg-[color:var(--hover-pagination)] hover:text-[color:var(--base-gray-darker-catalog)] disabled:opacity-50 select-none'">
         {{ pageNum + 1 }}
       </button>
     }
@@ -109,7 +109,7 @@
       <button
         (click)="goToPage(totalPages - 1)"
         type="button"
-        class="px-3 py-1 rounded-full text-[color:var(--base-gray-darker)] font-bold hover:bg-gray-200 disabled:opacity-50 select-none">
+        class="px-3 py-1 rounded-full text-[color:var(--base-gray-darker)] font-bold hover:bg-[color:var(--hover-pagination)] hover:text-[color:var(--base-gray-darker-catalog)] disabled:opacity-50 select-none">
         {{ totalPages }}
       </button>
     }
@@ -118,7 +118,7 @@
       (click)="nextPage()"
       [disabled]="currentPage === totalPages - 1"
       type="button"
-      class="px-3 py-1 rounded-full bg-white text-[color:var(--base-gray-darker)] font-bold hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed transition-opacity select-none">
+      class="px-3 py-1 rounded-full bg-[color:var(--search-bar-catalog)] text-[color:var(--base-gray-darker-catalog)] font-bold hover:bg-[color:var(--hover-pagination)] disabled:cursor-not-allowed transition-opacity select-none">
       &gt;
     </button>
   </nav>

@@ -1,5 +1,5 @@
-<div class="bg-white rounded-lg shadow p-2 flex flex-col items-center w-full"
-     style="max-width:180px; min-height:270px;">
+<div class="bg-[color:var(--book-bg)] rounded-lg shadow p-2 flex flex-col items-center w-full"
+     style="max-width:11rem; min-height:18rem;">
   <div class="overflow-hidden w-full rounded-lg mb-1 aspect-[8/10]">
     <img
       [src]="imgSrc"
@@ -12,12 +12,12 @@
     <div class="text-xs text-[color:var(--base-gray-darker)] mb-1 text-center truncate w-full">{{ author }}</div>
   </div>
   <div class="flex gap-2 justify-center w-full mt-auto m-1">
-    <button class="px-2 py-1 rounded bg-[color:var(--base-blue-lighter)] text-white text-xs font-semibold shadow"
+    <button class="px-2 py-1 rounded bg-[color:var(--details-bt)] text-[color:var(--book-bg)] text-xs font-semibold shadow"
             (click)="openDetails()">
       Szczegóły
     </button>
     <button
-      class="px-2 py-1 rounded bg-white text-[color:var(--base-blue-lighter)] border border-[color:var(--base-blue-lighter)] box-border text-xs font-semibold shadow">
+      class="px-2 py-1 rounded bg-[color:var(--availability-bt)] text-[color:var(--base-blue-lighter)] border border-[color:var(--base-blue-lighter)] box-border text-xs font-semibold shadow">
       Dostępność
     </button>
   </div>
