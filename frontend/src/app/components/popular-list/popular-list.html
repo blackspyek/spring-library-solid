@@ -1,44 +1,79 @@
 <section class="container mx-auto p-4 max-w-full py-8">
   <h2 class="font-roboto font-semibold text-2xl tracking-wide mb-6">POPULARNE</h2>
   <div class="relative group px-16">
-    <div #bookList class="flex justify-start overflow-x-auto scroll-smooth gap-4 scrollbar-hide">
-      @for (book of popularBooks(); track book.id; let i = $index) {
-        <div class="flex-shrink-0">
-          <div class="rounded-lg overflow-hidden shadow-lg">
-            <img
-              [ngSrc]="book.coverUrl"
-              [priority]="i < 3"
-              width="243"
-              height="300"
-              [alt]="book.title"
-              class="w-full h-auto object-cover aspect-[2/3]"
-            />
+    @if (isLoading()) {
+      <div class="flex justify-start overflow-x-auto scroll-smooth gap-4 scrollbar-hide">
+        @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+          <div class="flex-shrink-0">
+            <div
+              class="rounded-lg overflow-hidden shadow-lg w-[224px] h-[336px] bg-gray-200 animate-pulse"
+            ></div>
           </div>
-        </div>
-      }
-    </div>
-    <button
-      (click)="scrollLeft(bookList)"
-      class="absolute left-2 top-1/2 -translate-y-1/2 -translate-x-2 z-10 bg-white/80 hover:bg-white text-gray-900 rounded-full w-10 h-10 flex items-center justify-center cursor-pointer shadow-lg"
-      aria-label="Scroll left"
-    >
-      <mat-icon
-        class="material-icons-outlined"
-        fontIcon="chevron_left"
-        aria-hidden="true"
-      ></mat-icon>
-    </button>
+        }
+      </div>
+    } @else {
+      <div #bookList class="flex justify-start overflow-x-auto scroll-smooth gap-4 scrollbar-hide">
+        @for (book of popularBooks(); track book.id; let i = $index) {
+          <div class="flex-shrink-0">
+            <div
+              class="rounded-lg overflow-hidden shadow-lg relative w-[224px] h-[336px] bg-gray-200"
+            >
+              @if (isImageLoading(book.id)) {
+                <div
+                  class="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center"
+                >
+                  <svg
+                    class="w-10 h-10 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    ></path>
+                  </svg>
+                </div>
+              }
+              <img
+                [ngSrc]="getImageUrl(book)"
+                [priority]="i < 3"
+                width="224"
+                height="336"
+                [alt]="book.title"
+                class="w-full h-auto object-cover aspect-[2/3]"
+                (load)="handleImageLoad(book.id)"
+                (error)="handleImageError($event, book)"
+              />
+            </div>
+          </div>
+        }
+      </div>
+      <button
+        (click)="scrollLeft(bookList)"
+        class="absolute left-2 top-1/2 -translate-y-1/2 -translate-x-2 z-10 bg-white/80 hover:bg-white text-gray-900 rounded-full w-10 h-10 flex items-center justify-center cursor-pointer shadow-lg"
+        aria-label="Scroll left"
+      >
+        <mat-icon
+          class="material-icons-outlined"
+          fontIcon="chevron_left"
+          aria-hidden="true"
+        ></mat-icon>
+      </button>
 
-    <button
-      (click)="scrollRight(bookList)"
-      class="absolute right-2 top-1/2 bg-white/80 hover:bg-white text-gray-900 rounded-full w-10 h-10 flex items-center justify-center cursor-pointer shadow-lg"
-      aria-label="Scroll right"
-    >
-      <mat-icon
-        class="material-icons-outlined"
-        fontIcon="chevron_right"
-        aria-hidden="true"
-      ></mat-icon>
-    </button>
+      <button
+        (click)="scrollRight(bookList)"
+        class="absolute right-2 top-1/2 bg-white/80 hover:bg-white text-gray-900 rounded-full w-10 h-10 flex items-center justify-center cursor-pointer shadow-lg"
+        aria-label="Scroll right"
+      >
+        <mat-icon
+          class="material-icons-outlined"
+          fontIcon="chevron_right"
+          aria-hidden="true"
+        ></mat-icon>
+      </button>
+    }
   </div>
 </section>

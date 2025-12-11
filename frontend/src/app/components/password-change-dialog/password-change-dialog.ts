@@ -1,12 +1,6 @@
 import { Component, inject } from '@angular/core';
-import {
-  MatDialogRef,
-  MatDialogTitle,
-  MatDialogContent,
-  MatDialogActions,
-} from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
-import { CommonModule } from '@angular/common';
 
 import {
   ReactiveFormsModule,
@@ -32,18 +26,14 @@ function passwordMatchValidator(control: AbstractControl): ValidationErrors | nu
 @Component({
   selector: 'app-password-change-dialog',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    ReactiveFormsModule,
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
-  ],
+  imports: [MatButtonModule, ReactiveFormsModule],
   templateUrl: './password-change-dialog.html',
   styleUrl: './password-change-dialog.scss',
 })
 export class PasswordChangeDialog {
+  dialogRef = inject<MatDialogRef<PasswordChangeDialog>>(MatDialogRef);
+  private fb = inject(FormBuilder);
+
   private userService = inject(UserService);
 
   passwordForm: FormGroup;
@@ -53,10 +43,7 @@ export class PasswordChangeDialog {
   saveError: string | null = null;
   saveSuccess: string | null = null;
 
-  constructor(
-    public dialogRef: MatDialogRef<PasswordChangeDialog>,
-    private fb: FormBuilder,
-  ) {
+  constructor() {
     this.passwordForm = this.fb.group(
       {
         currentPassword: ['', Validators.required],
@@ -65,7 +52,7 @@ export class PasswordChangeDialog {
       },
       {
         validators: passwordMatchValidator,
-      },
+      }
     );
   }
 

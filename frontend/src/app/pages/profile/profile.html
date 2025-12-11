@@ -1,11 +1,11 @@
-<div class="px-4 sm:px-6 lg:px-5 space-y-6 py-15">
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<div class="px-4 sm:px-6 lg:px-5 space-y-4 py-10">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
     <div
-      class="bg-[color:var(--base-white)] rounded-xl shadow-lg p-6 flex flex-col sm:flex-row justify-between items-start w-full"
+      class="bg-[color:var(--base-white)] rounded-xl shadow-md p-4 flex flex-col sm:flex-row justify-between items-start w-full"
     >
       <div class="w-full flex-grow h-full flex flex-col">
         <h2
-          class="border-b border-[color:var(--base-gray-light)] text-xl font-bold text-[color:var(--base-gray-darker)] mb-4 flex items-center"
+          class="border-b border-[color:var(--base-gray-light)] text-lg font-bold text-[color:var(--base-gray-darker)] mb-3 pb-2 flex items-center"
         >
           <span class="mr-2 text-red-500"
             ><svg
@@ -22,16 +22,15 @@
           Twoja Karta Czytelnika
         </h2>
 
-        <div class="flex flex-col sm:flex-row flex-grow items-stretch justify-between gap-6">
-          <profile-card class="flex-grow"></profile-card>
-
-          <qr-code></qr-code>
+        <div class="flex flex-col sm:flex-row flex-grow items-stretch justify-between gap-4">
+          <app-profile-card class="flex-grow"></app-profile-card>
+          <app-qr-code></app-qr-code>
         </div>
       </div>
     </div>
-    <div class="bg-[color:var(--base-white)] rounded-xl shadow-lg p-6 w-full">
+    <div class="bg-[color:var(--base-white)] rounded-xl shadow-md p-4 w-full">
       <h2
-        class="border-b border-[color:var(--base-gray-light)] text-xl font-bold text-[color:var(--base-gray-darker)] mb-4 flex items-center"
+        class="border-b border-[color:var(--base-gray-light)] text-lg font-bold text-[color:var(--base-gray-darker)] mb-3 pb-2 flex items-center"
       >
         <span class="mr-2 text-red-500"
           ><svg
@@ -48,30 +47,59 @@
         Twoja biblioteka
       </h2>
 
-      <library-details
-        [libraryName]="'Miejska Biblioteka Publiczna<br />im. H. Łopacińskiego Filia nr 18'"
-        [libraryAddress]="'Głęboka 8A, 20-612 Lublin'"
-        [openingDays]="['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek']"
-        [openingHours]="[
-          '09:00 - 18:00',
-          '09:00 - 18:00',
-          '09:00 - 18:00',
-          '09:00 - 18:00',
-          '09:00 - 18:00',
-        ]"
-      ></library-details>
+      @if (isLoadingBranch()) {
+        <div class="flex items-center justify-center py-4">
+          <mat-spinner diameter="32"></mat-spinner>
+        </div>
+      } @else if (favouriteBranch()) {
+        <app-library-details
+          [libraryName]="libraryDisplayName()"
+          [libraryAddress]="libraryDisplayAddress()"
+          [openingDays]="openingDays()"
+          [openingHours]="openingHoursList()"
+          (changeLibrary)="openLibrarySelectorDialog()"
+        ></app-library-details>
+      } @else {
+        <div
+          class="bg-[color:var(--base-gray-light)] rounded-lg p-4 border border-[color:var(--base-border-gray)] flex flex-col items-center justify-center gap-3"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="36px"
+            viewBox="0 -960 960 960"
+            width="36px"
+            fill="var(--base-gray-lighter)"
+          >
+            <path
+              d="M120-120v-560h160v-160h400v320h160v400H520v-160h-80v160H120Zm80-80h80v-80h-80v80Zm0-160h80v-80h-80v80Zm0-160h80v-80h-80v80Zm160 160h80v-80h-80v80Zm0-160h80v-80h-80v80Zm0-160h80v-80h-80v80Zm160 320h80v-80h-80v80Zm0-160h80v-80h-80v80Zm0-160h80v-80h-80v80Zm160 480h80v-80h-80v80Zm0-160h80v-80h-80v80Z"
+            />
+          </svg>
+          <p class="text-[color:var(--base-gray-lighter)] text-center">
+            Nie masz jeszcze wybranej biblioteki.<br />Wybierz swoją ulubioną filię, aby ułatwić
+            sobie korzystanie z usług.
+          </p>
+          <button
+            (click)="openLibrarySelectorDialog()"
+            class="bg-[color:var(--base-blue-lighter)] hover:bg-[color:var(--base-blue-darker)] text-[color:var(--base-white)] text-sm py-2 px-6 rounded-lg transition duration-150 cursor-pointer"
+          >
+            Wybierz bibliotekę
+          </button>
+        </div>
+      }
 
       <h3
-        class="border-b border-[color:var(--base-gray-light)] text-lg font-bold text-[color:var(--base-gray-darker)] mb-3 mt-5"
+        class="border-b border-[color:var(--base-gray-light)] text-base font-bold text-[color:var(--base-gray-darker)] mb-2 mt-3 pb-1"
       >
         Ustawienia i Powiadomienia
       </h3>
       <div
-        class="border-b border-[color:var(--base-gray-light)] flex justify-between items-center mb-2"
+        class="border-b border-[color:var(--base-gray-light)] flex justify-between items-center "
       >
-        <p class="font-light text-[color:var(--base-gray-darker)] mb-2">Preferencje powiadomień</p>
+        <p class="font-light text-sm text-[color:var(--base-gray-darker)]">
+          Preferencje powiadomień
+        </p>
         <button
-          class="bg-[color:var(--base-blue-lighter)] hover:bg-[color:var(--base-blue-darker)] text-[color:var(--base-white)] text-sm py-1 px-3 rounded-lg transition duration-150 mb-2"
+          class="bg-[color:var(--base-blue-lighter)] hover:bg-[color:var(--base-blue-darker)] text-[color:var(--base-white)] text-sm py-1 px-3 rounded-lg transition duration-150 mb-2 cursor-pointer"
           (click)="openNotificationSettingsDialog()"
         >
           Edytuj
@@ -80,7 +108,7 @@
       <div class="flex justify-between items-center">
         <p class="font-light text-[color:var(--base-gray-darker)]">Zmiana hasła</p>
         <button
-          class="bg-[color:var(--base-blue-lighter)] hover:bg-[color:var(--base-blue-darker)] text-[color:var(--base-white)] text-sm py-1 px-3 rounded-lg transition duration-150"
+          class="bg-[color:var(--base-blue-lighter)] hover:bg-[color:var(--base-blue-darker)] text-[color:var(--base-white)] text-sm py-1 px-3 rounded-lg transition duration-150 cursor-pointer"
           (click)="openPasswordChangeDialog()"
         >
           Edytuj
@@ -88,10 +116,10 @@
       </div>
     </div>
   </div>
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <div class="bg-[color:var(--base-white)] rounded-xl shadow-lg p-6 w-full">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div class="bg-[color:var(--base-white)] rounded-xl shadow-md p-4 w-full">
       <h2
-        class="border-b border-[color:var(--base-gray-light)] text-xl font-bold text-[color:var(--base-gray-darker)] mb-4 flex items-center"
+        class="border-b border-[color:var(--base-gray-light)] text-lg font-bold text-[color:var(--base-gray-darker)] mb-3 pb-2 flex items-center"
       >
         <span class="mr-2 text-red-500"
           ><svg
@@ -107,12 +135,12 @@
         ></span>
         Twoje rezerwacje
       </h2>
-      <user-reservations-container></user-reservations-container>
+      <app-user-reservations-container></app-user-reservations-container>
     </div>
 
-    <div class="bg-[color:var(--base-white)] rounded-xl shadow-lg p-6 w-full">
+    <div class="bg-[color:var(--base-white)] rounded-xl shadow-md p-4 w-full">
       <h2
-        class="border-b border-[color:var(--base-gray-light)] text-xl font-bold text-[color:var(--base-gray-darker)] mb-4 flex items-center"
+        class="border-b border-[color:var(--base-gray-light)] text-lg font-bold text-[color:var(--base-gray-darker)] mb-3 pb-2 flex items-center"
       >
         <span class="mr-2 text-red-500"
           ><svg
@@ -128,14 +156,14 @@
         ></span>
         Twoje wypożyczenia
       </h2>
-      <user-rentals-container></user-rentals-container>
+      <app-user-rentals-container></app-user-rentals-container>
     </div>
   </div>
-  <div class="bg-[color:var(--base-white)] rounded-xl shadow-lg p-6 w-full">
+  <div class="bg-[color:var(--base-white)] rounded-xl shadow-md p-4 w-full">
     <div
-      class="flex justify-between items-center border-b border-[color:var(--base-gray-light)] mb-4 pb-2"
+      class="flex justify-between items-center border-b border-[color:var(--base-gray-light)] mb-3 pb-2"
     >
-      <h2 class="text-xl font-bold text-[color:var(--base-gray-darker)] flex items-center">
+      <h2 class="text-lg font-bold text-[color:var(--base-gray-darker)] flex items-center">
         <span class="mr-2 text-gray-500"
           ><svg
             xmlns="http://www.w3.org/2000/svg"

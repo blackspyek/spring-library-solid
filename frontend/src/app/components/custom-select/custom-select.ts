@@ -1,4 +1,4 @@
-import {Component, ElementRef, HostListener, inject, input, model, signal} from '@angular/core';
+import { Component, ElementRef, HostListener, inject, input, model, signal } from '@angular/core';
 import { SelectOption } from '../../types';
 
 @Component({
@@ -20,8 +20,8 @@ export class CustomSelect {
   isOpen = signal(false);
   isVisible = signal(false);
 
-  private searchTerm: string = '';
-  private searchTimeout: any = null;
+  private searchTerm = '';
+  private searchTimeout: ReturnType<typeof setTimeout> | null = null;
 
   toggle() {
     if (this.isOpen()) {
@@ -102,7 +102,7 @@ export class CustomSelect {
 
     this.searchTerm += key;
 
-    const matchingOption = this.options().find(opt =>
+    const matchingOption = this.options().find((opt) =>
       opt.label.toLowerCase().startsWith(this.searchTerm)
     );
 
@@ -119,7 +119,7 @@ export class CustomSelect {
     const dropdown = this.elementRef.nativeElement.querySelector('.select-options');
     if (!dropdown) return;
 
-    const optionIndex = this.options().findIndex(opt => opt.value === option.value);
+    const optionIndex = this.options().findIndex((opt) => opt.value === option.value);
 
     const optionElement = dropdown.children[optionIndex] as HTMLElement;
 
@@ -127,5 +127,4 @@ export class CustomSelect {
       optionElement.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     }
   }
-
 }

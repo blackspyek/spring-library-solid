@@ -1,23 +1,23 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { UserService } from '../../services/user-service';
 import { SingleBook } from '../../types';
 import { ProfileBookItemComponent } from '../profile-book-item/profile-book-item';
 import { ActiveBooksDialog } from '../active-books-dialog/active-books-dialog';
 import { MatDialog } from '@angular/material/dialog';
-import { filter, switchMap, take } from 'rxjs';
 
 @Component({
-  selector: 'user-reservations-container',
+  selector: 'app-user-reservations-container',
   standalone: true,
-  imports: [CommonModule, ProfileBookItemComponent],
+  imports: [ProfileBookItemComponent],
   templateUrl: './user-reservations-container.html',
   styleUrl: './user-reservations-container.scss',
 })
 export class UserReservationsContainer implements OnInit {
+  dialog = inject(MatDialog);
+
   //private reservationService = inject(ReservationService);
   private userService = inject(UserService);
-  constructor(public dialog: MatDialog) {}
 
   reservedItems: SingleBook[] = [];
   loading = true;

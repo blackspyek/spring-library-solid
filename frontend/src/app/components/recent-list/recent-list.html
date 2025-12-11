@@ -1,80 +1,111 @@
 <section class="container mx-auto p-4 max-w-full py-8">
   <h2 class="font-roboto font-semibold text-2xl tracking-wide mb-6">NOWOŚCI</h2>
 
-  <div class="flex flex-col lg:flex-row gap-4 w-full justify-center">
-    <div>
-      <div class="w-full max-w-[400px] mx-auto lg:mx-0 pb-3">
-        <span class="bg-[var(--base-blue-darker)] text-white text-2xl font-base px-4 py-1">
-          Polecane
-        </span>
+  @if (isLoading) {
+    <div class="flex flex-col lg:flex-row gap-4 w-full justify-center">
+      <div>
+        <div class="w-full max-w-[400px] mx-auto lg:mx-0 pb-3">
+          <span class="bg-[var(--base-blue-darker)] text-white text-2xl font-base px-4 py-1">
+            Polecane
+          </span>
+        </div>
+        <div
+          class="w-full max-w-[400px] h-[600px] overflow-hidden shadow-lg mx-auto lg:mx-0 bg-gray-200 animate-pulse"
+        ></div>
       </div>
-
-      <div class="w-full max-w-[400px] overflow-hidden shadow-lg mx-auto lg:mx-0">
-        <img
-          src="https://placehold.co/800x1200/374151/ffffff?text=Duża+Okładka"
-          alt="Duża okładka książki"
-          class="w-full object-cover aspect-[2/3]"
-          onerror="this.src='https://placehold.co/800x1200/374151/ffffff?text=Błąd+obrazka'"
-        />
-      </div>
-    </div>
-
-    <div class="w-full lg:w-auto md:pt-2">
-      <div class="grid grid-cols-2 md:grid-cols-3 gap-4 lg:pt-9">
-        <div class="overflow-hidden shadow-lg h-[292px] justify-self-center">
-          <img
-            src="https://placehold.co/400x600/1f2937/ffffff?text=Okładka+1"
-            alt="Mała okładka 1"
-            class="h-full object-cover aspect-[2/3]"
-            onerror="this.src='https://placehold.co/400x600/1f2937/ffffff?text=Błąd+obrazka'"
-          />
-        </div>
-
-        <div class="overflow-hidden shadow-lg h-[292px] justify-self-center">
-          <img
-            src="https://placehold.co/400x600/4b5563/ffffff?text=Okładka+2"
-            alt="Mała okładka 2"
-            class="h-full object-cover aspect-[2/3]"
-            onerror="this.src='https://placehold.co/400x600/4b5563/ffffff?text=Błąd+obrazka'"
-          />
-        </div>
-
-        <div class="overflow-hidden shadow-lg h-[292px] justify-self-center">
-          <img
-            src="https://placehold.co/400x600/111827/ffffff?text=Okładka+3"
-            alt="Mała okładka 3"
-            class="h-full object-cover aspect-[2/3]"
-            onerror="this.src='https://placehold.co/400x600/111827/ffffff?text=Błąd+obrazka'"
-          />
-        </div>
-
-        <div class="overflow-hidden shadow-lg h-[292px] justify-self-center">
-          <img
-            src="https://placehold.co/400x600/6b7280/ffffff?text=Okładka+4"
-            alt="Mała okładka 4"
-            class="h-full object-cover aspect-[2/3]"
-            onerror="this.src='https://placehold.co/400x600/6b7280/ffffff?text=Błąd+obrazka'"
-          />
-        </div>
-
-        <div class="overflow-hidden shadow-lg h-[292px] justify-self-center">
-          <img
-            src="https://placehold.co/400x600/374151/ffffff?text=Okładka+5"
-            alt="Mała okładka 5"
-            class="h-full object-cover aspect-[2/3]"
-            onerror="this.src='https://placehold.co/400x600/374151/ffffff?text=Błąd+obrazka'"
-          />
-        </div>
-
-        <div class="overflow-hidden shadow-lg h-[292px] justify-self-center">
-          <img
-            src="https://placehold.co/400x600/1f2937/ffffff?text=Okładka+6"
-            alt="Mała okładka 6"
-            class="h-full object-cover aspect-[2/3]"
-            onerror="this.src='https://placehold.co/400x600/1f2937/ffffff?text=Błąd+obrazka'"
-          />
+      <div class="w-full lg:w-auto md:pt-2">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 lg:pt-9">
+          @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+            <div
+              class="overflow-hidden shadow-lg h-[292px] w-[195px] justify-self-center bg-gray-200 animate-pulse"
+            ></div>
+          }
         </div>
       </div>
     </div>
-  </div>
+  } @else {
+    <div class="flex flex-col lg:flex-row gap-4 w-full justify-center">
+      @if (featuredBook) {
+        <div>
+          <div class="w-full max-w-[400px] mx-auto lg:mx-0 pb-3">
+            <span class="bg-[var(--base-blue-darker)] text-white text-2xl font-base px-4 py-1">
+              Polecane
+            </span>
+          </div>
+
+          <div
+            class="w-[400px] h-[600px] overflow-hidden shadow-lg mx-auto lg:mx-0 relative bg-gray-200"
+          >
+            @if (featuredImageLoading) {
+              <div
+                class="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center"
+              >
+                <svg
+                  class="w-16 h-16 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  ></path>
+                </svg>
+              </div>
+            }
+            <img
+              [ngSrc]="getImageUrl(featuredBook)"
+              [alt]="featuredBook.title"
+              fill
+              priority
+              class="object-cover"
+              (load)="handleFeaturedLoad()"
+              (error)="handleFeaturedError($event)"
+            />
+          </div>
+        </div>
+      }
+
+      <div class="w-full lg:w-auto md:pt-2">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 lg:pt-9">
+          @for (book of gridBooks; track book.id) {
+            <div
+              class="overflow-hidden shadow-lg h-[292px] justify-self-center relative aspect-[2/3] bg-gray-200"
+            >
+              @if (isGridImageLoading(book.id)) {
+                <div
+                  class="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center"
+                >
+                  <svg
+                    class="w-10 h-10 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    ></path>
+                  </svg>
+                </div>
+              }
+              <img
+                [ngSrc]="getImageUrl(book)"
+                [alt]="book.title"
+                fill
+                loading="lazy"
+                class="object-cover"
+                (load)="handleGridImageLoad(book.id)"
+                (error)="handleGridImageError($event, book)"
+              />
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
 </section>

@@ -1,0 +1,23 @@
+.test-container {
+  padding: 24px;
+  max-width: 800px;
+  margin: 0 auto;
+
+  h1 {
+    color: var(--base-blue-dark);
+    margin-bottom: 24px;
+  }
+}
+
+.test-card {
+  margin-bottom: 24px;
+
+  mat-card-content {
+    padding: 16px 0;
+  }
+
+  mat-card-actions {
+    padding: 16px;
+    padding-top: 0;
+  }
+}

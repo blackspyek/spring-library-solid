@@ -1,19 +1,28 @@
-<link rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=search"/>
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=search"
+/>
 
-<div class="flex flex-col text-[color:var(--base-gray-darker)] w-full px-8 items-center justify-center">
+<div
+  class="flex flex-col text-[color:var(--base-gray-darker)] w-full px-8 items-center justify-center"
+>
   <div class="w-full max-w-[1400px] mx-auto px-4">
-    <div class="mt-10 flex items-center gap-2.5 bg-white w-full rounded-lg shadow-md p-3 px-[18px] text-lg">
+    <div
+      class="mt-10 flex items-center gap-2.5 bg-white w-full rounded-lg shadow-md p-3 px-[18px] text-lg"
+    >
       <span class="material-symbols-outlined text-2xl">search</span>
       <input
         type="text"
         [(ngModel)]="searchQuery"
         (ngModelChange)="onSearchChange()"
         class="w-full bg-transparent outline-none text-lg"
-        placeholder="Wyszukaj..."/>
+        placeholder="Wyszukaj..."
+      />
     </div>
 
-    <div class="mt-[1vh] flex flex-col w-full items-center gap-4 sm:flex-row sm:justify-between sm:items-start">
+    <div
+      class="mt-[1vh] flex flex-col w-full items-center gap-4 sm:flex-row sm:justify-between sm:items-start"
+    >
       <div class="flex flex-col gap-2 w-full sm:flex-row sm:items-center sm:w-auto sm:gap-[0.5vw]">
         <app-custom-select
           placeholder="Status"
@@ -28,12 +37,15 @@
         ></app-custom-select>
       </div>
 
-      <div class="flex flex-wrap items-center justify-center sm:justify-end gap-2 w-full sm:w-auto" id="buttonGroup">
+      <div
+        class="flex flex-wrap items-center justify-center sm:justify-end gap-2 w-full sm:w-auto"
+        id="buttonGroup"
+      >
         @for (category of genres; track category) {
           <button
             (click)="setGenre(category)"
             [ngClass]="
-              'flex items-center text-sm rounded-md py-[3px] px-2 shadow-md outline-none transition-colors ' +
+              'flex items-center text-sm rounded-md py-[3px] px-2 shadow-md outline-none transition-colors cursor-pointer ' +
               (isGenreSelected(category)
                 ? 'bg-[color:var(--base-blue-lighter)] text-white'
                 : 'bg-white text-[color:var(--base-gray-darker)]')
@@ -58,7 +70,9 @@
 
 <div class="flex flex-col sm:flex-row items-center justify-between mt-8 mb-2 mx-4 sm:mx-10 gap-2">
   <div class="text-[color:var(--base-gray-darker)] text-sm text-center sm:text-left">
-    Znaleziono <a href="#" class="text-[color:var(--base-blue-lighter)] font-bold">{{ totalElements }}</a> pozycji
+    Znaleziono
+    <a href="#" class="text-[color:var(--base-blue-lighter)] font-bold">{{ totalElements }}</a>
+    pozycji
     @if (selectedGenre) {
       w kategorii: <span class="font-bold">{{ selectedGenre }}</span>
     }
@@ -69,25 +83,29 @@
 </div>
 
 <div class="w-full rounded-[10px] bg-white px-4 py-2 mb-2">
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-8 gap-3 justify-items-center">
+  <div
+    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-8 gap-3 justify-items-center"
+  >
     @for (book of books; track book) {
-      <single-book
+      <app-single-book
         [book]="book"
         [imgSrc]="book.imageUrl"
         [title]="book.title"
-        [author]="book.author">
-      </single-book>
+        [author]="book.author"
+      >
+      </app-single-book>
     }
   </div>
 </div>
 
-<div class="flex justify-center items-center w-full mt-4 mb-2 overflow-x-auto">
+<div class="flex justify-center items-center w-full mt-2 mb-2 overflow-x-auto">
   <nav class="flex flex-wrap justify-center gap-2 px-4 py-2" (click)="$event.stopPropagation()">
     <button
       (click)="previousPage()"
       [disabled]="currentPage === 0"
       type="button"
-      class="px-3 py-1 rounded-full bg-white text-[color:var(--base-gray-darker)] font-bold hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed transition-opacity select-none">
+      class="px-3 py-1 rounded-full bg-white text-[color:var(--base-gray-darker)] font-bold hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed transition-opacity select-none cursor-pointer"
+    >
       &lt;
     </button>
 
@@ -96,9 +114,12 @@
         (click)="goToPage(pageNum)"
         [disabled]="pageNum === currentPage"
         type="button"
-        [class]="pageNum === currentPage
-          ? 'px-3 py-1 rounded-full bg-[color:var(--base-blue-lighter)] text-white font-bold shadow select-none cursor-default'
-          : 'px-3 py-1 rounded-full text-[color:var(--base-gray-darker)] font-bold hover:bg-gray-200 disabled:opacity-50 select-none'">
+        [class]="
+          pageNum === currentPage
+            ? 'px-3 py-1 rounded-full bg-[color:var(--base-blue-lighter)] text-white font-bold shadow select-none cursor-default'
+            : 'px-3 py-1 rounded-full text-[color:var(--base-gray-darker)] font-bold hover:bg-gray-200 disabled:opacity-50 select-none cursor-pointer'
+        "
+      >
         {{ pageNum + 1 }}
       </button>
     }
@@ -109,7 +130,8 @@
       <button
         (click)="goToPage(totalPages - 1)"
         type="button"
-        class="px-3 py-1 rounded-full text-[color:var(--base-gray-darker)] font-bold hover:bg-gray-200 disabled:opacity-50 select-none">
+        class="px-3 py-1 rounded-full text-[color:var(--base-gray-darker)] font-bold hover:bg-gray-200 disabled:opacity-50 select-none cursor-pointer"
+      >
         {{ totalPages }}
       </button>
     }
@@ -118,7 +140,8 @@
       (click)="nextPage()"
       [disabled]="currentPage === totalPages - 1"
       type="button"
-      class="px-3 py-1 rounded-full bg-white text-[color:var(--base-gray-darker)] font-bold hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed transition-opacity select-none">
+      class="px-3 py-1 rounded-full bg-white text-[color:var(--base-gray-darker)] font-bold hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed transition-opacity select-none cursor-pointer"
+    >
       &gt;
     </button>
   </nav>

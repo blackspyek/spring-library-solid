@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.pollub.library.branch.model.LibraryBranch;
 import org.pollub.library.item.model.LibraryItem;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -58,6 +59,10 @@ public class User implements IUser {
     @OneToMany(mappedBy = "rentedByUser", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<LibraryItem> listOfRentedItems = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "favourite_branch_id")
+    private LibraryBranch favouriteBranch;
 
 
     @Override

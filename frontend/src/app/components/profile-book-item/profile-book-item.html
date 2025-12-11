@@ -7,15 +7,16 @@
         class="w-16 h-20 rounded-md mr-4 relative overflow-hidden bg-[color:var(--base-gray-lighter)]"
       >
         <img
-          [src]="imageUrl"
+          [ngSrc]="imageUrl"
           alt="Okładka książki {{ title }}"
           class="object-cover w-full h-full"
+          fill
           onerror="this.style.display='none'; this.closest('div').classList.add('flex', 'items-center', 'justify-center'); this.closest('div').style.backgroundColor = 'var(--base-gray-light)'; this.closest('div').innerHTML = '<span class=\'text-[color:var(--base-gray-darker)] text-xs font-light absolute whitespace-nowrap\'>' + this.closest('div').parentElement.querySelector('p').innerText.slice(0, 4) + '</span>';"
         />
       </div>
     } @else {
       <div
-        [style.backgroundColor]="coverColor()"
+        [style.background-color]="coverColor()"
         class="w-16 h-20 rounded-md flex items-center justify-center mr-4 relative"
       >
         <span
@@ -38,7 +39,7 @@
   <button
     (click)="onButtonClick()"
     [class]="buttonClasses()"
-    class="font-semibold text-sm py-2 px-4 rounded-lg transition duration-150 border ml-4 whitespace-nowrap"
+    class="font-semibold text-sm py-2 px-4 rounded-lg transition duration-150 border ml-4 whitespace-nowrap cursor-pointer"
   >
     {{ buttonLabel() }}
   </button>

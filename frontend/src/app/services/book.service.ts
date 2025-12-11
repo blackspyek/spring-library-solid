@@ -1,19 +1,21 @@
-import { Injectable } from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {SingleBook, PageResponse} from '../types';
+import { SingleBook, PageResponse } from '../types';
 import { environment } from '../../environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class BookService {
+  private http = inject(HttpClient);
+
   private apiUrl = environment.apiUrl + 'book';
 
-  constructor(private http: HttpClient) {}
-
-  getBooksPaginated(page: number, size: number = 16): Observable<PageResponse<SingleBook>> {
-    return this.http.get<PageResponse<SingleBook>>(`${this.apiUrl}/pagination?page=${page}&size=${size}`);
+  getBooksPaginated(page: number, size = 16): Observable<PageResponse<SingleBook>> {
+    return this.http.get<PageResponse<SingleBook>>(
+      `${this.apiUrl}/pagination?page=${page}&size=${size}`,
+    );
   }
 
   getTopGenres(): Observable<string[]> {
@@ -37,13 +39,11 @@ export class BookService {
     status?: string,
     publisher?: string,
     genres?: string[],
-    page: number = 0,
-    size: number = 16,
-    sortBy?: string
+    page = 0,
+    size = 16,
+    sortBy?: string,
   ): Observable<PageResponse<SingleBook>> {
-    let params = new HttpParams()
-      .set('page', page.toString())
-      .set('size', size.toString());
+    let params = new HttpParams().set('page', page.toString()).set('size', size.toString());
 
     if (query && query.trim()) {
       params = params.set('query', query.trim());
@@ -55,7 +55,7 @@ export class BookService {
       params = params.set('publisher', publisher.trim());
     }
     if (genres && genres.length > 0) {
-      genres.forEach(genre => {
+      genres.forEach((genre) => {
         params = params.append('genres', genre);
       });
     }
@@ -64,5 +64,13 @@ export class BookService {
     }
 
     return this.http.get<PageResponse<SingleBook>>(`${this.apiUrl}/search`, { params });
+  }
+
+  getRecentBooks(limit = 7): Observable<SingleBook[]> {
+    return this.http.get<SingleBook[]>(`${this.apiUrl}/recent?limit=${limit}`);
+  }
+
+  getPopularBooks(limit = 10): Observable<SingleBook[]> {
+    return this.http.get<SingleBook[]>(`${this.apiUrl}/popular?limit=${limit}`);
   }
 }

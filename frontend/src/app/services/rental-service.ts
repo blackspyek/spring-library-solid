@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, catchError, map, of, throwError } from 'rxjs';
 import { SingleBook } from '../types';
@@ -8,9 +8,9 @@ import { environment } from '../../environments/environment';
   providedIn: 'root',
 })
 export class RentalService {
-  private apiUrl = environment.apiUrl + 'rentals';
+  private http = inject(HttpClient);
 
-  constructor(private http: HttpClient) {}
+  private apiUrl = environment.apiUrl + 'rentals';
 
   getRentedItems(userId: number): Observable<SingleBook[]> {
     const url = `${this.apiUrl}/user/${userId}`;
@@ -23,7 +23,7 @@ export class RentalService {
           return of([]);
         }
         return throwError(() => new Error(`Błąd pobierania wypożyczeń: ${error.message}`));
-      }),
+      })
     );
   }
 }

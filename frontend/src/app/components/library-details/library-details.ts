@@ -1,11 +1,9 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
-  selector: 'library-details',
+  selector: 'app-library-details',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './library-details.html',
   styleUrl: './library-details.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -15,8 +13,9 @@ export class LibraryDetailsComponent {
   @Input() libraryAddress!: string;
   @Input() openingDays: string[] = [];
   @Input() openingHours: string[] = [];
+  @Output() changeLibrary = new EventEmitter<void>();
 
   onChangeLibraryClick() {
-    console.log('Kliknięto: Zmień Bibliotekę');
+    this.changeLibrary.emit();
   }
 }

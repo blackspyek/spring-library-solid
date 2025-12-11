@@ -8,15 +8,15 @@ import org.pollub.library.item.model.Book;
 import org.pollub.library.item.model.ItemStatus;
 import org.pollub.library.item.model.dto.BookCreateDto;
 import org.pollub.library.item.repository.IBookRepository;
+import org.pollub.library.rental.repository.IRentalHistoryRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BookService implements IBookService {
     private final IBookRepository bookRepository;
+    private final IRentalHistoryRepository rentalHistoryRepository;
 
     @Override
     public List<Book> findAll() {
@@ -146,6 +147,33 @@ public class BookService implements IBookService {
         return Arrays.stream(ItemStatus.values())
                 .map(Enum::name)
                 .sorted()
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Book> getRecentBooks(int limit) {
+        Pageable pageable = PageRequest.of(0, limit);
+        return bookRepository.findAllByOrderByCreatedAtDesc(pageable);
+    }
+
+    @Override
+    public List<Book> getPopularBooks(int limit) {
+        List<Long> popularBookIds = rentalHistoryRepository.findTopItemIdsByRentalCount(limit);
+
+        if (popularBookIds.isEmpty()) {
+            // Fallback to recent books if no rental history exists
+            return getRecentBooks(limit);
+        }
+
+        List<Book> books = bookRepository.findByIdIn(popularBookIds);
+
+        Map<Long, Book> bookMap = books.stream()
+                .collect(Collectors.toMap(Book::getId, Function.identity()));
+
+        return popularBookIds.stream()
+                .map(bookMap::get)
+                .filter(Objects::nonNull)
+                .peek(book -> book.setIsBestseller(true))
                 .collect(Collectors.toList());
     }
 }

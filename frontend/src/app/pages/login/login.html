@@ -3,11 +3,16 @@
     class="flex flex-col justify-center items-center w-full max-w-sm rounded-2xl font-[Roboto] bg-white p-8 shadow-xl"
   >
     <div class="md:hidden bg-[var(--base-blue-dark)] pr-4 pl-4 mt-4 mb-8 rounded-xl">
-      <a [routerLink]="['/']" class="flex flex-row cursor-pointer items-center gap-3 justify-center">
+      <a
+        [routerLink]="['/']"
+        class="flex flex-row cursor-pointer items-center gap-3 justify-center"
+      >
         <img
-          src="/logo.svg"
+          ngSrc="/logo.svg"
           alt="Logo w kształcie książki"
           class="h-auto object-cover w-20 md:w-24"
+          height="109"
+          width="80"
         />
         <span class="text-white text-base font-bold tracking-widest font-[Inter]">BIBLIOTEKA</span>
       </a>
@@ -20,6 +25,14 @@
         Witaj z powrotem! Uzyskaj dostęp do swojej cyfrowej półki.
       </p>
     </div>
+
+    <!-- Error message from backend -->
+    @if (errorMessage()) {
+      <div class="w-full mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+        <p class="text-red-600 text-sm font-medium text-center">{{ errorMessage() }}</p>
+      </div>
+    }
+
     <form class="w-full" [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
       <div class="my-4">
         <label for="email" class="block text-lg font-medium text-[var(--base-gray-darker)] mb-1">
@@ -39,13 +52,25 @@
               <div>Adres email jest wymagany.</div>
             }
             @if (email?.errors?.['email']) {
-              <div>Proszę podać poprawny adres email.</div>
+              <div>Wprowadzony adres e-mail jest niepoprawny.</div>
+            }
+            @if (emailSuggestion) {
+              <div class="mt-1">
+                Czy chodziło Ci o
+                <button
+                  type="button"
+                  class="text-blue-600 font-semibold hover:underline cursor-pointer"
+                  (click)="applySuggestion()"
+                >
+                  {{ emailSuggestion.suggestedDomain }}</button
+                >?
+              </div>
             }
           </div>
         }
       </div>
       <div class="my-4">
-        <label for="email" class="block text-lg font-medium text-[var(--base-gray-darker)] mb-1">
+        <label for="password" class="block text-lg font-medium text-[var(--base-gray-darker)] mb-1">
           Hasło
         </label>
         <input
@@ -66,17 +91,43 @@
       </div>
       <button
         type="submit"
-        [disabled]="loginForm.invalid"
-        class="w-full bg-[var(--base-blue-darker)] p-2 rounded-sm text-white font-bold text-base tracking-wide"
+        [disabled]="loginForm.invalid || isLoading()"
+        class="w-full bg-[var(--base-blue-darker)] p-2 rounded-sm text-white font-bold text-base tracking-wide cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
-        ZALOGUJ SIĘ
+        @if (isLoading()) {
+          <svg
+            class="animate-spin h-5 w-5 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          <span>LOGOWANIE...</span>
+        } @else {
+          <span>ZALOGUJ SIĘ</span>
+        }
       </button>
     </form>
     <div class="text-center mt-6">
-      <a href="#" class="font-medium text-sm text-[#1D4ED8]"> Zapomniałeś hasła? </a>
+      <a href="#" class="font-medium text-sm text-[#1D4ED8] cursor-pointer"> Zapomniałeś hasła? </a>
       <p class="font-medium text-sm text-black">
         Nie masz jeszcze aktywnego konta?
-        <a [routerLink]="['/zweryfikuj-email']" class="text-[#1D4ED8]"> Ponów e-mail aktywacyjny! </a>
+        <a [routerLink]="['/zweryfikuj-email']" class="text-[#1D4ED8] cursor-pointer">
+          Ponów e-mail aktywacyjny!
+        </a>
       </p>
     </div>
   </div>

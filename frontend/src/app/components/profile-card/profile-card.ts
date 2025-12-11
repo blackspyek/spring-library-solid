@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
 import { UserProfile } from '../../types';
 import { UserService } from '../../services/user-service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
-  selector: 'profile-card',
+  selector: 'app-profile-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatProgressSpinnerModule],
   templateUrl: './profile-card.html',
   styleUrl: './profile-card.scss',
 })

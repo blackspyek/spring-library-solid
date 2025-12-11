@@ -6,9 +6,10 @@ import org.pollub.library.auth.model.RegisterUserDto;
 import org.pollub.library.auth.service.util.AuthenticationStrategy;
 import org.pollub.library.auth.service.util.UserFactory;
 import org.pollub.library.auth.service.util.UserValidator;
-import org.pollub.library.exception.UserNotFoundException;
+import org.pollub.library.exception.InvalidCredentialsException;
 import org.pollub.library.user.repository.IUserRepository;
 import org.pollub.library.user.model.User;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,10 +32,15 @@ public class AuthenticationService implements IAuthenticationService {
     @Override
     public User authenticateUser(LoginUserDto loginUserDto) {
         User user = userRepository.findByEmail(loginUserDto.getEmail())
-                .orElseThrow(() -> new UserNotFoundException(loginUserDto.getEmail()));
+                .orElseThrow(InvalidCredentialsException::new);
 
         userValidator.validateUserStatus(user);
-        authenticationStrategy.authenticate(loginUserDto);
+
+        try {
+            authenticationStrategy.authenticate(loginUserDto);
+        } catch (BadCredentialsException e) {
+            throw new InvalidCredentialsException();
+        }
 
         return user;
     }

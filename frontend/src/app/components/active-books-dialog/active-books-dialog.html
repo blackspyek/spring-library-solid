@@ -2,7 +2,11 @@
   class="text-2xl font-bold text-[color:var(--base-blue-darker)] flex justify-between items-center px-6 pt-8 pb-2"
 >
   {{ dialogType === 'rent' ? 'Aktywne wypożyczenia' : 'Aktywne rezerwacje' }}
-  <button (click)="onNoClick()" aria-label="Zamknij okno" class="p-1 focus:outline-none">
+  <button
+    (click)="onNoClick()"
+    aria-label="Zamknij okno"
+    class="p-1 focus:outline-none cursor-pointer"
+  >
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
@@ -26,14 +30,14 @@
     <p class="text-center text-[color:var(--base-gray-lighter)] text-lg my-6">Ładowanie...</p>
   } @else {
     @for (item of activeItems; track item.id) {
-      <profile-book-item
+      <app-profile-book-item
         [title]="item.title"
         [author]="item.author"
         [date]="item.dueDate || item.rentedAt || 'Brak daty'"
         [coverText]="item.title"
         [imageUrl]="item.imageUrl"
         [statusType]="dialogType === 'rent' ? 'rent' : 'reservation'"
-      ></profile-book-item>
+      ></app-profile-book-item>
     } @empty {
       <p class="text-[color:var(--base-gray-lighter)] text-lg text-center my-6">
         Brak aktywnych książek do wyświetlenia.

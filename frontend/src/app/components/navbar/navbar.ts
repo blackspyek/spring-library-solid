@@ -1,6 +1,9 @@
-import { Component, input } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
+import { NgOptimizedImage } from '@angular/common';
+import { AuthService } from '../../services/auth-service';
+
 export interface NavItem {
   label: string;
   icon?: string;
@@ -9,24 +12,33 @@ export interface NavItem {
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [MatIcon, RouterLink],
+  imports: [MatIcon, RouterLink, RouterLinkActive, NgOptimizedImage],
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss',
 })
 export class Navbar {
-  currentPage = input<string>('Start');
+  private authService = inject(AuthService);
 
-  mobileNavItems: NavItem[] = [
+  isLoggedIn = this.authService.isLoggedIn;
+
+  mobileNavItems = computed<NavItem[]>(() => [
     { label: 'Start', icon: 'home', link: '/' },
     { label: 'Katalog', icon: 'list', link: '/katalog' },
     { label: 'Moja karta', icon: 'none', link: '/moja-karta' },
-    { label: 'Konto', icon: 'person', link: '/profil' },
-
+    {
+      label: this.isLoggedIn() ? 'Konto' : 'Zaloguj',
+      icon: 'person',
+      link: this.isLoggedIn() ? '/profil' : '/zaloguj-sie',
+    },
     { label: '', icon: '' },
-  ];
+  ]);
 
   desktopNavItems = [
-    { label: 'Strona główna', link: '/home' },
+    { label: 'Strona główna', link: '/' },
     { label: 'Katalog', link: '/catalog' },
   ];
+
+  logout(): void {
+    this.authService.logout();
+  }
 }

@@ -3,6 +3,7 @@ package org.pollub.library.user.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.pollub.library.auth.model.ApiTextResponse;
+import org.pollub.library.branch.model.LibraryBranch;
 import org.pollub.library.auth.model.ChangePasswordDto;
 import org.pollub.library.user.model.RoleSetDto;
 import org.pollub.library.user.model.User;
@@ -63,4 +64,21 @@ public class UserController {
         ApiTextResponse response = userService.changePassword(username, passwordDto);
         return ResponseEntity.ok(response);
     }
+    @PutMapping("/favourite-branch")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<User> updateFavouriteBranch(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam(required = false) Long branchId
+    ) {
+        User user = userService.updateFavouriteBranch(userDetails.getUsername(), branchId);
+        return ResponseEntity.ok(user);
+    }
+
+    @GetMapping("/favourite-branch")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<LibraryBranch> getFavouriteBranch(@AuthenticationPrincipal UserDetails userDetails) {
+        LibraryBranch branch = userService.getFavouriteBranch(userDetails.getUsername());
+        return ResponseEntity.ok(branch);
+    }
+
 }

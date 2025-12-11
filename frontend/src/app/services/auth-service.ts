@@ -13,6 +13,7 @@ interface BackendAuthResponse {
 interface AuthState {
   user: string | null;
   roles: Role[] | null;
+  initialized: boolean;
 }
 @Injectable({
   providedIn: 'root',
@@ -26,29 +27,70 @@ export class AuthService {
   private authState = signal<AuthState>({
     user: null,
     roles: null,
+    initialized: false,
   });
 
   public currentUser = computed(() => this.authState().user);
   public isLoggedIn = computed(() => !!this.authState().user);
+  public isInitialized = computed(() => this.authState().initialized);
 
-  login(credentials: { username: string; password: string }): Observable<BackendAuthResponse> {
+  /**
+   * Check if user has a valid session (JWT cookie)
+   * Called on app initialization to restore auth state
+   */
+  checkSession(): Observable<BackendAuthResponse | null> {
+    return this.http.get<BackendAuthResponse>(`${this.API_URL}/me`).pipe(
+      tap((response) => {
+        this.authState.set({
+          user: response.username,
+          roles: response.roles,
+          initialized: true,
+        });
+      }),
+      catchError(() => {
+        this.authState.set({
+          user: null,
+          roles: null,
+          initialized: true,
+        });
+        return of(null);
+      }),
+    );
+  }
+
+  login(credentials: { email: string; password: string }): Observable<BackendAuthResponse> {
     return this.http.post<BackendAuthResponse>(`${this.API_URL}/login`, credentials).pipe(
       tap((response) => {
         this.authState.set({
           user: response.username,
           roles: response.roles,
+          initialized: true,
         });
         void this.router.navigate(['/profil']);
-      }),
-      catchError((error) => {
-        console.error('Błąd logowania:', error);
-        return of(error);
       }),
     );
   }
 
+  // Callback to clear caches on logout (set by UserService to avoid circular dep)
+  private onLogoutCallbacks: (() => void)[] = [];
+
+  registerLogoutCallback(callback: () => void): void {
+    this.onLogoutCallbacks.push(callback);
+  }
+
   logout() {
-    this.authState.set({ user: null, roles: null });
-    void this.router.navigate(['/login']);
+    this.http.post(`${this.API_URL}/logout`, {}).subscribe({
+      next: () => {
+        this.onLogoutCallbacks.forEach((cb) => cb());
+        this.authState.set({ user: null, roles: null, initialized: true });
+        void this.router.navigate(['/zaloguj-sie']);
+      },
+      error: () => {
+        // Even if backend fails, clear local state
+        this.onLogoutCallbacks.forEach((cb) => cb());
+        this.authState.set({ user: null, roles: null, initialized: true });
+        void this.router.navigate(['/zaloguj-sie']);
+      },
+    });
   }
 }

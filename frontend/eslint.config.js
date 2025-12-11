@@ -39,8 +39,23 @@ module.exports = tseslint.config(
     rules: {},
   },
   eslintPluginPrettierRecommended,
+
+  {
+    files: ['**/*.ts', '**/*.html', '**/*.js'], // Apply to all relevant files
+    rules: {
+      'prettier/prettier': [
+        'error',
+        {
+          endOfLine: 'auto',
+          singleQuote: true,
+          printWidth: 100,
+          trailingComma: 'es5',
+        },
+      ],
+    },
+  },
   {
     files: ['**/*.html'],
     ...eslintPluginPrettierRecommended,
-  },
+  }
 );

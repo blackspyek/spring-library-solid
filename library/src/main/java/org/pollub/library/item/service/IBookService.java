@@ -24,5 +24,7 @@ public interface IBookService {
     List<String> getOtherGenres();
     List<String> getAllPublishers();
     List<String> getAllStatuses();
+    List<Book> getRecentBooks(int limit);
+    List<Book> getPopularBooks(int limit);
 
 }

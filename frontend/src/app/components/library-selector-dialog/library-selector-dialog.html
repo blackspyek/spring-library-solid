@@ -1,0 +1,65 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <h2>{{ dialogTitle }}</h2>
+    <button mat-icon-button class="close-button" (click)="onCancel()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <p class="dialog-subtitle">{{ dialogSubtitle }}</p>
+
+  <div class="search-container">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-icon matPrefix>search</mat-icon>
+      <input
+        matInput
+        placeholder="Wyszukaj: miasto, adres, filia..."
+        [value]="searchQuery()"
+        (input)="onSearchChange($event)"
+      />
+    </mat-form-field>
+  </div>
+
+  <div class="content-container">
+    <div class="map-section">
+      <h3>Lokalizacja na mapie:</h3>
+      <div #mapContainer class="map-container"></div>
+      <p class="map-hint">Kliknij na pinezkę, aby wybrać filię</p>
+    </div>
+
+    <div class="list-section">
+      <h3>Wybór z listy:</h3>
+      <div #branchListContainer class="branch-list" role="listbox">
+        @for (branch of filteredBranches(); track branch.id) {
+          <div
+            class="branch-item"
+            [id]="'branch-item-' + branch.id"
+            [class.selected]="isBranchSelected(branch)"
+            (click)="selectBranch(branch)"
+            (keydown.enter)="selectBranch(branch)"
+            (keydown.space)="selectBranch(branch)"
+            tabindex="0"
+            role="option"
+            [attr.aria-selected]="isBranchSelected(branch)"
+          >
+            <mat-radio-button [checked]="isBranchSelected(branch)" (change)="selectBranch(branch)">
+              <div class="branch-info">
+                <span class="branch-name">{{ getBranchDisplayName(branch) }}</span>
+                <span class="branch-address">{{ branch.address }}, {{ branch.city }}</span>
+              </div>
+            </mat-radio-button>
+          </div>
+        } @empty {
+          <p class="no-results">Nie znaleziono filii spełniających kryteria wyszukiwania.</p>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="dialog-actions">
+    <button mat-stroked-button color="primary" (click)="onCancel()">ANULUJ</button>
+    <button mat-flat-button color="primary" [disabled]="!selectedBranchId()" (click)="onConfirm()">
+      {{ confirmButtonText }}
+    </button>
+  </div>
+</div>
