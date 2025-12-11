@@ -1,0 +1,110 @@
+<h2
+  class="text-2xl font-bold text-[color:var(--base-blue-darker)] flex justify-between items-center px-6 pt-8 pb-2"
+>
+  Ustawienia Powiadomień
+  <button (click)="onNoClick()" aria-label="Zamknij okno" class="p-1 focus:outline-none">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      class="w-6 h-6 text-gray-400 hover:text-gray-600 transition"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z"
+        clip-rule="evenodd"
+      />
+    </svg>
+  </button>
+</h2>
+
+<div class="px-6">
+  <hr class="border-[color:var(--base-gray-light)]" />
+</div>
+
+<div class="px-6 py-4 space-y-4">
+  <p class="text-base text-[color:var(--base-gray-darker)] mb-6">
+    Wybierz, o czym chcesz być informowany drogą mailową.
+  </p>
+
+  <form [formGroup]="notificationForm" class="space-y-6">
+    <div class="flex items-start justify-between">
+      <div class="w-3/4 pr-4">
+        <h3 class="text-base text-[color:var(--base-gray-darker)]">Rezerwacje gotowe do odbioru</h3>
+        <p class="text-sm text-[color:var(--base-gray-lighter)]">
+          Powiadomienie, gdy zarezerwowana pozycja jest dostępna w bibliotece.
+        </p>
+      </div>
+      <div class="flex items-center space-x-2">
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" formControlName="reservationReady" class="sr-only peer" />
+          <div
+            class="w-11 h-6 bg-[color:var(--placeholder-gray)] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-[color:var(--base-white)] after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[color:var(--base-white)] after:border-[color:var(--base-gray-lighter)] after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[color:var(--base-green)]"
+          ></div>
+        </label>
+        <span class="text-sm font-medium text-[color:var(--base-gray-darker)] w-8 text-right">
+          {{ notificationForm.get('reservationReady')?.value ? 'TAK' : 'NIE' }}
+        </span>
+      </div>
+    </div>
+
+    <div class="flex items-start justify-between pt-4">
+      <div class="w-3/4 pr-4">
+        <h3 class="text-base text-[color:var(--base-gray-darker)]">
+          Przypomnienia o terminie zwrotu
+        </h3>
+        <p class="text-sm text-[color:var(--base-gray-lighter)]">
+          Otrzymaj maila na 3 dni przed upływem terminu wypożyczenia.
+        </p>
+      </div>
+      <div class="flex items-center space-x-2">
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" formControlName="returnReminder" class="sr-only peer" />
+          <div
+            class="w-11 h-6 bg-[color:var(--placeholder-gray)] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-[color:var(--base-white)] after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[color:var(--base-white)] after:border-[color:var(--base-gray-lighter)] after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[color:var(--base-green)]"
+          ></div>
+        </label>
+        <span class="text-sm font-medium text-[color:var(--base-gray-darker)] w-8 text-right">
+          {{ notificationForm.get('returnReminder')?.value ? 'TAK' : 'NIE' }}
+        </span>
+      </div>
+    </div>
+
+    <div class="flex items-start justify-between pt-4">
+      <div class="w-3/4 pr-4">
+        <h3 class="text-base text-[color:var(--base-gray-darker)]">Popularne nowości w katalogu</h3>
+        <p class="text-sm text-[color:var(--base-gray-lighter)]">
+          Informacje o najnowszych nabytkach biblioteki, wysyłane raz w miesiącu.
+        </p>
+      </div>
+      <div class="flex items-center space-x-2">
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" formControlName="newArrivals" class="sr-only peer" />
+          <div
+            class="w-11 h-6 bg-[color:var(--placeholder-gray)] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-[color:var(--base-white)] after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[color:var(--base-white)] after:border-[color:var(--base-gray-lighter)] after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[color:var(--base-green)]"
+          ></div>
+        </label>
+        <span class="text-sm font-medium text-[color:var(--base-gray-darker)] w-8 text-right">
+          {{ notificationForm.get('newArrivals')?.value ? 'TAK' : 'NIE' }}
+        </span>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="flex justify-end gap-3 p-4">
+  <button
+    (click)="onNoClick()"
+    class="bg-[color:var(--base-white)] border border-[color:var(--base-blue-lighter)] text-[color:var(--base-blue-lighter)] hover:bg-blue-100 font-medium py-2 px-4 rounded-md transition duration-150"
+  >
+    ANULUJ
+  </button>
+
+  <button
+    (click)="onSaveClick()"
+    [disabled]="notificationForm?.invalid"
+    class="bg-[color:var(--base-blue-lighter)] hover:bg-blue-700 text-[color:var(--base-white)] font-medium py-2 px-4 rounded-md transition duration-150"
+  >
+    ZAPISZ ZMIANY
+  </button>
+</div>

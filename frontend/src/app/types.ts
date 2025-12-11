@@ -29,6 +29,21 @@ export interface Book {
   coverUrl: string;
 }
 
+export interface UserProfile {
+  id: number;
+  name: string;
+  surname: string;
+  email: string;
+  phone: string;
+  readerId: string;
+  qrCode: string;
+}
+
+export interface ApiTextResponse {
+  success: boolean;
+  message: string;
+}
+
 export interface SingleBook {
   id: number;
   title: string;
