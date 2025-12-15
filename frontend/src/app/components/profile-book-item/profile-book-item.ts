@@ -1,12 +1,12 @@
 import { Component, Input, computed, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule, DatePipe, NgOptimizedImage } from '@angular/common';
 
 type ItemStatus = 'rent' | 'reservation';
 
 @Component({
-  selector: 'profile-book-item',
+  selector: 'app-profile-book-item',
   standalone: true,
-  imports: [CommonModule, DatePipe],
+  imports: [CommonModule, DatePipe, NgOptimizedImage],
   templateUrl: './profile-book-item.html',
   styleUrl: './profile-book-item.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

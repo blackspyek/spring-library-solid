@@ -2,6 +2,8 @@ package org.pollub.library.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.pollub.library.auth.model.ApiTextResponse;
+import org.pollub.library.branch.model.LibraryBranch;
+import org.pollub.library.branch.service.ILibraryBranchService;
 import org.pollub.library.auth.model.ChangePasswordDto;
 import org.pollub.library.exception.UserNotFoundException;
 import org.pollub.library.user.model.Role;
@@ -19,6 +21,7 @@ import java.util.Set;
 public class UserService implements IUserService {
     private final IUserRepository userRepository;
     private final IUserContextService userContextService;
+    private final ILibraryBranchService branchService;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -84,4 +87,23 @@ public class UserService implements IUserService {
         userRepository.save(user);
         return new ApiTextResponse(true, "Password for user " + username + " changed successfully");
     }
+    @Override
+    @Transactional
+    public User updateFavouriteBranch(String username, Long branchId) {
+        User user = findByUsername(username);
+        if (branchId == null) {
+            user.setFavouriteBranch(null);
+        } else {
+            LibraryBranch branch = branchService.getBranchById(branchId);
+            user.setFavouriteBranch(branch);
+        }
+        return userRepository.save(user);
+    }
+
+    @Override
+    public LibraryBranch getFavouriteBranch(String username) {
+        User user = findByUsername(username);
+        return user.getFavouriteBranch();
+    }
+
 }

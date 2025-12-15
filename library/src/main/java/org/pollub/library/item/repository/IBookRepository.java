@@ -21,6 +21,13 @@ public interface IBookRepository extends ILibraryItemRepository<Book> {
     List<Book> findByGenre(String genre);
     List<Book> findByIsbn(String isbn);
 
+    // Recent books - ordered by creation date descending
+    List<Book> findAllByOrderByCreatedAtDesc(Pageable pageable);
+
+    // Find books by IDs preserving order
+    @Query("SELECT b FROM Book b WHERE b.id IN :ids")
+    List<Book> findByIdIn(@Param("ids") List<Long> ids);
+
     @Query("SELECT b FROM Book b WHERE " +
             "(LOWER(b.title) LIKE LOWER(CONCAT('%', COALESCE(:query, ''), '%')) " +
             "   OR LOWER(b.author) LIKE LOWER(CONCAT('%', COALESCE(:query, ''), '%')) " +

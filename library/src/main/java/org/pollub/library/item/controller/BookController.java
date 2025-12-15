@@ -121,5 +121,23 @@ public class BookController {
         return ResponseEntity.ok(bookService.getAllStatuses());
     }
 
+    @GetMapping("/recent")
+    public ResponseEntity<List<Book>> getRecentBooks(
+            @RequestParam(defaultValue = "7") int limit) {
+        if (limit > 20) {
+            limit = 20;
+        }
+        return ResponseEntity.ok(bookService.getRecentBooks(limit));
+    }
+
+    @GetMapping("/popular")
+    public ResponseEntity<List<Book>> getPopularBooks(
+            @RequestParam(defaultValue = "10") int limit) {
+        if (limit > 20) {
+            limit = 20;
+        }
+        return ResponseEntity.ok(bookService.getPopularBooks(limit));
+    }
+
 
 }

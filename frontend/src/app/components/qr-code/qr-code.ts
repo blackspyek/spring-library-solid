@@ -8,18 +8,19 @@ import {
   Renderer2,
   ChangeDetectorRef,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { UserProfile } from '../../types';
 import { Observable, Subscription } from 'rxjs';
 import { UserService } from '../../services/user-service';
 import QRCode from 'qrcode';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
-  selector: 'qr-code',
+  selector: 'app-qr-code',
   templateUrl: './qr-code.html',
   styleUrl: './qr-code.scss',
   standalone: true,
-  imports: [CommonModule],
+  imports: [MatProgressSpinnerModule],
 })
 export class QrCodeComponent implements OnInit, OnDestroy {
   private userService = inject(UserService);
@@ -60,12 +61,17 @@ export class QrCodeComponent implements OnInit, OnDestroy {
       element,
       readerId,
       {
-        width: 150,
+        width: 135,
+        margin: 0,
         errorCorrectionLevel: 'H',
+        color: {
+          dark: '#000000',
+          light: '#0000', // przezroczyste tło (RGBA)
+        },
       },
       (error: Error | null | undefined) => {
         if (error) console.error('Błąd generowania QR Code:', error);
-      },
+      }
     );
   }
 

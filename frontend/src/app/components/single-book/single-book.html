@@ -1,23 +1,49 @@
-<div class="bg-white rounded-lg shadow p-2 flex flex-col items-center w-full"
-     style="max-width:180px; min-height:270px;">
-  <div class="overflow-hidden w-full rounded-lg mb-1 aspect-[8/10]">
+<div
+  class="bg-white rounded-lg shadow p-2 flex flex-col items-center w-full"
+  style="max-width: 180px; min-height: 270px"
+>
+  <div class="overflow-hidden w-full rounded-lg mb-1 aspect-[8/10] relative bg-gray-200">
+    @if (isLoading) {
+      <div class="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center">
+        <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+          ></path>
+        </svg>
+      </div>
+    }
     <img
-      [src]="imgSrc"
+      [ngSrc]="currentImgSrc"
       [alt]="title"
-      class="w-full object-cover"
+      fill
+      class="object-cover"
+      (load)="handleImageLoad()"
+      (error)="handleImageError($event)"
     />
   </div>
   <div class="flex flex-col flex-grow w-full items-center">
-    <div class="text-xs font-semibold mb-1 text-[color:var(--base-gray-darker)] text-center truncate w-full">{{ title }}</div>
-    <div class="text-xs text-[color:var(--base-gray-darker)] mb-1 text-center truncate w-full">{{ author }}</div>
+    <div
+      class="text-xs font-semibold mb-1 text-[color:var(--base-gray-darker)] text-center truncate w-full"
+    >
+      {{ title }}
+    </div>
+    <div class="text-xs text-[color:var(--base-gray-darker)] mb-1 text-center truncate w-full">
+      {{ author }}
+    </div>
   </div>
   <div class="flex gap-2 justify-center w-full mt-auto m-1">
-    <button class="px-2 py-1 rounded bg-[color:var(--base-blue-lighter)] text-white text-xs font-semibold shadow"
-            (click)="openDetails()">
+    <button
+      class="px-2 py-1 rounded bg-[color:var(--base-blue-lighter)] text-white text-xs font-semibold shadow cursor-pointer"
+      (click)="openDetails()"
+    >
       Szczegóły
     </button>
     <button
-      class="px-2 py-1 rounded bg-white text-[color:var(--base-blue-lighter)] border border-[color:var(--base-blue-lighter)] box-border text-xs font-semibold shadow">
+      class="px-2 py-1 rounded bg-white text-[color:var(--base-blue-lighter)] border border-[color:var(--base-blue-lighter)] box-border text-xs font-semibold shadow cursor-pointer"
+    >
       Dostępność
     </button>
   </div>

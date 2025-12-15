@@ -3,15 +3,33 @@
 }
 
 .active-link {
+  position: relative;
   color: white;
+  font-weight: 400 !important;
   &::after {
     content: '';
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50%;
     height: 3px;
-    background-color: #6E9FE0;
+    background-color: #6e9fe0;
+  }
+}
+
+.active-link-account {
+  position: relative;
+  font-weight: 400 !important;
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50%;
+    height: 3px;
+    background-color: #6e9fe0;
   }
 }
 
@@ -22,3 +40,27 @@
   background-color: rgba(255, 255, 255, 0.1); /* Bardzo subtelne, jasne tło */
 }
 
+.account-dropdown {
+  &:hover {
+    .dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    .dropdown-arrow {
+      transform: rotate(180deg);
+    }
+  }
+}
+
+.dropdown-menu {
+  min-width: 160px;
+}
+
+.logout-btn {
+  &:hover {
+    mat-icon {
+      transform: translateX(3px) scale(0.7);
+    }
+  }
+}

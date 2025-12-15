@@ -5,16 +5,17 @@
 >
   <div class="absolute inset-x-0 -top-8 flex justify-center">
     <button
-      class="w-[65px] h-[65px] bg-[#173152] text-white rounded-full flex items-center justify-center"
+      class="w-[65px] h-[65px] bg-[#173152] text-white rounded-full flex items-center justify-center cursor-pointer"
     >
       <mat-icon class="scale-[1.875]" fontIcon="qr_code" aria-hidden="true"></mat-icon>
     </button>
   </div>
-  @for (item of mobileNavItems; track item.label) {
+  @for (item of mobileNavItems(); track item.label) {
     <a
       [routerLink]="[item.link]"
-      class="flex flex-col items-center text-xs text-white p-2 transition duration-150"
-      [class.active-mobile-link]="item.label === currentPage()"
+      class="flex flex-col items-center text-xs text-white p-2 transition duration-150 cursor-pointer"
+      routerLinkActive="active-mobile-link"
+      [routerLinkActiveOptions]="{ exact: item.link === '/' }"
     >
       <mat-icon fontIcon="{{ item.icon }}" aria-hidden="true"></mat-icon>
 
@@ -28,8 +29,15 @@
   class="hidden md:flex bg-[var(--base-blue-dark)] text-white h-16 shadow-lg px-8 items-center justify-between font-[Inter]"
 >
   <div class="flex items-center gap-8 justify-center">
-    <a [routerLink]="['/']" class="flex items-center gap-4">
-      <img src="/logo.svg" alt="Logo w kształcie książki" class="h-auto object-cover md:w-12" />
+    <a [routerLink]="['/']" class="flex items-center gap-4 cursor-pointer">
+      <img
+        ngSrc="/logo.svg"
+        width="48"
+        height="48"
+        alt="Logo w kształcie książki"
+        priority
+        class="object-cover"
+      />
       <span class="text-white text-base font-bold tracking-widest font-[Inter]">BIBLIOTEKA</span>
     </a>
 
@@ -38,22 +46,61 @@
         <a
           [routerLink]="[item.link]"
           class="flex flex-col justify-center cursor-pointer hover:text-blue-300 transition duration-150 text-base font-light font-[Inter] tracking-wide"
-          [class.active-link]="item.label === currentPage()"
+          routerLinkActive="active-link"
+          [routerLinkActiveOptions]="{ exact: item.link === '/' }"
         >
           {{ item.label }}
         </a>
       }
     </nav>
   </div>
-  <a
-    [routerLink]="['/profil']"
-    class="flex items-center hover:text-blue-300 transition duration-150 text-base font-light font-[Inter] tracking-wide gap-1"
-  >
-    <mat-icon
-      class="material-icons-outlined scale-[0.85]"
-      fontIcon="person"
-      aria-hidden="true"
-    ></mat-icon>
-    <span>Moje konto</span>
-  </a>
+  @if (isLoggedIn()) {
+    <div class="group flex items-center gap-0 rounded-full p-1 transition-all duration-300">
+      <a
+        [routerLink]="['/profil']"
+        class="flex items-center gap-1 px-2 py-1 cursor-pointer transition-all duration-150"
+      >
+        <mat-icon
+          class="material-icons-outlined scale-[0.85]"
+          fontIcon="person"
+          aria-hidden="true"
+        ></mat-icon>
+        <span
+          routerLinkActive="active-link-account"
+          class="text-base font-light font-[Inter] tracking-wide"
+          >Moje konto</span
+        >
+      </a>
+
+      <!-- Logout section - hidden, appears on group hover -->
+      <div
+        class="flex items-center overflow-hidden max-w-0 opacity-0 group-hover:max-w-[120px] group-hover:opacity-100 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+      >
+        <div class="h-5 w-[1px] bg-white/30 mx-1"></div>
+        <button
+          (click)="logout()"
+          class="logout-btn flex items-center gap-1 px-2 py-1 text-sm text-white/70 whitespace-nowrap hover:text-white rounded-full transition-colors cursor-pointer"
+        >
+          <span>Wyloguj</span>
+          <mat-icon
+            class="scale-[0.7] transition-transform duration-300"
+            fontIcon="logout"
+            aria-hidden="true"
+          ></mat-icon>
+        </button>
+      </div>
+    </div>
+  } @else {
+    <a
+      [routerLink]="['/zaloguj-sie']"
+      class="flex items-center hover:text-blue-300 transition duration-150 text-base font-light font-[Inter] tracking-wide gap-1 cursor-pointer"
+    >
+      <mat-icon
+        class="material-icons-outlined scale-[0.85]"
+        fontIcon="person"
+        aria-hidden="true"
+      ></mat-icon>
+      <span>Zaloguj</span>
+    </a>
+  }
 </header>

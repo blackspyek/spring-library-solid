@@ -1,25 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
-import { CommonModule } from '@angular/common';
 
 import { ReactiveFormsModule, FormGroup, FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-notification-settings-dialog',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, ReactiveFormsModule],
+  imports: [MatButtonModule, ReactiveFormsModule],
   templateUrl: './notification-settings-dialog.html',
   styleUrl: './notification-settings-dialog.scss',
 })
 export class NotificationSettingsDialog implements OnInit {
+  dialogRef = inject<MatDialogRef<NotificationSettingsDialog>>(MatDialogRef);
+  private fb = inject(FormBuilder);
+
   notificationForm!: FormGroup;
   submitted = false;
-
-  constructor(
-    public dialogRef: MatDialogRef<NotificationSettingsDialog>,
-    private fb: FormBuilder,
-  ) {}
 
   ngOnInit(): void {
     this.notificationForm = this.fb.group({

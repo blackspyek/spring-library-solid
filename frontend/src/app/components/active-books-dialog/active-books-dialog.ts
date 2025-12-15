@@ -1,8 +1,7 @@
-import { Component, OnInit, Inject, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormGroup, FormBuilder } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { ProfileBookItemComponent } from '../profile-book-item/profile-book-item';
 import { SingleBook } from '../../types';
 import { RentalService } from '../../services/rental-service';
@@ -18,11 +17,14 @@ export type DialogBookItem = SingleBook;
 @Component({
   selector: 'app-active-books-dialog',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, ReactiveFormsModule, ProfileBookItemComponent],
+  imports: [MatButtonModule, ReactiveFormsModule, ProfileBookItemComponent],
   templateUrl: './active-books-dialog.html',
   styleUrl: './active-books-dialog.scss',
 })
 export class ActiveBooksDialog implements OnInit {
+  dialogRef = inject<MatDialogRef<ActiveBooksDialog>>(MatDialogRef);
+  data = inject<DialogData>(MAT_DIALOG_DATA);
+
   private rentalService = inject(RentalService);
   private userService = inject(UserService);
 
@@ -32,11 +34,9 @@ export class ActiveBooksDialog implements OnInit {
 
   public loading = false;
 
-  constructor(
-    public dialogRef: MatDialogRef<ActiveBooksDialog>,
-    private fb: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData,
-  ) {
+  constructor() {
+    const data = this.data;
+
     this.dialogType = data.type;
   }
 
@@ -44,7 +44,6 @@ export class ActiveBooksDialog implements OnInit {
     if (this.dialogType === 'rent') {
       this.fetchRentedItems();
     } else {
-      // temporary
       this.activeItems = this.getMockReservationItems();
     }
   }
@@ -57,7 +56,7 @@ export class ActiveBooksDialog implements OnInit {
       .pipe(
         filter((userId): userId is number => userId !== undefined && userId > 0),
         switchMap((userId) => this.rentalService.getRentedItems(userId)),
-        take(1),
+        take(1)
       )
       .subscribe({
         next: (items) => {

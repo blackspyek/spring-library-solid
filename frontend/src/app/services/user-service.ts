@@ -1,8 +1,9 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { catchError, map, Observable, of, throwError } from 'rxjs';
+import { catchError, map, Observable, of, shareReplay, throwError } from 'rxjs';
 import { ApiTextResponse, UserProfile } from '../types';
 import { AuthService } from './auth-service';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { LibraryBranch, User } from '../types';
 import { environment } from '../../environments/environment';
 
 export interface ChangePasswordRequest {
@@ -14,10 +15,19 @@ export interface ChangePasswordRequest {
   providedIn: 'root',
 })
 export class UserService {
-  private apiUrl = environment.apiUrl + 'user';
+  private API_URL = environment.apiUrl + 'user';
 
   private http = inject(HttpClient);
   private authService = inject(AuthService);
+
+  // Cache for current user profile - shared between components
+  private currentProfileCache$: Observable<UserProfile> | null = null;
+  private cachedUsername: string | null = null;
+
+  constructor() {
+    // Register logout callback to clear cache
+    this.authService.registerLogoutCallback(() => this.clearProfileCache());
+  }
 
   private replaceEmptyUserData(profile: UserProfile): UserProfile {
     const cleaned: UserProfile = { ...profile };
@@ -49,12 +59,19 @@ export class UserService {
       );
     }
 
-    const profileUrl = `${this.apiUrl}/username/${username}`;
+    // Return cached observable if username matches
+    if (this.currentProfileCache$ && this.cachedUsername === username) {
+      return this.currentProfileCache$;
+    }
 
-    return this.http.get<UserProfile>(profileUrl).pipe(
+    const profileUrl = `${this.API_URL}/username/${username}`;
+
+    this.cachedUsername = username;
+    this.currentProfileCache$ = this.http.get<UserProfile>(profileUrl).pipe(
       map((profile) => this.replaceEmptyUserData(profile)),
       catchError((error) => {
         console.error(`Błąd pobierania profilu dla ${username} z ${profileUrl}:`, error);
+        this.currentProfileCache$ = null; // Clear cache on error
 
         return of(
           this.replaceEmptyUserData({
@@ -68,11 +85,32 @@ export class UserService {
           }),
         );
       }),
+      shareReplay(1), // Cache the result and share between subscribers
     );
+
+    return this.currentProfileCache$;
+  }
+
+  /** Clear profile cache - call after logout or profile update */
+  clearProfileCache(): void {
+    this.currentProfileCache$ = null;
+    this.cachedUsername = null;
+  }
+
+  updateFavouriteBranch(branchId: number | null): Observable<User> {
+    let params = new HttpParams();
+    if (branchId !== null) {
+      params = params.set('branchId', branchId.toString());
+    }
+    return this.http.put<User>(`${this.API_URL}/favourite-branch`, null, { params });
+  }
+
+  getFavouriteBranch(): Observable<LibraryBranch> {
+    return this.http.get<LibraryBranch>(`${this.API_URL}/favourite-branch`);
   }
 
   changePassword(request: ChangePasswordRequest): Observable<ApiTextResponse> {
-    const passwordUrl = `${this.apiUrl}/password`;
+    const passwordUrl = `${this.API_URL}/password`;
 
     return this.http.put<ApiTextResponse>(passwordUrl, request).pipe(
       catchError((error) => {

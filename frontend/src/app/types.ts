@@ -1,3 +1,16 @@
+export interface LibraryBranch {
+  id: number;
+  branchNumber: string;
+  name: string;
+  city: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  phone?: string;
+  email?: string;
+  openingHours?: string;
+}
+
 export interface User {
   id: number;
   email: string;
@@ -5,6 +18,7 @@ export interface User {
   last_name: string;
   phone_number: string;
   roles: Role[];
+  favouriteBranch?: LibraryBranch;
 }
 export interface SelectOption {
   label: string;
@@ -27,6 +41,18 @@ export interface Book {
   title: string;
   author: string;
   coverUrl: string;
+  availableAtBranches?: LibraryBranch[];
+}
+
+export type LibrarySelectorMode = 'availability' | 'favorite';
+
+export interface LibrarySelectorDialogData {
+  mode: LibrarySelectorMode;
+  bookTitle?: string;
+  availableBranches?: LibraryBranch[];
+  currentFavouriteBranchId?: number;
+  /** Optional: provide all branches directly instead of loading from API */
+  allBranches?: LibraryBranch[];
 }
 
 export interface UserProfile {
@@ -51,6 +77,8 @@ export interface SingleBook {
   imageUrl: string;
   rentedAt?: string;
   dueDate?: string;
+  createdAt?: string;
+  releaseYear?: number;
   status: string;
   pageCount: number;
   isbn: string;
@@ -60,6 +88,7 @@ export interface SingleBook {
   author: string;
   genre: string;
   libraryLocation?: string;
+  bestseller?: boolean;
 }
 
 export interface PageResponse<T> {

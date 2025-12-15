@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, effect, OnInit, signal} from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CustomSelect } from '../../components/custom-select/custom-select';
 import { SelectOption, SingleBook } from '../../types';
@@ -6,23 +6,25 @@ import { SingleBookComponent } from '../../components/single-book/single-book';
 import { BookService } from '../../services/book.service';
 import { FormsModule } from '@angular/forms';
 import { debounceTime, Subject, forkJoin } from 'rxjs';
-import {SortSelectComponent} from '../../components/sort-select/sort-select';
+import { SortSelectComponent } from '../../components/sort-select/sort-select';
 
 @Component({
-  selector: 'catalog',
+  selector: 'app-catalog',
   imports: [CommonModule, CustomSelect, SingleBookComponent, FormsModule, SortSelectComponent],
   templateUrl: './catalog.html',
   styleUrl: './catalog.scss',
-  changeDetection: ChangeDetectionStrategy.Default
+  changeDetection: ChangeDetectionStrategy.Default,
 })
 export class Catalog implements OnInit {
-  books: SingleBook[] = [];
-  currentPage: number = 0;
-  totalPages: number = 0;
-  totalElements: number = 0;
-  pageSize: number = 16;
+  private bookService = inject(BookService);
 
-  searchQuery: string = '';
+  books: SingleBook[] = [];
+  currentPage = 0;
+  totalPages = 0;
+  totalElements = 0;
+  pageSize = 16;
+
+  searchQuery = '';
   selectedStatus: string | number | null = null;
   selectedPublisher: string | number | null = null;
   selectedGenre: string | null = null;
@@ -39,7 +41,7 @@ export class Catalog implements OnInit {
   currentSelectionStatus = signal<SelectOption | null>(null);
   currentSelectionPublisher = signal<SelectOption | null>(null);
 
-  constructor(private bookService: BookService) {
+  constructor() {
     effect(() => {
       const statusOpt = this.currentSelectionStatus();
       const newStatus = statusOpt ? String(statusOpt.value) : null;
@@ -72,41 +74,37 @@ export class Catalog implements OnInit {
   }
 
   ngOnInit() {
-
     this.searchSubject.pipe(debounceTime(500)).subscribe(() => {
       this.currentPage = 0;
       this.loadBooks();
     });
 
-    this.loadFiltersAndBooks()
-
+    this.loadFiltersAndBooks();
   }
-
 
   loadFiltersAndBooks() {
     forkJoin({
       genres: this.bookService.getTopGenres(),
       otherGenres: this.bookService.getOtherGenres(),
       publishers: this.bookService.getAllPublishers(),
-      statuses: this.bookService.getAllStatuses()
+      statuses: this.bookService.getAllStatuses(),
     }).subscribe({
       next: (data) => {
-
         this.genres = data.genres;
 
-        this.otherGenres = data.otherGenres.map(genre => ({
+        this.otherGenres = data.otherGenres.map((genre) => ({
           label: genre,
-          value: genre
+          value: genre,
         }));
 
-        this.publishers = data.publishers.map(pub => ({
+        this.publishers = data.publishers.map((pub) => ({
           label: pub,
-          value: pub
+          value: pub,
         }));
 
-        this.statusOptions = data.statuses.map(status => ({
+        this.statusOptions = data.statuses.map((status) => ({
           label: this.getStatusLabel(status),
-          value: status
+          value: status,
         }));
 
         this.loadBooks();
@@ -114,39 +112,41 @@ export class Catalog implements OnInit {
       error: (error) => {
         console.error('Error loading filters:', error);
         this.loadBooks();
-      }
+      },
     });
   }
 
   getStatusLabel(status: string): string {
-    const labels: { [key: string]: string } = {
-      'AVAILABLE': 'Dostępny',
-      'RENTED': 'Wypożyczony',
-      'MAINTENANCE': 'W konserwacji',
-      'LOST': 'Zgubiony'
+    const labels: Record<string, string> = {
+      AVAILABLE: 'Dostępny',
+      RENTED: 'Wypożyczony',
+      MAINTENANCE: 'W konserwacji',
+      LOST: 'Zgubiony',
     };
     return labels[status] || status;
   }
 
   loadBooks() {
-    this.bookService.searchBooks(
-      this.searchQuery || undefined,
-      this.selectedStatus !== null ? String(this.selectedStatus) : undefined,
-      this.selectedPublisher !== null ? String(this.selectedPublisher) : undefined,
-      this.selectedGenre ? [this.selectedGenre] : undefined,
-      this.currentPage,
-      this.pageSize,
-      this.sortBy || undefined
-    ).subscribe({
-      next: (response) => {
-        this.books = response.content;
-        this.totalPages = response.totalPages;
-        this.totalElements = response.totalElements;
-      },
-      error: (error) => {
-        console.error('Error loading books:', error);
-      }
-    });
+    this.bookService
+      .searchBooks(
+        this.searchQuery || undefined,
+        this.selectedStatus !== null ? String(this.selectedStatus) : undefined,
+        this.selectedPublisher !== null ? String(this.selectedPublisher) : undefined,
+        this.selectedGenre ? [this.selectedGenre] : undefined,
+        this.currentPage,
+        this.pageSize,
+        this.sortBy || undefined
+      )
+      .subscribe({
+        next: (response) => {
+          this.books = response.content;
+          this.totalPages = response.totalPages;
+          this.totalElements = response.totalElements;
+        },
+        error: (error) => {
+          console.error('Error loading books:', error);
+        },
+      });
   }
 
   onSortChange(sort: string | null) {
@@ -160,7 +160,6 @@ export class Catalog implements OnInit {
   }
 
   setGenre(genre: string) {
-
     if (this.selectedGenre === genre) {
       this.selectedGenre = null;
     } else {
@@ -174,7 +173,6 @@ export class Catalog implements OnInit {
   isGenreSelected(genre: string): boolean {
     return this.selectedGenre === genre;
   }
-
 
   goToPage(page: number) {
     if (page < 0 || page >= this.totalPages || page === this.currentPage) {
@@ -202,7 +200,7 @@ export class Catalog implements OnInit {
     const pages: number[] = [];
     const maxVisible = 4;
     let startPage = Math.max(0, this.currentPage - 2);
-    let endPage = Math.min(this.totalPages - 1, startPage + maxVisible - 1);
+    const endPage = Math.min(this.totalPages - 1, startPage + maxVisible - 1);
 
     if (endPage - startPage < maxVisible - 1) {
       startPage = Math.max(0, endPage - maxVisible + 1);
