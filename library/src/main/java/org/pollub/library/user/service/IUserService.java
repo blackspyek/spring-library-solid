@@ -4,6 +4,8 @@ import org.pollub.library.auth.model.ApiTextResponse;
 import org.pollub.library.branch.model.LibraryBranch;
 import org.pollub.library.user.model.RoleSetDto;
 import org.pollub.library.auth.model.ChangePasswordDto;
+import org.pollub.library.user.model.NotificationSettings;
+import org.pollub.library.user.model.NotificationSettingsDto;
 import org.pollub.library.user.model.User;
 
 public interface IUserService {
@@ -15,4 +17,6 @@ public interface IUserService {
     User updateFavouriteBranch(String username, Long branchId);
     LibraryBranch getFavouriteBranch(String username);
     ApiTextResponse changePassword(String username, ChangePasswordDto passwordDto);
+    NotificationSettings getNotificationSettings(String username);
+    NotificationSettings updateNotificationSettings(String username, NotificationSettingsDto dto);
 }

@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { catchError, map, Observable, of, shareReplay, throwError } from 'rxjs';
-import { ApiTextResponse, UserProfile } from '../types';
+import { ApiTextResponse, UserProfile, NotificationSettings } from '../types';
 import { AuthService } from './auth-service';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { LibraryBranch, User } from '../types';
@@ -122,5 +122,25 @@ export class UserService {
 
   getUserId(): Observable<number | undefined> {
     return this.getCurrentUserProfile().pipe(map((profile) => profile.id));
+  }
+
+  getNotificationSettings(): Observable<NotificationSettings> {
+    return this.http.get<NotificationSettings>(`${this.API_URL}/notification-settings`).pipe(
+      catchError((error) => {
+        console.error('Błąd pobierania ustawień powiadomień:', error);
+        return of({ reservationReady: false, returnReminder: false, newArrivals: false });
+      }),
+    );
+  }
+
+  updateNotificationSettings(settings: NotificationSettings): Observable<NotificationSettings> {
+    return this.http
+      .put<NotificationSettings>(`${this.API_URL}/notification-settings`, settings)
+      .pipe(
+        catchError((error) => {
+          console.error('Błąd aktualizacji ustawień powiadomień:', error);
+          return throwError(() => error);
+        }),
+      );
   }
 }

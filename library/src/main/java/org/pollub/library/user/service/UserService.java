@@ -9,6 +9,8 @@ import org.pollub.library.exception.UserNotFoundException;
 import org.pollub.library.user.model.Role;
 import org.pollub.library.user.model.RoleSetDto;
 import org.pollub.library.user.model.User;
+import org.pollub.library.user.model.NotificationSettings;
+import org.pollub.library.user.model.NotificationSettingsDto;
 import org.pollub.library.user.repository.IUserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -104,6 +106,23 @@ public class UserService implements IUserService {
     public LibraryBranch getFavouriteBranch(String username) {
         User user = findByUsername(username);
         return user.getFavouriteBranch();
+    }
+
+    @Override
+    public NotificationSettings getNotificationSettings(String username) {
+        User user = findByUsername(username);
+        NotificationSettings settings = user.getNotificationSettings();
+        return settings != null ? settings : new NotificationSettings();
+    }
+
+    @Override
+    @Transactional
+    public NotificationSettings updateNotificationSettings(String username, NotificationSettingsDto dto) {
+        User user = findByUsername(username);
+        NotificationSettings settings = dto.toEntity();
+        user.setNotificationSettings(settings);
+        userRepository.save(user);
+        return settings;
     }
 
 }
