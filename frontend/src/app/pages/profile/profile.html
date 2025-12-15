@@ -175,27 +175,13 @@
         Ostatnie wypożyczenia
       </h2>
       <button
-        class="bg-[color:var(--edit-button-bg)] hover:bg-[color:var(--edit-button-bg)] text-[color:var(--white-to-yellow)] text-sm py-2 px-4 rounded-lg transition duration-150 whitespace-nowrap"
+        (click)="downloadHistory()"
+        [disabled]="isExportingHistory()"
+        class="bg-[color:var(--edit-button-bg)] hover:bg-[color:var(--edit-button-bg)] text-[color:var(--white-to-yellow)] text-sm py-2 px-4 rounded-lg transition duration-150 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
       >
-        Pobierz całą historię
+        {{ isExportingHistory() ? 'Pobieranie...' : 'Pobierz całą historię' }}
       </button>
     </div>
-    <history-item
-      [fullDescription]="'Sto lat samotności (Gabriel García Márquez, Muza S.A., 2012).'"
-      [dateRented]="'28.10.2025'"
-      [dateReturned]="'28.11.2025'"
-    ></history-item>
-
-    <history-item
-      [fullDescription]="'Sto lat samotności (Gabriel García Márquez, Muza S.A., 2012).'"
-      [dateRented]="'28.10.2025'"
-      [dateReturned]="'28.11.2025'"
-    ></history-item>
-
-    <history-item
-      [fullDescription]="'Sto lat samotności (Gabriel García Márquez, Muza S.A., 2012).'"
-      [dateRented]="'28.10.2025'"
-      [dateReturned]="'28.11.2025'"
-    ></history-item>
+    <app-recent-rentals-list></app-recent-rentals-list>
   </div>
 </div>

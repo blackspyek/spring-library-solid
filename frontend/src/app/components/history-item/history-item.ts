@@ -1,8 +1,7 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
-  selector: 'history-item',
+  selector: 'app-history-item',
   templateUrl: './history-item.html',
   styleUrl: './history-item.scss',
   standalone: true,

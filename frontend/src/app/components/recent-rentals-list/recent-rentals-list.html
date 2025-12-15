@@ -1,0 +1,18 @@
+@if (isLoading()) {
+  <div class="flex items-center justify-center py-4">
+    <mat-spinner diameter="32"></mat-spinner>
+  </div>
+} @else if (recentRentals().length === 0) {
+  <div class="text-center py-4 text-[color:var(--base-gray-lighter)]">
+    <p>Brak historii wypożyczeń</p>
+
+  </div>
+} @else {
+  @for (rental of recentRentals(); track rental.id) {
+    <app-history-item
+      [fullDescription]="rental | rentalDescription"
+      [dateRented]="rental.rentedAt"
+      [dateReturned]="rental.returnedAt"
+    ></app-history-item>
+  }
+}

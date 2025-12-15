@@ -108,3 +108,13 @@ export interface Option {
   value: string;
   label: string;
 }
+
+export interface RentalHistoryItem {
+  id: number;
+  itemTitle: string;
+  itemAuthor: string;
+  branchName: string;
+  branchAddress: string;
+  rentedAt: string;
+  returnedAt: string;
+}
