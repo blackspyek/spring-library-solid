@@ -1,0 +1,81 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: library-reminder-job
+  namespace: library
+spec:
+  schedule: "0 9 * * *" # Codziennie o 9:00
+  timeZone: "Europe/Warsaw"
+  concurrencyPolicy: Forbid # Nie uruchamiaj jeśli poprzedni job jeszcze trwa
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 600 # Timeout 10 minut
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: reminder
+              image: your-registry/library:latest # Ten sam image co główna apka
+              env:
+                - name: APP_MODE
+                  value: "reminder"
+                - name: SPRING_DATASOURCE_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: library-secrets
+                      key: database-url
+                - name: SPRING_DATASOURCE_USERNAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: library-secrets
+                      key: database-username
+                - name: SPRING_DATASOURCE_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: library-secrets
+                      key: database-password
+                - name: JWT_SECRET_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: library-secrets
+                      key: jwt-secret
+                - name: ADMIN_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: library-secrets
+                      key: admin-password
+                - name: MAIL_HOST
+                  valueFrom:
+                    configMapKeyRef:
+                      name: library-config
+                      key: mail-host
+                - name: MAIL_PORT
+                  valueFrom:
+                    configMapKeyRef:
+                      name: library-config
+                      key: mail-port
+                - name: MAIL_USERNAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: library-secrets
+                      key: mail-username
+                - name: MAIL_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: library-secrets
+                      key: mail-password
+                - name: REMINDER_FROM_EMAIL
+                  valueFrom:
+                    configMapKeyRef:
+                      name: library-config
+                      key: reminder-from-email
+              resources:
+                requests:
+                  memory: "256Mi"
+                  cpu: "100m"
+                limits:
+                  memory: "512Mi"
+                  cpu: "500m"
