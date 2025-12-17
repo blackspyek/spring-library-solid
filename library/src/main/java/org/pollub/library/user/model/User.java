@@ -10,6 +10,7 @@ import lombok.Setter;
 import org.pollub.library.branch.model.LibraryBranch;
 import org.pollub.library.item.model.LibraryItem;
 import org.springframework.security.core.GrantedAuthority;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -63,6 +64,9 @@ public class User implements IUser {
     @ManyToOne
     @JoinColumn(name = "favourite_branch_id")
     private LibraryBranch favouriteBranch;
+
+    @Embedded
+    private NotificationSettings notificationSettings = new NotificationSettings();
 
 
     @Override

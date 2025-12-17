@@ -7,6 +7,8 @@ import org.pollub.library.branch.model.LibraryBranch;
 import org.pollub.library.auth.model.ChangePasswordDto;
 import org.pollub.library.user.model.RoleSetDto;
 import org.pollub.library.user.model.User;
+import org.pollub.library.user.model.NotificationSettings;
+import org.pollub.library.user.model.NotificationSettingsDto;
 import org.pollub.library.user.service.IUserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -79,6 +81,23 @@ public class UserController {
     public ResponseEntity<LibraryBranch> getFavouriteBranch(@AuthenticationPrincipal UserDetails userDetails) {
         LibraryBranch branch = userService.getFavouriteBranch(userDetails.getUsername());
         return ResponseEntity.ok(branch);
+    }
+
+    @GetMapping("/notification-settings")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<NotificationSettingsDto> getNotificationSettings(@AuthenticationPrincipal UserDetails userDetails) {
+        NotificationSettings settings = userService.getNotificationSettings(userDetails.getUsername());
+        return ResponseEntity.ok(NotificationSettingsDto.fromEntity(settings));
+    }
+
+    @PutMapping("/notification-settings")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<NotificationSettingsDto> updateNotificationSettings(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @Valid @RequestBody NotificationSettingsDto dto
+    ) {
+        NotificationSettings settings = userService.updateNotificationSettings(userDetails.getUsername(), dto);
+        return ResponseEntity.ok(NotificationSettingsDto.fromEntity(settings));
     }
 
 }

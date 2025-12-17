@@ -34,6 +34,7 @@ public abstract class LibraryItem {
 
     private LocalDateTime rentedAt;
     private LocalDateTime dueDate;
+    private LocalDateTime reminderSentAt;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

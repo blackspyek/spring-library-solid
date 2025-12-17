@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Przypomnienie o terminie zwrotu</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 0;
+      }
+      .header {
+        background-color: #2563eb;
+        color: white;
+        padding: 30px 20px;
+        text-align: center;
+        border-radius: 8px 8px 0 0;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 24px;
+      }
+      .content {
+        background-color: #ffffff;
+        padding: 30px;
+        border-left: 1px solid #e2e8f0;
+        border-right: 1px solid #e2e8f0;
+      }
+      .book-info {
+        background-color: #f8fafc;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border-left: 4px solid #2563eb;
+      }
+      .book-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #1e40af;
+        margin: 0 0 10px 0;
+      }
+      .due-date-box {
+        background-color: #fef2f2;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        margin: 20px 0;
+        border: 1px solid #fecaca;
+      }
+      .due-date {
+        font-size: 22px;
+        font-weight: bold;
+        color: #dc2626;
+        margin: 0;
+      }
+      .due-label {
+        font-size: 14px;
+        color: #991b1b;
+        margin-bottom: 5px;
+      }
+      .footer {
+        background-color: #f1f5f9;
+        padding: 20px;
+        text-align: center;
+        font-size: 12px;
+        color: #64748b;
+        border-radius: 0 0 8px 8px;
+        border: 1px solid #e2e8f0;
+        border-top: none;
+      }
+      .footer p {
+        margin: 5px 0;
+      }
+      .greeting {
+        font-size: 16px;
+        margin-bottom: 15px;
+      }
+      .signature {
+        margin-top: 25px;
+        padding-top: 15px;
+        border-top: 1px solid #e2e8f0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>📚 Biblioteka - Przypomnienie</h1>
+      </div>
+      <div class="content">
+        <p class="greeting">
+          Cześć <strong th:text="${userName}">Użytkowniku</strong>!
+        </p>
+
+        <p>
+          Chcielibyśmy Ci przypomnieć, że za
+          <strong th:text="${dueDaysLeft}">3</strong> dni mija termin zwrotu
+          wypożyczonej pozycji:
+        </p>
+
+        <div class="book-info">
+          <p class="book-title" th:text="${bookTitle}">Tytuł książki</p>
+        </div>
+
+        <div class="due-date-box">
+          <p class="due-label">Termin zwrotu</p>
+          <p class="due-date" th:text="${dueDate}">01.01.2025</p>
+        </div>
+
+        <p>
+          Prosimy o terminowy zwrot książki do jednej z naszych filii lub
+          przedłużenie wypożyczenia w aplikacji.
+        </p>
+
+        <p>
+          W przypadku przekroczenia terminu zwrotu mogą zostać naliczone opłaty
+          za przetrzymanie.
+        </p>
+
+        <div class="signature">
+          <p>Pozdrawiamy serdecznie,<br /><strong>Zespół Biblioteki</strong></p>
+        </div>
+      </div>
+      <div class="footer">
+        <p>
+          Ta wiadomość została wysłana automatycznie. Prosimy nie odpowiadać na
+          nią.
+        </p>
+        <p>
+          Aby zmienić ustawienia powiadomień, odwiedź swój profil w aplikacji
+          bibliotecznej.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
