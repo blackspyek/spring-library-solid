@@ -7,6 +7,7 @@ import { BookService } from '../../services/book.service';
 import { FormsModule } from '@angular/forms';
 import { debounceTime, Subject, forkJoin } from 'rxjs';
 import {SortSelectComponent} from '../../components/sort-select/sort-select';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'catalog',
@@ -39,7 +40,7 @@ export class Catalog implements OnInit {
   currentSelectionStatus = signal<SelectOption | null>(null);
   currentSelectionPublisher = signal<SelectOption | null>(null);
 
-  constructor(private bookService: BookService) {
+  constructor(private bookService: BookService, private route:ActivatedRoute) {
     effect(() => {
       const statusOpt = this.currentSelectionStatus();
       const newStatus = statusOpt ? String(statusOpt.value) : null;
@@ -73,12 +74,21 @@ export class Catalog implements OnInit {
 
   ngOnInit() {
 
+    this.route.queryParamMap.subscribe(params => {
+      const q = params.get('q');
+      if (q !== null) {
+        this.searchQuery = q;
+        this.currentPage = 0;
+        this.loadBooks();
+      }
+    });
+
     this.searchSubject.pipe(debounceTime(500)).subscribe(() => {
       this.currentPage = 0;
       this.loadBooks();
     });
 
-    this.loadFiltersAndBooks()
+    this.loadFiltersAndBooks();
 
   }
 

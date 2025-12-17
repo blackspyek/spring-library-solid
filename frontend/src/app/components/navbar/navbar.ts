@@ -27,7 +27,7 @@ export class Navbar implements OnInit {
   platformId = Inject(PLATFORM_ID);
   mobileNavItems: NavItem[] = [
     { label: 'Start', icon: 'home', link: '/' },
-    { label: 'Katalog', icon: 'list', link: '/katalog' },
+    { label: 'Katalog', icon: 'list', link: '/catalog' },
     { label: 'Moja karta', icon: 'none', link: '/moja-karta' },
     { label: 'Konto', icon: 'person', link: '/profil' },
 
@@ -35,7 +35,7 @@ export class Navbar implements OnInit {
   ];
 
   desktopNavItems = [
-    { label: 'Strona główna', link: '/home' },
+    { label: 'Strona główna', link: '' },
     { label: 'Katalog', link: '/catalog' },
   ];
 
