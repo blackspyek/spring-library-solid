@@ -1,17 +1,17 @@
 <h2
-  class="text-2xl font-bold text-[color:var(--base-blue-darker)] flex justify-between items-center px-6 pt-8 pb-2"
+  class="text-2xl font-bold text-[color:var(--base-btn-secondary-bg)] flex justify-between items-center px-6 pt-8 pb-2"
 >
   {{ dialogType === 'rent' ? 'Aktywne wypożyczenia' : 'Aktywne rezerwacje' }}
   <button
     (click)="onNoClick()"
     aria-label="Zamknij okno"
-    class="p-1 focus:outline-none cursor-pointer"
+    class="p-2 rounded-lg bg-[color:var(--white-to-dark-gray)] focus:outline-none cursor-pointer transition duration-200"
   >
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill="currentColor"
-      class="w-6 h-6 text-gray-400 hover:text-gray-600 transition"
+      class="w-6 h-6 text-[color:var(--gray-to-yellow)] hover:text-[color:var(--base-gray-darker-catalog)] transition"
     >
       <path
         fill-rule="evenodd"

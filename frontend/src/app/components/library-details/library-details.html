@@ -1,15 +1,18 @@
 <div
-  class="bg-[color:var(--base-gray-light)] rounded-lg p-3 border border-[color:var(--base-border-gray)] flex flex-col items-start justify-start gap-8 sm:flex-row sm:justify-between sm:items-center"
+  class="bg-[color:var(--gray-library-info)] rounded-lg p-3 border border-[color:var(--base-border-gray)] flex flex-col items-start justify-start gap-8 sm:flex-row sm:justify-between sm:items-center"
 >
   <div class="flex flex-col">
-    <p class="text-md font-normal text-[color:var(--base-gray-darker)]" [innerHTML]="libraryName"></p>
-    <p class="text-xs font-light text-[color:var(--base-gray-darker)] mb-2">
+    <p
+      class="text-md font-normal text-[color:var(--gray-library-details)]"
+      [innerHTML]="libraryName"
+    ></p>
+    <p class="text-xs font-light text-[color:var(--gray-library-details)] mb-2">
       {{ libraryAddress }}
     </p>
 
     <button
       (click)="onChangeLibraryClick()"
-      class="bg-[color:var(--base-blue-lighter)] hover:bg-[color:var(--base-blue-darker)] text-[color:var(--base-white)] text-sm py-2 px-4 rounded-lg transition duration-150 mt-2 cursor-pointer"
+      class="bg-[color:var(--base-blue-lighter)] hover:bg-[color:var(--base-blue-darker)] text-[color:var(--base-white)] text-sm py-2 px-4 rounded-lg transition duration-150 mt-2 cursor-pointer border border-[color:var(--gray-library-details)]"
     >
       Zmień Bibliotekę
     </button>

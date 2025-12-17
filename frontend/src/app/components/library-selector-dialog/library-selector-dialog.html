@@ -1,16 +1,47 @@
-<div class="dialog-container">
-  <div class="dialog-header">
-    <h2>{{ dialogTitle }}</h2>
-    <button mat-icon-button class="close-button" (click)="onCancel()">
-      <mat-icon>close</mat-icon>
+<div class="p-6 w-[850px] max-w-[90vw] box-border">
+  <div class="flex justify-between items-start mb-2">
+    <h2 class="pt-2 m-0 text-2xl font-semibold text-[color:var(--base-btn-secondary-bg)]">
+      {{ dialogTitle }}
+    </h2>
+    <button
+      (click)="onCancel()"
+      aria-label="Zamknij okno"
+      class="p-2 -mr-2 -mt-2 rounded-lg bg-[color:var(--white-to-dark-gray)] focus:outline-none cursor-pointer transition duration-200"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        class="w-6 h-6 text-[color:var(--gray-to-yellow)] hover:text-[color:var(--base-gray-darker-catalog)] transition"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z"
+          clip-rule="evenodd"
+        />
+      </svg>
     </button>
   </div>
 
-  <p class="dialog-subtitle">{{ dialogSubtitle }}</p>
+  <div class="pb-5 pe-60">
+    <hr class="border-[color:var(--base-gray-light)]" />
+  </div>
 
-  <div class="search-container">
-    <mat-form-field appearance="outline" class="search-field">
-      <mat-icon matPrefix>search</mat-icon>
+  <p class="text-[color:var(--base-gray-darker-catalog)] mb-5 text-[0.95rem]">
+    {{ dialogSubtitle }}
+  </p>
+
+  <div class="mb-5">
+    <mat-form-field
+      appearance="outline"
+      class="w-full"
+      style="
+        --mdc-outlined-text-field-focus-outline-color: var(--base-gray-darker-catalog);
+        --mdc-outlined-text-field-hover-outline-color: var(--base-gray-darker-catalog);
+        --mdc-outlined-text-field-focus-label-text-color: var(--base-gray-darker-catalog);
+      "
+    >
+      <mat-icon matPrefix class="text-[color:var(--base-gray-darker-catalog)]">search</mat-icon>
       <input
         matInput
         placeholder="Wyszukaj: miasto, adres, filia..."
@@ -20,45 +51,86 @@
     </mat-form-field>
   </div>
 
-  <div class="content-container">
-    <div class="map-section">
-      <h3>Lokalizacja na mapie:</h3>
-      <div #mapContainer class="map-container"></div>
-      <p class="map-hint">Kliknij na pinezkę, aby wybrać filię</p>
+  <div class="flex flex-col md:flex-row gap-6 mb-6">
+    <div class="flex-1 min-w-0">
+      <h3 class="mb-3 text-base font-medium text-[color:var(--base-gray-darker-catalog)]">
+        Lokalizacja na mapie:
+      </h3>
+      <div
+        #mapContainer
+        class="h-[200px] md:h-[280px] rounded-lg border border-[color:var(--base-input-bg)] overflow-hidden"
+      ></div>
+      <p class="mt-2 text-sm text-[color:var(--placeholder-gray)] italic">
+        Kliknij na pinezkę, aby wybrać filię
+      </p>
     </div>
 
-    <div class="list-section">
-      <h3>Wybór z listy:</h3>
-      <div #branchListContainer class="branch-list" role="listbox">
+    <div class="flex-1 min-w-0 flex flex-col">
+      <h3 class="mb-3 text-base font-medium text-[color:var(--base-gray-darker-catalog)]">
+        Wybór z listy:
+      </h3>
+      <div
+        #branchListContainer
+        class="max-h-[200px] md:max-h-[300px] overflow-y-auto border border-[color:var(--branch-border)] rounded-lg"
+        role="listbox"
+      >
         @for (branch of filteredBranches(); track branch.id) {
           <div
-            class="branch-item"
             [id]="'branch-item-' + branch.id"
-            [class.selected]="isBranchSelected(branch)"
             (click)="selectBranch(branch)"
             (keydown.enter)="selectBranch(branch)"
             (keydown.space)="selectBranch(branch)"
             tabindex="0"
             role="option"
             [attr.aria-selected]="isBranchSelected(branch)"
+            class="p-3 px-4 border-b border-[color:var(--branch-border)] cursor-pointer transition-colors duration-200 last:border-b-0 hover:bg-[color:var(--branch-hover)]"
+            [class.bg-[color:var(--branch-background-color)]]="isBranchSelected(branch)"
+            [class.border-l-[3px]]="isBranchSelected(branch)"
+            [class.border-l-[color:var(--branch-border-left)]]="isBranchSelected(branch)"
           >
-            <mat-radio-button [checked]="isBranchSelected(branch)" (change)="selectBranch(branch)">
-              <div class="branch-info">
-                <span class="branch-name">{{ getBranchDisplayName(branch) }}</span>
-                <span class="branch-address">{{ branch.address }}, {{ branch.city }}</span>
+            <mat-radio-button
+              class="w-full pointer-events-none"
+              [checked]="isBranchSelected(branch)"
+              style="
+                --mdc-radio-selected-icon-color: var(--branch-border-left);
+                --mdc-radio-selected-hover-icon-color: var(--branch-border-left);
+                --mdc-radio-selected-pressed-icon-color: var(--branch-border-left);
+                --mat-radio-checked-ripple-color: var(--branch-border-left);
+              "
+            >
+              <div class="flex flex-col gap-[2px] ml-2">
+                <span class="font-semibold text-[0.95rem] text-[color:var(--branch-border-left)]">
+                  {{ getBranchDisplayName(branch) }}
+                </span>
+                <span class="text-[0.85rem] text-[color:var(--base-gray-darker-catalog)]">
+                  {{ branch.address }}, {{ branch.city }}
+                </span>
               </div>
             </mat-radio-button>
           </div>
         } @empty {
-          <p class="no-results">Nie znaleziono filii spełniających kryteria wyszukiwania.</p>
+          <p class="p-6 text-center text-[color:var(--base-gray-darker-catalog)]">
+            Nie znaleziono filii spełniających kryteria wyszukiwania.
+          </p>
         }
       </div>
     </div>
   </div>
 
-  <div class="dialog-actions">
-    <button mat-stroked-button color="primary" (click)="onCancel()">ANULUJ</button>
-    <button mat-flat-button color="primary" [disabled]="!selectedBranchId()" (click)="onConfirm()">
+  <div class="flex justify-end gap-3">
+    <button
+      mat-stroked-button
+      (click)="onCancel()"
+      class="!min-w-[140px] !px-4 !py-2 !font-medium !rounded-md !transition-all !duration-150 cursor-pointer !bg-[color:var(--white-to-yellow)] !border !border-[color:var(--edit-button-bg)] !text-[color:var(--edit-button-bg)] hover:!bg-[color:var(--light-gray-to-light-yellow)]"
+    >
+      ANULUJ
+    </button>
+    <button
+      mat-flat-button
+      [disabled]="!selectedBranchId()"
+      (click)="onConfirm()"
+      class="!min-w-[140px] !px-4 !py-2 !font-medium !rounded-md !transition-all !duration-150 cursor-pointer !bg-[color:var(--edit-button-bg)] hover:!bg-[color:var(--blue-hover)] !text-[color:var(--white-to-yellow)] disabled:!bg-black/10 disabled:!text-black/40 disabled:!cursor-not-allowed"
+    >
       {{ confirmButtonText }}
     </button>
   </div>
