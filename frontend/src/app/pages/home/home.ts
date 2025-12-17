@@ -18,7 +18,7 @@ export class Home {
   constructor(private router: Router) {}
 
   onSearchClick(){
-    this.router.navigate(['/catalog'], {
+    this.router.navigate(['/katalog'], {
       queryParams: { q: this.searchTerm }});
   }
 }

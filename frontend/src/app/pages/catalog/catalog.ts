@@ -50,7 +50,7 @@ export class Catalog implements OnInit {
   currentSelectionStatus = signal<SelectOption | null>(null);
   currentSelectionPublisher = signal<SelectOption | null>(null);
 
-  constructor(private bookService: BookService, private route:ActivatedRoute) {
+  constructor(private route:ActivatedRoute) {
     effect(() => {
       const statusOpt = this.currentSelectionStatus();
       const newStatus = statusOpt ? String(statusOpt.value) : null;
