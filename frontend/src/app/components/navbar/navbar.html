@@ -69,10 +69,16 @@
   <div class="flex items-center gap-6">
 
     <div class="flex items-center gap-4 text-sm font-medium">
-      <div class="flex items-center cursor-pointer hover:text-gray-300 transition-colors">
+      <button
+        type="button"
+        class="flex items-center cursor-pointer hover:text-gray-300 transition-colors bg-transparent border-none text-inherit"
+        (click)="openFeedbackDialog()"
+        aria-haspopup="dialog"
+        aria-label="Zgłoś uwagę dotyczącą dostępności lub funkcjonalności"
+      >
         <span class="material-icons text-xl mr-1"> error_outline </span>
         <span class="hidden lg:inline">Zgłoś uwagę</span>
-      </div>
+      </button>
 
       <div class="flex items-center gap-3 border-l border-white/20 pl-4">
         <button

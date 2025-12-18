@@ -1,0 +1,156 @@
+<div class="feedback-dialog-container">
+  @if (isSuccess()) {
+    <!-- Success View -->
+    <div class="success-view" role="alert" aria-live="polite">
+      <div class="success-icon-wrapper">
+        <mat-icon class="success-icon">check_circle</mat-icon>
+      </div>
+      <h2 class="success-title">Dziękujemy za zgłoszenie!</h2>
+      <p class="success-message">
+        Twoja uwaga została przyjęta i zostanie rozpatrzona przez nasz zespół.
+      </p>
+      <button
+        mat-flat-button
+        class="close-button"
+        (click)="onSuccessClose()"
+        aria-label="Zamknij okno"
+      >
+        ZAMKNIJ
+      </button>
+    </div>
+  } @else {
+    <!-- Form View -->
+    <header class="dialog-header">
+      <h2 id="feedback-dialog-title" class="dialog-title">
+        <mat-icon aria-hidden="true">feedback</mat-icon>
+        Zgłoś uwagę
+      </h2>
+      <button
+        type="button"
+        class="close-icon-button"
+        (click)="onClose()"
+        aria-label="Zamknij okno dialogowe"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </header>
+
+    <div class="dialog-divider"></div>
+
+    <p class="dialog-description">
+      Pomóż nam ulepszyć dostępność i użyteczność aplikacji. Twoja opinia jest dla nas ważna.
+    </p>
+
+    <!-- Error Messages -->
+    @if (errorMessage()) {
+      <div 
+        class="error-banner" 
+        [class.rate-limited]="isRateLimited()"
+        role="alert" 
+        aria-live="assertive"
+      >
+        <mat-icon aria-hidden="true">{{ isRateLimited() ? 'schedule' : 'error' }}</mat-icon>
+        <span>{{ errorMessage() }}</span>
+      </div>
+    }
+
+    <form [formGroup]="feedbackForm" (ngSubmit)="onSubmit()" class="feedback-form">
+      <!-- Category Select -->
+      <div class="form-field">
+        <label for="category-select" class="field-label">
+          Kategoria <span class="required" aria-hidden="true">*</span>
+        </label>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-select
+            id="category-select"
+            formControlName="category"
+            placeholder="Wybierz kategorię"
+            aria-required="true"
+            [attr.aria-invalid]="hasError('category', 'required')"
+          >
+            @for (cat of categories; track cat.value) {
+              <mat-option [value]="cat.value">
+                <mat-icon class="category-icon" aria-hidden="true">{{ cat.icon }}</mat-icon>
+                {{ cat.label }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        @if (hasError('category', 'required')) {
+          <p class="field-error" role="alert">Wybierz kategorię zgłoszenia.</p>
+        }
+      </div>
+
+      <!-- Message Textarea -->
+      <div class="form-field">
+        <label for="message-textarea" class="field-label">
+          Treść zgłoszenia <span class="required" aria-hidden="true">*</span>
+        </label>
+        <mat-form-field appearance="outline" class="full-width">
+          <textarea
+            matInput
+            id="message-textarea"
+            formControlName="message"
+            placeholder="Opisz szczegółowo napotkany problem lub sugestię..."
+            rows="5"
+            aria-required="true"
+            [attr.aria-invalid]="hasError('message', 'required') || hasError('message', 'minlength')"
+            [attr.aria-describedby]="'message-counter message-hint'"
+          ></textarea>
+        </mat-form-field>
+        <div class="field-footer">
+          <p id="message-hint" class="field-hint">Minimum 10 znaków</p>
+          <span 
+            id="message-counter" 
+            class="char-counter"
+            [class.near-limit]="messageLength > maxMessageLength * 0.9"
+            aria-live="polite"
+          >
+            {{ messageLength }}/{{ maxMessageLength }}
+          </span>
+        </div>
+        @if (hasError('message', 'required')) {
+          <p class="field-error" role="alert">Treść zgłoszenia jest wymagana.</p>
+        }
+        @if (hasError('message', 'minlength')) {
+          <p class="field-error" role="alert">Treść musi mieć co najmniej 10 znaków.</p>
+        }
+      </div>
+
+      <!-- Current Page Info -->
+      <div class="page-info">
+        <mat-icon aria-hidden="true">link</mat-icon>
+        <span class="page-url" title="{{ currentPageUrl }}">
+          {{ currentPageUrl || 'Strona aplikacji' }}
+        </span>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="dialog-actions">
+        <button
+          type="button"
+          mat-stroked-button
+          class="cancel-button"
+          (click)="onClose()"
+          [disabled]="isLoading()"
+        >
+          ANULUJ
+        </button>
+        <button
+          type="submit"
+          mat-flat-button
+          class="submit-button"
+          [disabled]="feedbackForm.invalid || isLoading()"
+        >
+          @if (isLoading()) {
+            <mat-spinner diameter="20" class="button-spinner"></mat-spinner>
+            <span>WYSYŁAM...</span>
+          } @else {
+            <mat-icon aria-hidden="true">send</mat-icon>
+            <span>WYŚLIJ</span>
+          }
+        </button>
+      </div>
+    </form>
+  }
+</div>

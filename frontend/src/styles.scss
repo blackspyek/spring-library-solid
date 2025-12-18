@@ -187,6 +187,7 @@ body {
 .library-selector-dialog .mat-mdc-dialog-surface,
 .user-rentals-dialog .mat-mdc-dialog-surface,
 .user-reservations-dialog .mat-mdc-dialog-surface,
-.extend-rental-dialog .mat-mdc-dialog-surface{
+.extend-rental-dialog .mat-mdc-dialog-surface,
+.feedback-dialog .mat-mdc-dialog-surface {
   background-color: var(--white-to-yellow) !important;
 }
