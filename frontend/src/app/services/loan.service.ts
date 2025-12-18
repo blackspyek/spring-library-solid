@@ -7,6 +7,7 @@ import { environment } from '../../environments/environment';
 export interface RentRequest {
   libraryItemId: number;
   userId: number;
+  branchId: number;
 }
 
 @Injectable({

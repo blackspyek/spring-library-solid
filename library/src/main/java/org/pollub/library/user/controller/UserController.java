@@ -14,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/user")
@@ -79,6 +80,23 @@ public class UserController {
     public ResponseEntity<LibraryBranch> getFavouriteBranch(@AuthenticationPrincipal UserDetails userDetails) {
         LibraryBranch branch = userService.getFavouriteBranch(userDetails.getUsername());
         return ResponseEntity.ok(branch);
+    }
+
+    @GetMapping("/employee-branch")
+    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN')")
+    public ResponseEntity<LibraryBranch> getEmployeeBranch(@AuthenticationPrincipal UserDetails userDetails) {
+        LibraryBranch branch = userService.getEmployeeBranch(userDetails.getUsername());
+        if (branch == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(branch);
+    }
+
+    @GetMapping("/search")
+    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN')")
+    public ResponseEntity<List<User>> searchUsers(@RequestParam String query) {
+        List<User> users = userService.searchUsers(query);
+        return ResponseEntity.ok(users);
     }
 
 }

@@ -105,6 +105,12 @@ export class UserService {
     return this.http.get<LibraryBranch>(`${this.API_URL}/favourite-branch`);
   }
 
+  getEmployeeBranch(): Observable<LibraryBranch | null> {
+    return this.http.get<LibraryBranch>(`${this.API_URL}/employee-branch`).pipe(
+      catchError(() => of(null)),
+    );
+  }
+
   changePassword(request: ChangePasswordRequest): Observable<ApiTextResponse> {
     const passwordUrl = `${this.API_URL}/password`;
 

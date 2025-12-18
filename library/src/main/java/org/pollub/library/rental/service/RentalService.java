@@ -84,7 +84,6 @@ public class RentalService implements IRentalService{
 
         this.rentalValidator.checkAbilityToReturnOrThrow(libraryItem);
 
-        // Save rental history before clearing rental data
         saveRentalHistory(libraryItem);
 
         updateBookToBeAvailableToRent(libraryItem);
@@ -95,6 +94,9 @@ public class RentalService implements IRentalService{
 
     private void saveRentalHistory(LibraryItem libraryItem) {
         if (libraryItem.getRentedByUser() != null && libraryItem.getRentedAt() != null) {
+            if (libraryItem.getRentedFromBranch() == null) {
+                return;
+            }
             RentalHistory history = RentalHistory.builder()
                     .item(libraryItem)
                     .user(libraryItem.getRentedByUser())

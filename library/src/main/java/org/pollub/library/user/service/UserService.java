@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -104,6 +105,22 @@ public class UserService implements IUserService {
     public LibraryBranch getFavouriteBranch(String username) {
         User user = findByUsername(username);
         return user.getFavouriteBranch();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public LibraryBranch getEmployeeBranch(String username) {
+        User user = userRepository.findByUsernameWithEmployeeBranch(username.toLowerCase())
+                .orElseThrow(() -> new UserNotFoundException(username));
+        return user.getEmployeeBranch();
+    }
+
+    @Override
+    public List<User> searchUsers(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return List.of();
+        }
+        return userRepository.searchUsers(query.trim());
     }
 
 }

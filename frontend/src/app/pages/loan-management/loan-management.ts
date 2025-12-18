@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 import { LoanService } from '../../services/loan.service';
 import { UserService } from '../../services/user.service';
-import { SingleBook, User } from '../../types';
-import { debounceTime, Subject, catchError, of, forkJoin } from 'rxjs';
+import { SingleBook, User, LibraryBranch } from '../../types';
+import { debounceTime, Subject } from 'rxjs';
 import { QrScannerComponent } from '../../components/qr-scanner/qr-scanner';
 
 @Component({
@@ -25,6 +25,11 @@ export class LoanManagement implements OnInit {
   userLoans = signal<SingleBook[]>([]);
   userSearchError = signal<string | null>(null);
   isSearchingUser = signal(false);
+  searchResults = signal<User[]>([]);
+
+  employeeBranch = signal<LibraryBranch | null>(null);
+  employeeBranchError = signal<string | null>(null);
+  isLoadingBranch = signal(false);
 
   bookSearchQuery = '';
   availableBooks = signal<SingleBook[]>([]);
@@ -53,6 +58,30 @@ export class LoanManagement implements OnInit {
 
   ngOnInit() {
     this.loadAvailableBooks();
+    this.loadEmployeeBranch();
+  }
+
+  loadEmployeeBranch() {
+    this.isLoadingBranch.set(true);
+    this.employeeBranchError.set(null);
+    this.userService.getEmployeeBranch().subscribe({
+      next: (branch) => {
+        this.isLoadingBranch.set(false);
+        if (branch) {
+          this.employeeBranch.set(branch);
+        } else {
+          this.employeeBranchError.set(
+            'Bibliotekarka nie jest obecnie zatrudniona w żadnej bibliotece'
+          );
+        }
+      },
+      error: () => {
+        this.isLoadingBranch.set(false);
+        this.employeeBranchError.set(
+          'Bibliotekarka nie jest obecnie zatrudniona w żadnej bibliotece'
+        );
+      },
+    });
   }
 
   onUserSearchChange() {
@@ -62,41 +91,32 @@ export class LoanManagement implements OnInit {
   searchUser(query: string) {
     this.isSearchingUser.set(true);
     this.userSearchError.set(null);
+    this.searchResults.set([]);
 
-    this.userService
-      .findByUsername(query)
-      .pipe(
-        catchError(() => this.userService.findByEmail(query)),
-        catchError(() => {
-          // Try parsing as ID
-          const id = parseInt(query, 10);
-          if (!isNaN(id)) {
-            return this.userService.findById(id);
-          }
-          return of(null);
-        }),
-      )
-      .subscribe({
-        next: (user) => {
-          this.isSearchingUser.set(false);
-          if (user) {
-            this.selectUser(user);
-          } else {
-            this.userSearchError.set('Nie znaleziono użytkownika');
-            this.selectedUser.set(null);
-            this.userLoans.set([]);
-          }
-        },
-        error: () => {
-          this.isSearchingUser.set(false);
-          this.userSearchError.set('Błąd podczas wyszukiwania użytkownika');
-        },
-      });
+    this.userService.searchUsers(query).subscribe({
+      next: (users) => {
+        this.isSearchingUser.set(false);
+        if (users.length === 0) {
+          this.userSearchError.set('Nie znaleziono użytkownika');
+          this.selectedUser.set(null);
+          this.userLoans.set([]);
+        } else if (users.length === 1) {
+          this.selectUser(users[0]);
+        } else {
+          this.searchResults.set(users);
+        }
+      },
+      error: () => {
+        this.isSearchingUser.set(false);
+        this.userSearchError.set('Błąd podczas wyszukiwania użytkownika');
+      },
+    });
   }
 
   selectUser(user: User) {
     this.selectedUser.set(user);
     this.userSearchError.set(null);
+    this.searchResults.set([]);
     this.loadUserLoans(user.id);
   }
 
@@ -112,6 +132,7 @@ export class LoanManagement implements OnInit {
     this.userLoans.set([]);
     this.userSearchQuery = '';
     this.userSearchError.set(null);
+    this.searchResults.set([]);
   }
 
   openQrScanner() {
@@ -172,31 +193,41 @@ export class LoanManagement implements OnInit {
       (book) =>
         book.title.toLowerCase().includes(lowerQuery) ||
         book.author.toLowerCase().includes(lowerQuery) ||
-        book.isbn?.toLowerCase().includes(lowerQuery),
+        book.isbn?.toLowerCase().includes(lowerQuery)
     );
     this.filteredBooks.set(filtered);
   }
 
   rentBook(book: SingleBook) {
     const user = this.selectedUser();
+    const branch = this.employeeBranch();
+
     if (!user) {
       this.showMessage('error', 'Najpierw wybierz użytkownika');
       return;
     }
 
+    if (!branch) {
+      this.showMessage('error', 'Bibliotekarka nie jest obecnie zatrudniona w żadnej bibliotece');
+      return;
+    }
+
     this.isProcessing.set(true);
-    this.loanService.rentItem({ libraryItemId: book.id, userId: user.id }).subscribe({
-      next: () => {
-        this.isProcessing.set(false);
-        this.showMessage('success', `Książka "${book.title}" została wypożyczona`);
-        this.loadAvailableBooks();
-        this.loadUserLoans(user.id);
-      },
-      error: (err) => {
-        this.isProcessing.set(false);
-        this.showMessage('error', err.error?.message || 'Błąd podczas wypożyczania');
-      },
-    });
+    this.loanService
+      .rentItem({ libraryItemId: book.id, userId: user.id, branchId: branch.id })
+      .subscribe({
+        next: () => {
+          this.isProcessing.set(false);
+          this.showMessage('success', `Książka "${book.title}" została wypożyczona`);
+          this.loadAvailableBooks();
+          this.loadUserLoans(user.id);
+        },
+        error: (err) => {
+          this.isProcessing.set(false);
+          const errorMessage = this.extractErrorMessage(err);
+          this.showMessage('error', errorMessage);
+        },
+      });
   }
 
   returnBook(book: SingleBook) {
@@ -236,7 +267,20 @@ export class LoanManagement implements OnInit {
     });
   }
 
-  // ========== HELPERS ==========
+
+  extractErrorMessage(err: any): string {
+    if (err.error?.errors?.error && Array.isArray(err.error.errors.error)) {
+      const errorMessages = err.error.errors.error;
+      if (errorMessages.includes('User cannot rent more items')) {
+        return 'Użytkownik nie może wypożyczyć więcej książek';
+      }
+      return errorMessages.join('. ');
+    }
+    if (err.error?.message && err.error.message !== 'An unexpected error occurred') {
+      return err.error.message;
+    }
+    return 'Błąd podczas wypożyczania';
+  }
 
   showMessage(type: 'success' | 'error', text: string) {
     this.actionMessage.set({ type, text });

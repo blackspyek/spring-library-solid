@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { User } from '../types';
+import { catchError, Observable, of } from 'rxjs';
+import { User, LibraryBranch } from '../types';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -9,10 +9,10 @@ import { environment } from '../../environments/environment';
 })
 export class UserService {
   private http = inject(HttpClient);
-  private API_URL = environment.apiUrl + 'users';
+  private API_URL = environment.apiUrl + 'user';
 
   findByUsername(username: string): Observable<User> {
-    return this.http.get<User>(`${this.API_URL}/${username}`);
+    return this.http.get<User>(`${this.API_URL}/username/${username}`);
   }
 
   findByEmail(email: string): Observable<User> {
@@ -25,5 +25,11 @@ export class UserService {
 
   searchUsers(query: string): Observable<User[]> {
     return this.http.get<User[]>(`${this.API_URL}/search?query=${encodeURIComponent(query)}`);
+  }
+
+  getEmployeeBranch(): Observable<LibraryBranch | null> {
+    return this.http
+      .get<LibraryBranch>(`${this.API_URL}/employee-branch`, { withCredentials: true })
+      .pipe(catchError(() => of(null)));
   }
 }

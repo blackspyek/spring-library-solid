@@ -1,266 +1,328 @@
-<div
-  class="flex flex-col w-full min-h-screen px-4 md:px-8 py-6 text-[color:var(--base-gray-darker)]"
->
-  <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl md:text-3xl font-bold text-[color:var(--base-blue-dark)]">
-      Zarządzanie wypożyczeniami
-    </h1>
-  </div>
-
-  @if (actionMessage()) {
-    <div
-      [class]="
-        'mb-4 p-4 rounded-lg text-white font-medium ' +
-        (actionMessage()?.type === 'success' ? 'bg-green-600' : 'bg-red-600')
-      "
-    >
-      {{ actionMessage()?.text }}
+<div class="contents">
+  <div
+    class="flex flex-col w-full min-h-screen px-4 md:px-8 py-6 text-[color:var(--base-gray-darker)]"
+  >
+    <div class="flex items-center justify-between mb-6">
+      <h1 class="text-2xl md:text-3xl font-bold text-[color:var(--base-blue-dark)]">
+        Zarządzanie wypożyczeniami
+      </h1>
     </div>
-  }
 
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <div class="flex flex-col gap-4">
-      <div class="bg-[color:var(--base-form-bg)] rounded-xl shadow-md p-6">
-        <h2 class="text-lg font-semibold mb-4 text-[color:var(--base-blue-dark)]">
-          Wyszukaj czytelnika
-        </h2>
+    @if (actionMessage()) {
+      <div
+        [class]="
+          'mb-4 p-4 rounded-lg text-white font-medium ' +
+          (actionMessage()?.type === 'success'
+            ? 'bg-green-600 [.high-contrast_&]:bg-[var(--base-font-color)] [.high-contrast_&]:text-[var(--nav-base-color)]'
+            : 'bg-red-600 [.high-contrast_&]:bg-[#ff0000]')
+        "
+      >
+        {{ actionMessage()?.text }}
+      </div>
+    }
 
-        <div class="flex gap-2 mb-4">
-          <div
-            class="flex-1 flex items-center gap-2 bg-[color:var(--base-input-bg)] border border-gray-300 rounded-lg px-4 py-2"
-          >
-            <mat-icon class="text-[color:var(--base-gray-lighter)]">search</mat-icon>
-            <input
-              type="text"
-              [(ngModel)]="userSearchQuery"
-              (ngModelChange)="onUserSearchChange()"
-              placeholder="Email, nazwa użytkownika lub ID..."
-              class="flex-1 bg-transparent outline-none text-[color:var(--base-font-color)]"
-            />
-            @if (userSearchQuery) {
-              <button (click)="clearUser()" class="text-gray-400 hover:text-gray-600">
-                <mat-icon>close</mat-icon>
-              </button>
-            }
-          </div>
-          <button
-            (click)="openQrScanner()"
-            class="flex items-center justify-center px-4 py-2 bg-[color:var(--base-blue-dark)] text-white rounded-lg hover:bg-[color:var(--base-blue-darker)] transition-colors"
-            title="Skanuj QR"
-          >
-            <mat-icon>qr_code_scanner</mat-icon>
-          </button>
-        </div>
-
-        @if (isSearchingUser()) {
+    <div class="mb-6 bg-[color:var(--book-bg)] rounded-xl shadow-md p-4">
+      <div class="flex items-center gap-4">
+        <label class="text-sm font-medium text-[color:var(--base-gray-darker)]">Filia:</label>
+        @if (isLoadingBranch()) {
           <div class="flex items-center gap-2 text-[color:var(--base-gray-lighter)]">
             <div
               class="animate-spin h-4 w-4 border-2 border-blue-500 border-t-transparent rounded-full"
             ></div>
-            <span>Szukam...</span>
+            <span>Ładowanie...</span>
           </div>
-        }
-
-        @if (userSearchError()) {
-          <div class="text-red-500 text-sm">{{ userSearchError() }}</div>
-        }
-
-        @if (selectedUser()) {
-          <div
-            class="mt-4 p-4 bg-[color:var(--blue-50)] rounded-lg border border-[color:var(--blue-500)]"
-          >
-            <div class="flex items-center justify-between">
-              <div>
-                <h3 class="font-semibold text-[color:var(--base-blue-dark)]">
-                  {{ selectedUser()?.first_name }} {{ selectedUser()?.last_name }}
-                </h3>
-                <p class="text-sm text-[color:var(--base-gray-lighter)]">
-                  {{ selectedUser()?.email }}
-                </p>
-                <p class="text-sm text-[color:var(--base-gray-lighter)]">
-                  Tel: {{ selectedUser()?.phone_number || '-' }}
-                </p>
-              </div>
-              <button
-                (click)="clearUser()"
-                class="text-gray-400 hover:text-gray-600"
-                title="Wyczyść"
-              >
-                <mat-icon>close</mat-icon>
-              </button>
-            </div>
+        } @else if (employeeBranchError()) {
+          <div class="text-[color:var(--base-red)] [.high-contrast_&]:text-[color:var(--base-red)] font-medium">
+            {{ employeeBranchError() }}
+          </div>
+        } @else if (employeeBranch()) {
+          <div class="flex-1 px-4 py-2 bg-[color:var(--base-input-bg)] border border-gray-300 [.high-contrast_&]:border-[var(--base-font-color)] rounded-lg text-[color:var(--base-font-color)]">
+            {{ employeeBranch()?.name }} - {{ employeeBranch()?.city }}, {{ employeeBranch()?.address }}
           </div>
         }
       </div>
+    </div>
 
-      @if (selectedUser()) {
-        <div class="bg-[color:var(--base-form-bg)] rounded-xl shadow-md p-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="flex flex-col gap-4">
+        <div class="bg-[color:var(--book-bg)] rounded-xl shadow-md p-6">
           <h2 class="text-lg font-semibold mb-4 text-[color:var(--base-blue-dark)]">
-            Wypożyczenia czytelnika ({{ userLoans().length }})
+            Wyszukaj czytelnika
           </h2>
 
-          @if (userLoans().length === 0) {
-            <p class="text-[color:var(--base-gray-lighter)] text-center py-4">
-              Brak aktywnych wypożyczeń
-            </p>
-          } @else {
-            <div class="flex flex-col gap-3 max-h-[400px] overflow-y-auto">
-              @for (loan of userLoans(); track loan.id) {
-                <div
-                  [class]="
-                    'flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-lg border ' +
-                    (isOverdue(loan.dueDate)
-                      ? 'bg-red-50 border-red-300'
-                      : 'bg-gray-50 border-gray-200')
-                  "
+          <div class="flex gap-2 mb-4">
+            <div
+              class="flex-1 flex items-center gap-2 bg-[color:var(--base-input-bg)] border border-gray-300 [.high-contrast_&]:border-[var(--base-font-color)] rounded-lg px-4 py-2"
+            >
+              <mat-icon class="text-[color:var(--base-gray-lighter)]">search</mat-icon>
+              <input
+                type="text"
+                [(ngModel)]="userSearchQuery"
+                (ngModelChange)="onUserSearchChange()"
+                placeholder="Email, nazwa użytkownika lub ID..."
+                class="flex-1 bg-transparent outline-none text-[color:var(--base-font-color)]"
+              />
+              @if (userSearchQuery) {
+                <button (click)="clearUser()" class="text-gray-400 hover:text-gray-600">
+                  <mat-icon>close</mat-icon>
+                </button>
+              }
+            </div>
+            <button
+              (click)="openQrScanner()"
+              class="flex items-center justify-center px-4 py-2 bg-[color:var(--base-blue-dark)] text-[color:var(--white-to-dark-gray)] rounded-lg hover:bg-[color:var(--base-blue-darker)] transition-colors"
+              title="Skanuj QR"
+            >
+              <mat-icon>qr_code_scanner</mat-icon>
+            </button>
+          </div>
+
+          @if (isSearchingUser()) {
+            <div class="flex items-center gap-2 text-[color:var(--base-gray-lighter)]">
+              <div
+                class="animate-spin h-4 w-4 border-2 border-blue-500 border-t-transparent rounded-full"
+              ></div>
+              <span>Szukam...</span>
+            </div>
+          }
+
+          @if (userSearchError()) {
+            <div class="text-red-500 [.high-contrast_&]:text-[#ff6666] text-sm">
+              {{ userSearchError() }}
+            </div>
+          }
+
+          @if (searchResults().length > 0) {
+            <div
+              class="mt-4 border border-gray-200 [.high-contrast_&]:border-[var(--base-font-color)] rounded-lg overflow-hidden max-h-[200px] overflow-y-auto [scrollbar-width:thin] [scrollbar-color:var(--base-blue-lighter)_transparent] [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[var(--base-blue-lighter)] [&::-webkit-scrollbar-thumb]:rounded-[3px]"
+            >
+              @for (user of searchResults(); track user.id) {
+                <button
+                  (click)="selectUser(user)"
+                  class="w-full text-left px-4 py-3 hover:bg-[color:var(--blue-50)] border-b border-gray-100 last:border-b-0 transition-colors cursor-pointer"
                 >
-                  <div class="flex items-center gap-3 mb-2 sm:mb-0">
-                    @if (loan.imageUrl) {
-                      <img
-                        [src]="loan.imageUrl"
-                        [alt]="loan.title"
-                        class="w-12 h-16 object-cover rounded"
-                      />
-                    }
-                    <div>
-                      <h4 class="font-medium text-[color:var(--base-font-color)]">
-                        {{ loan.title }}
-                      </h4>
-                      <p class="text-sm text-[color:var(--base-gray-lighter)]">{{ loan.author }}</p>
-                      <p class="text-xs mt-1">
-                        <span class="text-[color:var(--base-gray-lighter)]">Termin: </span>
-                        <span
-                          [class]="
-                            isOverdue(loan.dueDate)
-                              ? 'text-red-600 font-semibold'
-                              : 'text-[color:var(--base-font-color)]'
-                          "
-                        >
-                          {{ formatDate(loan.dueDate) }}
-                        </span>
-                        @if (isOverdue(loan.dueDate)) {
-                          <span class="ml-1 text-red-600">(przeterminowane)</span>
-                        }
-                      </p>
-                    </div>
+                  <div class="font-medium text-[color:var(--base-font-color)]">
+                    {{ user.name }} {{ user.surname }}
                   </div>
-                  <div class="flex gap-2 w-full sm:w-auto">
-                    <button
-                      (click)="extendLoan(loan)"
-                      [disabled]="isProcessing()"
-                      class="flex-1 sm:flex-none px-3 py-1.5 text-sm bg-[color:var(--base-blue-lighter)] text-white rounded-md hover:opacity-90 transition-opacity disabled:opacity-50"
-                    >
-                      +7 dni
-                    </button>
-                    <button
-                      (click)="returnBook(loan)"
-                      [disabled]="isProcessing()"
-                      class="flex-1 sm:flex-none px-3 py-1.5 text-sm bg-green-600 text-white rounded-md hover:opacity-90 transition-opacity disabled:opacity-50"
-                    >
-                      Zwróć
-                    </button>
+                  <div class="text-sm text-[color:var(--base-gray-lighter)]">
+                    {{ user.email }}
                   </div>
-                </div>
+                </button>
               }
             </div>
           }
+
+          @if (selectedUser()) {
+            <div
+              class="mt-4 p-4 bg-[color:var(--blue-50)] rounded-lg border border-[color:var(--blue-500)]"
+            >
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="font-semibold text-[color:var(--base-blue-dark)]">
+                    {{ selectedUser()?.name }} {{ selectedUser()?.surname }}
+                  </h3>
+                  <p class="text-sm text-[color:var(--base-gray-lighter)]">
+                    {{ selectedUser()?.email }}
+                  </p>
+                  <p class="text-sm text-[color:var(--base-gray-lighter)]">
+                    Tel: {{ selectedUser()?.phone || '-' }}
+                  </p>
+                </div>
+                <button
+                  (click)="clearUser()"
+                  class="text-gray-400 hover:text-gray-600"
+                  title="Wyczyść"
+                >
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+            </div>
+          }
         </div>
-      }
-    </div>
 
-    <div class="bg-[color:var(--base-form-bg)] rounded-xl shadow-md p-6">
-      <h2 class="text-lg font-semibold mb-4 text-[color:var(--base-blue-dark)]">
-        Dostępne książki do wypożyczenia
-      </h2>
+        @if (selectedUser()) {
+          <div class="bg-[color:var(--base-form-bg)] rounded-xl shadow-md p-6">
+            <h2 class="text-lg font-semibold mb-4 text-[color:var(--base-blue-dark)]">
+              Wypożyczenia czytelnika ({{ userLoans().length }})
+            </h2>
 
-      <div
-        class="flex items-center gap-2 bg-[color:var(--base-input-bg)] border border-gray-300 rounded-lg px-4 py-2 mb-4"
-      >
-        <mat-icon class="text-[color:var(--base-gray-lighter)]">search</mat-icon>
-        <input
-          type="text"
-          [(ngModel)]="bookSearchQuery"
-          (ngModelChange)="onBookSearchChange()"
-          placeholder="Szukaj po tytule, autorze lub ISBN..."
-          class="flex-1 bg-transparent outline-none text-[color:var(--base-font-color)]"
-        />
-        @if (bookSearchQuery) {
-          <button
-            (click)="bookSearchQuery = ''; onBookSearchChange()"
-            class="text-gray-400 hover:text-gray-600"
-          >
-            <mat-icon>close</mat-icon>
-          </button>
+            @if (userLoans().length === 0) {
+              <p class="text-[color:var(--base-gray-lighter)] text-center py-4">
+                Brak aktywnych wypożyczeń
+              </p>
+            } @else {
+              <div
+                class="flex flex-col gap-3 max-h-[400px] overflow-y-auto [scrollbar-width:thin] [scrollbar-color:var(--base-blue-lighter)_transparent] [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[var(--base-blue-lighter)] [&::-webkit-scrollbar-thumb]:rounded-[3px]"
+              >
+                @for (loan of userLoans(); track loan.id) {
+                  <div
+                    [class]="
+                      'flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-lg border ' +
+                      (isOverdue(loan.dueDate)
+                        ? 'bg-red-50 [.high-contrast_&]:bg-[rgba(255,0,0,0.15)] border-red-300'
+                        : 'bg-gray-50 [.high-contrast_&]:bg-[var(--book-bg)] border-gray-200 [.high-contrast_&]:border-[var(--base-font-color)]')
+                    "
+                  >
+                    <div class="flex items-center gap-3 mb-2 sm:mb-0">
+                      @if (loan.imageUrl) {
+                        <img
+                          [src]="loan.imageUrl"
+                          [alt]="loan.title"
+                          class="w-12 h-16 object-cover rounded"
+                        />
+                      }
+                      <div>
+                        <h4 class="font-medium text-[color:var(--base-font-color)]">
+                          {{ loan.title }}
+                        </h4>
+                        <p class="text-sm text-[color:var(--base-gray-lighter)]">
+                          {{ loan.author }}
+                        </p>
+                        <p class="text-xs mt-1">
+                          <span class="text-[color:var(--base-gray-lighter)]">Termin: </span>
+                          <span
+                            [class]="
+                              isOverdue(loan.dueDate)
+                                ? 'text-red-600 [.high-contrast_&]:text-[#ff6666] font-semibold'
+                                : 'text-[color:var(--base-font-color)]'
+                            "
+                          >
+                            {{ formatDate(loan.dueDate) }}
+                          </span>
+                          @if (isOverdue(loan.dueDate)) {
+                            <span class="ml-1 text-red-600 [.high-contrast_&]:text-[#ff6666]"
+                              >(przeterminowane)</span
+                            >
+                          }
+                        </p>
+                      </div>
+                    </div>
+                    <div class="flex gap-2 w-full sm:w-auto">
+                      <button
+                        (click)="extendLoan(loan)"
+                        [disabled]="isProcessing()"
+                        class="bg-[color:var(--edit-button-bg)] hover:bg-[color:var(--edit-button-bg)] text-[color:var(--white-to-yellow)] text-sm py-2 px-4 rounded-lg transition duration-150 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                      >
+                        +14 dni
+                      </button>
+                      <button
+                        (click)="returnBook(loan)"
+                        [disabled]="isProcessing()"
+                        class="flex-1 sm:flex-none px-3 py-1.5 text-sm bg-[color:var(--base-green)] [.high-contrast_&]:bg-[var(--base-font-color)] [.high-contrast_&]:text-[var(--nav-base-color)] text-white rounded-md hover:opacity-90 transition-opacity disabled:opacity-50"
+                      >
+                        Zwróć
+                      </button>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
         }
       </div>
 
-      @if (isLoadingBooks()) {
-        <div class="flex items-center justify-center py-8">
-          <div
-            class="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full"
-          ></div>
-        </div>
-      } @else {
-        <div class="text-sm text-[color:var(--base-gray-lighter)] mb-3">
-          Znaleziono: {{ filteredBooks().length }} pozycji
-        </div>
+      <div class="bg-[color:var(--book-bg)] rounded-xl shadow-md p-6">
+        <h2 class="text-lg font-semibold mb-4 text-[color:var(--base-blue-dark)]">
+          Dostępne książki do wypożyczenia
+        </h2>
 
-        <div class="flex flex-col gap-2 max-h-[500px] overflow-y-auto">
-          @for (book of filteredBooks(); track book.id) {
-            <div
-              class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200 hover:bg-[color:var(--hover-reserve)] transition-colors"
+        <div
+          class="flex items-center gap-2 bg-[color:var(--base-input-bg)] border border-gray-300 [.high-contrast_&]:border-[var(--base-font-color)] rounded-lg px-4 py-2 mb-4"
+        >
+          <mat-icon class="text-[color:var(--base-gray-lighter)]">search</mat-icon>
+          <input
+            type="text"
+            [(ngModel)]="bookSearchQuery"
+            (ngModelChange)="onBookSearchChange()"
+            placeholder="Szukaj po tytule, autorze lub ISBN..."
+            class="flex-1 bg-transparent outline-none text-[color:var(--base-font-color)]"
+          />
+          @if (bookSearchQuery) {
+            <button
+              (click)="bookSearchQuery = ''; onBookSearchChange()"
+              class="text-gray-400 hover:text-gray-600"
             >
-              <div class="flex items-center gap-3">
-                @if (book.imageUrl) {
-                  <img
-                    [src]="book.imageUrl"
-                    [alt]="book.title"
-                    class="w-10 h-14 object-cover rounded"
-                  />
-                } @else {
-                  <div class="w-10 h-14 bg-gray-300 rounded flex items-center justify-center">
-                    <mat-icon class="text-gray-500">book</mat-icon>
-                  </div>
-                }
-                <div>
-                  <h4 class="font-medium text-[color:var(--base-font-color)] text-sm">
-                    {{ book.title }}
-                  </h4>
-                  <p class="text-xs text-[color:var(--base-gray-lighter)]">{{ book.author }}</p>
-                  @if (book.isbn) {
-                    <p class="text-xs text-[color:var(--base-gray-lighter)]">
-                      ISBN: {{ book.isbn }}
-                    </p>
-                  }
-                </div>
-              </div>
-              <button
-                (click)="rentBook(book)"
-                [disabled]="!selectedUser() || isProcessing()"
-                [class]="
-                  'px-4 py-2 text-sm rounded-md transition-all ' +
-                  (selectedUser()
-                    ? 'bg-[color:var(--base-blue-dark)] text-white hover:opacity-90'
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed')
-                "
-                [title]="selectedUser() ? 'Wypożycz' : 'Najpierw wybierz czytelnika'"
-              >
-                Wypożycz
-              </button>
-            </div>
-          }
-
-          @if (filteredBooks().length === 0 && !isLoadingBooks()) {
-            <p class="text-center text-[color:var(--base-gray-lighter)] py-8">
-              Brak dostępnych książek
-            </p>
+              <mat-icon>close</mat-icon>
+            </button>
           }
         </div>
-      }
+
+        @if (isLoadingBooks()) {
+          <div class="flex items-center justify-center py-8">
+            <div
+              class="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full"
+            ></div>
+          </div>
+        } @else {
+          <div class="text-sm text-[color:var(--base-gray-lighter)] mb-3">
+            Wyświetlono: {{ filteredBooks().length }} z {{ availableBooks().length }} pozycji
+            @if (filteredBooks().length < availableBooks().length && !bookSearchQuery) {
+              <span class="text-xs">(użyj wyszukiwarki aby znaleźć więcej)</span>
+            }
+          </div>
+          <div
+            class="flex flex-col gap-2 max-h-[500px] overflow-y-auto [scrollbar-width:thin] [scrollbar-color:var(--base-blue-lighter)_transparent] [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[var(--base-blue-lighter)] [&::-webkit-scrollbar-thumb]:rounded-[3px]"
+          >
+            @for (book of filteredBooks(); track book.id) {
+              <div
+                class="flex items-center justify-between p-3 bg-gray-50 [.high-contrast_&]:bg-[var(--book-bg)] rounded-lg border border-gray-200 [.high-contrast_&]:border-[var(--base-font-color)] hover:bg-[color:var(--hover-reserve)] transition-colors"
+              >
+                <div class="flex items-center gap-3">
+                  @if (book.imageUrl) {
+                    <img
+                      [src]="book.imageUrl"
+                      [alt]="book.title"
+                      loading="lazy"
+                      class="w-10 h-14 object-cover rounded"
+                    />
+                  } @else {
+                    <div class="w-10 h-14 bg-gray-300 rounded flex items-center justify-center">
+                      <mat-icon class="text-gray-500">book</mat-icon>
+                    </div>
+                  }
+                  <div>
+                    <h4 class="font-medium text-[color:var(--base-font-color)] text-sm">
+                      {{ book.title }}
+                    </h4>
+                    <p class="text-xs text-[color:var(--base-gray-lighter)]">{{ book.author }}</p>
+                    @if (book.isbn) {
+                      <p class="text-xs text-[color:var(--base-gray-lighter)]">
+                        ISBN: {{ book.isbn }}
+                      </p>
+                    }
+                  </div>
+                </div>
+                <button
+                  (click)="rentBook(book)"
+                  [disabled]="!selectedUser() || isProcessing()"
+                  [class]="
+                    'px-4 py-2 text-sm rounded-md transition-all ' +
+                    (selectedUser()
+                      ? 'bg-[color:var(--base-blue-dark)] text-[color:var(--white-to-dark-gray)] hover:opacity-90'
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed')
+                  "
+                  [title]="selectedUser() ? 'Wypożycz' : 'Najpierw wybierz czytelnika'"
+                >
+                  Wypożycz
+                </button>
+              </div>
+            }
+
+            @if (filteredBooks().length === 0 && !isLoadingBooks()) {
+              <p class="text-center text-[color:var(--base-gray-lighter)] py-8">
+                Brak dostępnych książek
+              </p>
+            }
+          </div>
+        }
+      </div>
     </div>
   </div>
-</div>
 
-@if (showQrScanner()) {
-  <app-qr-scanner (scanned)="onQrCodeScanned($event)" (closed)="closeQrScanner()"></app-qr-scanner>
-}
+  @if (showQrScanner()) {
+    <app-qr-scanner
+      (scanned)="onQrCodeScanned($event)"
+      (closed)="closeQrScanner()"
+    ></app-qr-scanner>
+  }
+</div>
