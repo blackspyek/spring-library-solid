@@ -130,3 +130,24 @@ export interface RentalHistoryItem {
   rentedAt: string;
   returnedAt: string;
 }
+
+// Feedback Dialog Types
+export type FeedbackCategory = 'accessibility' | 'navigation' | 'content' | 'other';
+
+export interface FeedbackRequest {
+  category: FeedbackCategory;
+  message: string;
+  pageUrl: string;
+}
+
+export interface FeedbackResponse {
+  success: boolean;
+  message: string;
+  ticketId?: string;
+}
+
+export interface FeedbackCategoryOption {
+  value: FeedbackCategory;
+  label: string;
+  icon: string;
+}

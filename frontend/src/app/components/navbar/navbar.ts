@@ -2,7 +2,9 @@ import { Component, computed, inject, PLATFORM_ID, OnInit } from '@angular/core'
 import { MatIcon } from '@angular/material/icon';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { NgOptimizedImage, isPlatformBrowser } from '@angular/common';
+import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from '../../services/auth-service';
+import { FeedbackDialog } from '../feedback-dialog/feedback-dialog';
 export interface NavItem {
   label: string;
   icon?: string;
@@ -19,6 +21,7 @@ export interface NavItem {
 export class Navbar implements OnInit {
   private authService = inject(AuthService);
   private platformId = inject(PLATFORM_ID);
+  private dialog = inject(MatDialog);
 
   isLoggedIn = this.authService.isLoggedIn;
 
@@ -106,5 +109,13 @@ export class Navbar implements OnInit {
   isLibrarian(): boolean {
     console.log('Checking librarian status:', this.authService.isLibrarian());
     return this.authService.isLibrarian();
+  }
+
+  openFeedbackDialog(): void {
+    this.dialog.open(FeedbackDialog, {
+      panelClass: 'feedback-dialog',
+      autoFocus: 'first-tabbable',
+      restoreFocus: true,
+    });
   }
 }
