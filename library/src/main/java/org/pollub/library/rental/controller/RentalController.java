@@ -76,4 +76,18 @@ public class RentalController {
                 .headers(headers)
                 .body(xlsxContent);
     }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN')")
+    @PostMapping("/{itemId}/extend")
+    public ResponseEntity<LibraryItem> extendLoan(
+            @PathVariable Long itemId,
+            @RequestParam(defaultValue = "7") int days) {
+        return ResponseEntity.ok(rentalService.extendLoan(itemId, days));
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN')")
+    @GetMapping("/all-rented")
+    public ResponseEntity<List<LibraryItem>> getAllRentedItems() {
+        return ResponseEntity.ok(rentalService.getAllRentedItems());
+    }
 }

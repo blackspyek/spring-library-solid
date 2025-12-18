@@ -1,9 +1,8 @@
-import { Component, computed, inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, computed, inject, PLATFORM_ID, OnInit } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { NgOptimizedImage, isPlatformBrowser } from '@angular/common';
 import { AuthService } from '../../services/auth-service';
-
 export interface NavItem {
   label: string;
   icon?: string;
@@ -28,7 +27,6 @@ export class Navbar implements OnInit {
   private minScale = 50;
   private maxScale = 200;
 
-
   mobileNavItems = computed<NavItem[]>(() => [
     { label: 'Start', icon: 'home', link: '/' },
     { label: 'Katalog', icon: 'list', link: '/katalog' },
@@ -46,32 +44,30 @@ export class Navbar implements OnInit {
     { label: 'Katalog', link: '/katalog' },
   ];
 
-
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       try {
         const stored = localStorage.getItem('highContrast');
         this.highContrast = stored === 'true';
         this.applyHighContrast(this.highContrast);
-
       } catch (e) {
         console.warn('LocalStorage niedostępny', e);
       }
     }
   }
 
-
   logout(): void {
     this.authService.logout();
   }
-
 
   toggleHighContrast(): void {
     this.highContrast = !this.highContrast;
     if (isPlatformBrowser(this.platformId)) {
       try {
         localStorage.setItem('highContrast', String(this.highContrast));
-      } catch (e) {}
+      } catch (e) {
+        console.warn('LocalStorage niedostępny', e);
+      }
       this.applyHighContrast(this.highContrast);
     }
   }
@@ -105,5 +101,10 @@ export class Navbar implements OnInit {
     if (isPlatformBrowser(this.platformId)) {
       document.documentElement.style.fontSize = `${this.currentScale}%`;
     }
+  }
+
+  isLibrarian(): boolean {
+    console.log('Checking librarian status:', this.authService.isLibrarian());
+    return this.authService.isLibrarian();
   }
 }

@@ -4,6 +4,7 @@ import { Catalog } from './pages/catalog/catalog';
 import { Layout } from './components/layout/layout';
 import { ResendEmail } from './pages/resend-email/resend-email';
 import { Profile } from './pages/profile/profile';
+import { LoanManagement } from './pages/loan-management/loan-management';
 import { authGuard } from './guards/auth-guard';
 import { Home } from './pages/home/home';
 
@@ -32,6 +33,11 @@ export const routes: Routes = [
       {
         path: 'katalog',
         component: Catalog,
+      },
+      {
+        path: 'zarzadzanie-wypozyczeniami',
+        component: LoanManagement,
+        //canActivate: [librarianGuard],
       },
     ],
   },

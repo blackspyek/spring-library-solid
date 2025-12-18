@@ -9,6 +9,8 @@ import java.util.List;
 public interface IRentalService {
     LibraryItem rentItem(RentDto rentDto);
     LibraryItem returnItem(long itemId);
+    LibraryItem extendLoan(long itemId, int days);
     List<LibraryItem> getRentedItems(long userId);
     List<LibraryItem> getAvailableItems();
+    List<LibraryItem> getAllRentedItems();
 }
