@@ -13,6 +13,8 @@
   --base-blue-darker: #1e3a8a;
   --base-blue-lighter: #1f549a;
   --base-gray-light: #f2f2f2;
+  --base-separator: #f2f2f2;
+  --gray-library-info: #f2f2f2;
   --base-gray-lighter: #8c8989;
   --base-gray-darker: #4a4a4a;
   --placeholder-gray: #8b8989;
@@ -33,19 +35,31 @@
   --base-font-color: black;
   --base-arrow-color: rgba(255, 255, 255, 0.8);
   --base-form-bg: white;
+  --book-details-text: #8c8989;
   --base-btn-secondary-bg: #1e3a8a;
   --base-form-lighter-text: #4a4a4a;
+  --book-details-text-darker: #4a4a4a;
   --base-eye-catching-link: #1d4ed8;
-
+  --blue-hover: #1447E6;
+  --gray-to-yellow: #4a4a4a;
+  --switch-button-off: #8b8989;
+  --switch-button-on: #0F7E03;
+  --gray-library-details: #4a4a4a;
   --blue-50: #eff6ff;
   --blue-500: #3b82f6;
   --blue-800: #1e40af;
   --search-bar-catalog: white;
   --base-gray-darker-catalog: #4a4a4a;
+  --branch-background-color:  #e3f2fd;
+  --branch-border-left: #1a365b;
+  --branch-border: #e0e0e0;
+  --branch-hover: #f5f5f5;
   --purple-50: #faf5ff;
   --purple-700: #8200db;
   --base-input-bg: white;
   --book-bg: white;
+  --edit-button-bg: #1f549a;
+  --edit-button-hover: #1e3a8a;
   --details-bt: #1f549a;
   --availability-bt: white;
   --base-blue-lighter-catalog: #1f549a;
@@ -55,10 +69,13 @@
   --hover-pagination: #e5e7eb;
   --hover-reserve: #eff6ff;
   --mobile-bg: #f9fafb;
+  --cancel-button: #f2f2f2;
   --bg-x: #ffffff80;
   --white-to-yellow: white;
+  --light-gray-to-light-yellow: #F3F4F6;
   --nav-underline-active: #6e9fe0;
   --form-btn-hover: #2a368a;
+  --white-to-dark-gray: white;
 }
 
 /* High-contrast overrides (black / yellow) — toggled by adding `high-contrast` to <html> */
@@ -77,6 +94,8 @@ html.high-contrast {
   --base-font-color: #ffed00; /* primary font color */
   --base-arrow-color: #ffed00c6; /* yellow for arrows/icons */
   --base-form-bg: black;
+  --switch-button-off: #484710;
+  --switch-button-on: black;
   --base-btn-secondary-bg: black;
   --base-form-lighter-text: rgba(255, 237, 0, 0.76);
   --base-eye-catching-link: #ffff00;
@@ -88,19 +107,40 @@ html.high-contrast {
   --purple-50: #bdbd71;
   --purple-700: #0b1016;
   --book-bg: #262727;
+  --white-to-dark-gray: #262727;
+  --edit-button-bg: #262727;
+  --edit-button-hover: #262727;
+  --base-separator: rgba(255, 237, 0, 0.12);
   --details-bt: rgba(255, 237, 0, 0.76);
   --availability-bt: rgba(11,16,22,0.76);
+  --branch-background-color:  #E7D802;
+  --branch-border-left: black;
+  --branch-border: black;
+  --branch-hover: #F5E502;
   --base-blue-lighter-catalog: #0b1016;
+  --qr-gray-light: #ffed00;
+  --gray-library-info: #ffed00;
+  --cancel-button: #ffed00;
+  --base-blue-lighter80: #ffed00;
   --availability-green: #0b1016;
   --availability-red: #0b1016;
   --availability-orange: #0b1016;
   --hover-pagination: #bdbd71;
   --hover-reserve: #bdbd71;
+  --light-gray-to-light-yellow: #F6EC6D;
   --mobile-bg: #FFED00;
   --bg-x: rgba(227, 220, 95, 0);
   --white-to-yellow: #FFED00;
+  --gray-to-yellow: #FFED00;
   --nav-underline-active: black;
-  --form-btn-hover: #40403d
+  --blue-hover: #3D3D3D;
+  --form-btn-hover: #40403d;
+  --base-green: #305CDE;
+  --base-green-darker: #38529E;
+  --base-red: #784008;
+  --base-purple: #784008;
+  --base-red-light: #ffed00;
+
 }
 
 html {
@@ -141,4 +181,12 @@ body {
 body {
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+
+.password-change-dialog .mat-mdc-dialog-surface,
+.notification-settings-dialog .mat-mdc-dialog-surface,
+.library-selector-dialog .mat-mdc-dialog-surface,
+.user-rentals-dialog .mat-mdc-dialog-surface,
+.user-reservations-dialog .mat-mdc-dialog-surface {
+  background-color: var(--white-to-yellow) !important;
 }

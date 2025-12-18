@@ -1,11 +1,11 @@
 <div class="px-4 sm:px-6 lg:px-5 space-y-4 py-10">
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
     <div
-      class="bg-[color:var(--base-white)] rounded-xl shadow-md p-4 flex flex-col sm:flex-row justify-between items-start w-full"
+      class="bg-[color:var(--book-bg)] rounded-xl shadow-md p-4 flex flex-col sm:flex-row justify-between items-start w-full"
     >
       <div class="w-full flex-grow h-full flex flex-col">
         <h2
-          class="border-b border-[color:var(--base-gray-light)] text-lg font-bold text-[color:var(--base-gray-darker)] mb-3 pb-2 flex items-center"
+          class="border-b border-[color:var(--base-separator)] text-lg font-bold text-[color:var(--base-gray-darker)] mb-3 pb-2 flex items-center"
         >
           <span class="mr-2 text-red-500"
             ><svg
@@ -28,9 +28,9 @@
         </div>
       </div>
     </div>
-    <div class="bg-[color:var(--base-white)] rounded-xl shadow-md p-4 w-full">
+    <div class="bg-[color:var(--book-bg)] rounded-xl shadow-md p-4 w-full">
       <h2
-        class="border-b border-[color:var(--base-gray-light)] text-lg font-bold text-[color:var(--base-gray-darker)] mb-3 pb-2 flex items-center"
+        class="border-b border-[color:var(--base-separator)] text-lg font-bold text-[color:var(--base-gray-darker)] mb-3 pb-2 flex items-center"
       >
         <span class="mr-2 text-red-500"
           ><svg
@@ -88,18 +88,16 @@
       }
 
       <h3
-        class="border-b border-[color:var(--base-gray-light)] text-base font-bold text-[color:var(--base-gray-darker)] mb-2 mt-3 pb-1"
+        class="border-b border-[color:var(--base-separator)] text-base font-bold text-[color:var(--base-gray-darker)] mb-2 mt-3 pb-1"
       >
         Ustawienia i Powiadomienia
       </h3>
-      <div
-        class="border-b border-[color:var(--base-gray-light)] flex justify-between items-center "
-      >
+      <div class="border-b border-[color:var(--base-separator)] flex justify-between items-center">
         <p class="font-light text-sm text-[color:var(--base-gray-darker)]">
           Preferencje powiadomień
         </p>
         <button
-          class="bg-[color:var(--base-blue-lighter)] hover:bg-[color:var(--base-blue-darker)] text-[color:var(--base-white)] text-sm py-1 px-3 rounded-lg transition duration-150 mb-2 cursor-pointer"
+          class="bg-[color:var(--edit-button-bg)] hover:bg-[color:var(--edit-button-hover)] text-[color:var(--white-to-yellow)] text-sm py-1 px-3 rounded-lg transition duration-150 mb-2 cursor-pointer"
           (click)="openNotificationSettingsDialog()"
         >
           Edytuj
@@ -108,7 +106,7 @@
       <div class="flex justify-between items-center">
         <p class="font-light text-[color:var(--base-gray-darker)]">Zmiana hasła</p>
         <button
-          class="bg-[color:var(--base-blue-lighter)] hover:bg-[color:var(--base-blue-darker)] text-[color:var(--base-white)] text-sm py-1 px-3 rounded-lg transition duration-150 cursor-pointer"
+          class="bg-[color:var(--edit-button-bg)] hover:bg-[color:var(--edit-button-hover)] text-[color:var(--white-to-yellow)] text-sm py-1 px-3 rounded-lg transition duration-150 mb-2 cursor-pointer"
           (click)="openPasswordChangeDialog()"
         >
           Edytuj
@@ -117,9 +115,9 @@
     </div>
   </div>
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-    <div class="bg-[color:var(--base-white)] rounded-xl shadow-md p-4 w-full">
+    <div class="bg-[color:var(--book-bg)] rounded-xl shadow-md p-4 w-full">
       <h2
-        class="border-b border-[color:var(--base-gray-light)] text-lg font-bold text-[color:var(--base-gray-darker)] mb-3 pb-2 flex items-center"
+        class="border-b border-[color:var(--base-separator)] text-lg font-bold text-[color:var(--base-gray-darker)] mb-3 pb-2 flex items-center"
       >
         <span class="mr-2 text-red-500"
           ><svg
@@ -138,9 +136,9 @@
       <app-user-reservations-container></app-user-reservations-container>
     </div>
 
-    <div class="bg-[color:var(--base-white)] rounded-xl shadow-md p-4 w-full">
+    <div class="bg-[color:var(--book-bg)] rounded-xl shadow-md p-4 w-full">
       <h2
-        class="border-b border-[color:var(--base-gray-light)] text-lg font-bold text-[color:var(--base-gray-darker)] mb-3 pb-2 flex items-center"
+        class="border-b border-[color:var(--base-separator)] text-lg font-bold text-[color:var(--base-gray-darker)] mb-3 pb-2 flex items-center"
       >
         <span class="mr-2 text-red-500"
           ><svg
@@ -159,9 +157,9 @@
       <app-user-rentals-container></app-user-rentals-container>
     </div>
   </div>
-  <div class="bg-[color:var(--base-white)] rounded-xl shadow-md p-4 w-full">
+  <div class="bg-[color:var(--book-bg)] rounded-xl shadow-md p-4 w-full">
     <div
-      class="flex justify-between items-center border-b border-[color:var(--base-gray-light)] mb-3 pb-2"
+      class="flex justify-between items-center border-b border-[color:var(--base-separator)] mb-3 pb-2"
     >
       <h2 class="text-lg font-bold text-[color:var(--base-gray-darker)] flex items-center">
         <span class="mr-2 text-gray-500"
@@ -177,7 +175,7 @@
         Ostatnie wypożyczenia
       </h2>
       <button
-        class="bg-[color:var(--base-blue-lighter)] hover:bg-[color:var(--base-blue-darker)] text-[color:var(--base-white)] text-sm py-2 px-4 rounded-lg transition duration-150 whitespace-nowrap"
+        class="bg-[color:var(--edit-button-bg)] hover:bg-[color:var(--edit-button-bg)] text-[color:var(--white-to-yellow)] text-sm py-2 px-4 rounded-lg transition duration-150 whitespace-nowrap"
       >
         Pobierz całą historię
       </button>

@@ -39,9 +39,9 @@ export class ProfileBookItemComponent {
 
   buttonClasses = computed(() => {
     if (this.statusType === 'rent') {
-      return 'bg-[color:var(--base-green)] text-[color:var(--base-white)] hover:bg-[color:var(--base-green-darker)] border-[color:var(--base-green)]';
+      return 'bg-[color:var(--base-green)] text-white hover:bg-[color:var(--base-green-darker)] border-[color:var(--base-green)]';
     } else {
-      return 'bg-[color:var(--base-gray-light)] text-[color:var(--base-red)] hover:bg-[color:var(--base-red-light)] border-[color:var(--base-red)]';
+      return 'bg-[color:var(--cancel-button)] text-[color:var(--base-red)] hover:bg-[color:var(--base-red-light)] border-[color:var(--base-red)]';
     }
   });
 

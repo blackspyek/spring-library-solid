@@ -1,5 +1,5 @@
 <div
-  class="bg-[color:var(--base-gray-light)] rounded-xl p-3 border border-[color:var(--base-border-gray)] flex justify-between items-center mb-3 transition-shadow duration-300 hover:shadow-md"
+  class="bg-[color:var(--gray-library-info)] rounded-xl p-3 border border-[color:var(--base-input-bg)] flex justify-between items-center mb-3 transition-shadow duration-300 hover:shadow-md"
 >
   <div class="flex items-center">
     @if (imageUrl) {
@@ -27,8 +27,8 @@
       </div>
     }
     <div class="flex flex-col">
-      <p class="font-bold text-[color:var(--base-gray-darker)] text-base">{{ title }}</p>
-      <p class="text-sm text-[color:var(--base-gray-lighter)] mb-1">Aut. {{ author }}</p>
+      <p class="font-bold text-[color:var(--book-details-text-darker)] text-base">{{ title }}</p>
+      <p class="text-sm text-[color:var(--book-details-text)] mb-1">Aut. {{ author }}</p>
 
       <p class="text-xs {{ statusTextColorClass() }}">
         {{ statusLabel() }}: <span class="font-bold">{{ date | date: 'dd.MM.yyyy' }}</span>
