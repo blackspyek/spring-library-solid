@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { debounceTime, Subject, forkJoin } from 'rxjs';
 import { SortSelectComponent } from '../../components/sort-select/sort-select';
 import { MatIconModule } from '@angular/material/icon';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-catalog',
@@ -49,7 +50,7 @@ export class Catalog implements OnInit {
   currentSelectionStatus = signal<SelectOption | null>(null);
   currentSelectionPublisher = signal<SelectOption | null>(null);
 
-  constructor() {
+  constructor(private route:ActivatedRoute) {
     effect(() => {
       const statusOpt = this.currentSelectionStatus();
       const newStatus = statusOpt ? String(statusOpt.value) : null;
@@ -82,6 +83,16 @@ export class Catalog implements OnInit {
   }
 
   ngOnInit() {
+
+    this.route.queryParamMap.subscribe(params => {
+      const q = params.get('q');
+      if (q !== null) {
+        this.searchQuery = q;
+        this.currentPage = 0;
+        this.loadBooks();
+      }
+    });
+
     this.searchSubject.pipe(debounceTime(500)).subscribe(() => {
       this.currentPage = 0;
       this.loadBooks();
@@ -102,17 +113,17 @@ export class Catalog implements OnInit {
 
         this.otherGenres = data.otherGenres.map((genre) => ({
           label: genre,
-          value: genre,
+          value: genre
         }));
 
         this.publishers = data.publishers.map((pub) => ({
           label: pub,
-          value: pub,
+          value: pub
         }));
 
         this.statusOptions = data.statuses.map((status) => ({
           label: this.getStatusLabel(status),
-          value: status,
+          value: status
         }));
 
         this.loadBooks();

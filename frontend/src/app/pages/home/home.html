@@ -28,12 +28,14 @@
           ></mat-icon>
         </div>
         <input
+          [(ngModel)]="searchTerm"
           type="text"
-          placeholder="Wyszukaj tytuł, autora lub ISBN..."
+          placeholder="Wyszukaj tytuł lub autora..."
           class="w-full font-normal bg-[var(--base-input-bg)] px-4 py-4 pl-12 text-[var(--base-gray-lighter)] focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
       <button
+        (click)="onSearchClick()"
         class="bg-[var(--base-blue-darker)] hover:bg-blue-700 text-[var(--nav-base-color)] px-8 py-4 font-semibold uppercase tracking-wider transition-colors cursor-pointer"
       >
         Katalog
