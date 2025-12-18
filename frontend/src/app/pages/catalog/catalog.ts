@@ -128,6 +128,7 @@ export class Catalog implements OnInit {
     const labels: Record<string, string> = {
       AVAILABLE: 'Dostępny',
       RENTED: 'Wypożyczony',
+      RESERVED: 'Zarezerwowany',
       MAINTENANCE: 'W konserwacji',
       LOST: 'Zgubiony',
     };

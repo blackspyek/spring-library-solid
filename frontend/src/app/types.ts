@@ -49,10 +49,21 @@ export type LibrarySelectorMode = 'availability' | 'favorite';
 export interface LibrarySelectorDialogData {
   mode: LibrarySelectorMode;
   bookTitle?: string;
+  bookId?: number;
   availableBranches?: LibraryBranch[];
   currentFavouriteBranchId?: number;
   /** Optional: provide all branches directly instead of loading from API */
   allBranches?: LibraryBranch[];
+}
+
+export interface BookAvailability {
+  id: number;
+  title: string;
+  author: string;
+  status: string;
+  imageUrl: string;
+  daysUntilDue?: number;
+  availableAtBranches: LibraryBranch[];
 }
 
 export interface UserProfile {
@@ -89,6 +100,7 @@ export interface SingleBook {
   genre: string;
   libraryLocation?: string;
   bestseller?: boolean;
+  availableAtBranches?: LibraryBranch[];
 }
 
 export interface PageResponse<T> {

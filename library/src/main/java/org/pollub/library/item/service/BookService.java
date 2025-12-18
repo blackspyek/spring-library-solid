@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.pollub.library.exception.BookNotFoundException;
 import org.pollub.library.item.model.Book;
 import org.pollub.library.item.model.ItemStatus;
+import org.pollub.library.item.model.dto.BookAvailabilityDto;
 import org.pollub.library.item.model.dto.BookCreateDto;
 import org.pollub.library.item.repository.IBookRepository;
 import org.pollub.library.rental.repository.IRentalHistoryRepository;
@@ -175,5 +176,29 @@ public class BookService implements IBookService {
                 .filter(Objects::nonNull)
                 .peek(book -> book.setIsBestseller(true))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public BookAvailabilityDto getBookAvailability(Long id) {
+        Book book = findById(id);
+        
+        Integer daysUntilDue = null;
+        if (book.getStatus() == ItemStatus.RENTED && book.getDueDate() != null) {
+            long days = java.time.temporal.ChronoUnit.DAYS.between(
+                    java.time.LocalDate.now(), 
+                    book.getDueDate().toLocalDate()
+            );
+            daysUntilDue = (int) Math.max(0, days);
+        }
+        
+        return BookAvailabilityDto.builder()
+                .id(book.getId())
+                .title(book.getTitle())
+                .author(book.getAuthor())
+                .status(book.getStatus().name())
+                .imageUrl(book.getImageUrl())
+                .daysUntilDue(daysUntilDue)
+                .availableAtBranches(book.getAvailableAtBranches())
+                .build();
     }
 }

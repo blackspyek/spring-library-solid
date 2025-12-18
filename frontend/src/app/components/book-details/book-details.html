@@ -42,37 +42,65 @@
     </p>
 
     <div class="mt-auto">
-      <p
-        class="text-xs mb-3 md:mb-2 w-full md:max-w-[260px] leading-snug text-[color:var(--base-gray-darker-catalog)] break-normal whitespace-normal opacity-80"
-      >
-        {{
-          data.libraryLocation || 'Miejska Biblioteka Publiczna im. H. Łopacińskiego Filia nr 12'
-        }}
-      </p>
-
-      <div class="flex items-center justify-between mt-2 pt-2 md:border-0">
-        <div class="flex items-center gap-2">
-          <span
-            class="w-2.5 h-2.5 rounded-full"
-            [ngClass]="{
-              'bg-[color:var(--availability-green)]': data.status === 'AVAILABLE',
-              'bg-[color:var(--availability-red)]':
-                data.status === 'RENTED' || data.status === 'LOST',
-              'bg-[color:var(--availability-orange)]': data.status === 'MAINTENANCE',
-            }"
-          >
-          </span>
-          <span class="text-xs font-bold whitespace-nowrap">
-            {{ getStatusLabel(data.status) }}
-          </span>
-        </div>
-
-        <button
-          class="ml-2 px-4 py-1.5 rounded bg-[color:var(--search-bar-catalog)] text-[color:var(--base-blue-lighter-catalog)] border border-[color:var(--base-blue-lighter-catalog)] text-xs font-bold uppercase tracking-wider hover:bg-[color:var(--hover-reserve)] transition-colors whitespace-nowrap cursor-pointer"
+      @if (showLoginPrompt()) {
+        <p
+          class="text-xs mb-3 md:mb-2 w-full md:max-w-[260px] leading-snug text-[color:var(--base-gray-darker-catalog)] break-normal whitespace-normal opacity-80"
         >
-          ZAREZERWUJ
-        </button>
-      </div>
+          <a routerLink="/zaloguj-sie" class="text-[color:var(--base-blue-lighter-catalog)] hover:underline cursor-pointer">
+            Zaloguj się
+          </a>, aby wyświetlić dostępność w swojej ulubionej bibliotece
+        </p>
+        <div class="flex items-center justify-between mt-2 pt-2 md:border-0">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-gray-400"></span>
+            <span class="text-xs font-bold whitespace-nowrap text-gray-500">
+              Brak danych
+            </span>
+          </div>
+          <button
+            (click)="openReservationDialog()"
+            class="ml-2 px-4 py-1.5 rounded bg-[color:var(--search-bar-catalog)] text-[color:var(--base-blue-lighter-catalog)] border border-[color:var(--base-blue-lighter-catalog)] text-xs font-bold uppercase tracking-wider hover:bg-[color:var(--hover-reserve)] transition-colors whitespace-nowrap cursor-pointer"
+          >
+            ZAREZERWUJ
+          </button>
+        </div>
+      } @else {
+        <p
+          class="text-xs mb-3 md:mb-2 w-full md:max-w-[260px] leading-snug text-[color:var(--base-gray-darker-catalog)] break-normal whitespace-normal opacity-80"
+        >
+          {{ favouriteBranchName() || 'Ładowanie...' }}
+        </p>
+
+        <div class="flex items-center justify-between mt-2 pt-2 md:border-0">
+          <div class="flex items-center gap-2">
+            <span
+              class="w-2.5 h-2.5 rounded-full"
+              [ngClass]="{
+                'bg-[color:var(--availability-green)]': isAvailableAtFavourite() === true,
+                'bg-[color:var(--availability-red)]': isAvailableAtFavourite() === false,
+                'bg-gray-400': isAvailableAtFavourite() === null,
+              }"
+            >
+            </span>
+            <span class="text-xs font-bold whitespace-nowrap">
+              @if (isAvailableAtFavourite() === null) {
+                Sprawdzam...
+              } @else if (isAvailableAtFavourite()) {
+                Dostępna w Twojej bibliotece
+              } @else {
+                Niedostępna w Twojej bibliotece
+              }
+            </span>
+          </div>
+
+          <button
+            (click)="openReservationDialog()"
+            class="ml-2 px-4 py-1.5 rounded bg-[color:var(--search-bar-catalog)] text-[color:var(--base-blue-lighter-catalog)] border border-[color:var(--base-blue-lighter-catalog)] text-xs font-bold uppercase tracking-wider hover:bg-[color:var(--hover-reserve)] transition-colors whitespace-nowrap cursor-pointer"
+          >
+            ZAREZERWUJ
+          </button>
+        </div>
+      }
     </div>
   </div>
 </div>

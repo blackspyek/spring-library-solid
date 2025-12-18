@@ -1,119 +1,75 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 
-import { UserService } from '../../services/user-service';
-import { SingleBook } from '../../types';
+import { ReservationService, ReservationHistory } from '../../services/reservation.service';
 import { ProfileBookItemComponent } from '../profile-book-item/profile-book-item';
 import { ActiveBooksDialog } from '../active-books-dialog/active-books-dialog';
 import { MatDialog } from '@angular/material/dialog';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-user-reservations-container',
   standalone: true,
-  imports: [ProfileBookItemComponent],
+  imports: [ProfileBookItemComponent, CommonModule],
   templateUrl: './user-reservations-container.html',
   styleUrl: './user-reservations-container.scss',
 })
 export class UserReservationsContainer implements OnInit {
   dialog = inject(MatDialog);
+  private reservationService = inject(ReservationService);
 
-  //private reservationService = inject(ReservationService);
-  private userService = inject(UserService);
+  reservations = signal<ReservationHistory[]>([]);
+  loading = signal(true);
+  cancellingItemId = signal<number | null>(null);
 
-  reservedItems: SingleBook[] = [];
-  loading = true;
-
-  itemsToDisplay: SingleBook[] = [];
-
-  ngOnInit() {
-    /*
-    this.userService
-      .getUserId()
-      .pipe(
-        filter((userId): userId is number => userId !== undefined && userId > 0),
-        switchMap((userId) => {
-          return this.reservationService.getRentedItems(userId);
-        }),
-        take(1),
-      )
-      .subscribe({
-        next: (items) => {
-          this.reservedItems = items;
-          this.loading = false;
-          this.itemsToDisplay = items.slice(0, 2);
-        },
-        error: (err) => {
-          console.error('Błąd podczas pobierania wypożyczeń:', err);
-          this.loading = false;
-        },
-      });
-
-     */
-    //temporary
-    this.setMockReservedItems();
+  get itemsToDisplay(): ReservationHistory[] {
+    return this.reservations().slice(0, 2);
   }
 
-  private setMockReservedItems(): void {
-    const mockItems: SingleBook[] = [
-      {
-        id: 201,
-        title: 'Księga Dżungli',
-        author: 'Rudyard Kipling',
-        dueDate: '2026-01-15T00:00:00',
-        imageUrl: 'https://covers.openlibrary.org/b/id/9783084-L.jpg',
-        status: 'RESERVED',
-        description: 'Klasyka literatury dziecięcej.',
-        rentedAt: '',
-        pageCount: 250,
-        isbn: '978-0140439070',
-        paperType: 'B5',
-        publisher: 'Puffin',
-        shelfNumber: 5,
-        genre: 'Literatura',
-      },
-      {
-        id: 202,
-        title: 'Mały Książę',
-        author: 'Antoine de Saint-Exupéry',
-        dueDate: '2026-01-20T00:00:00',
-        imageUrl: 'https://covers.openlibrary.org/b/id/8228691-L.jpg',
-        status: 'RESERVED',
-        description: 'Opowieść o małym księciu.',
-        rentedAt: '',
-        pageCount: 96,
-        isbn: '978-0156012195',
-        paperType: 'A5',
-        publisher: 'Mariner Books',
-        shelfNumber: 3,
-        genre: 'Literatura',
-      },
-      {
-        id: 203,
-        title: 'Hobbit',
-        author: 'J.R.R. Tolkien',
-        dueDate: '2026-01-25T00:00:00',
-        imageUrl: 'https://covers.openlibrary.org/b/id/8406786-L.jpg',
-        status: 'RESERVED',
-        description: 'Przygody Bilbo Bagginsa.',
-        rentedAt: '',
-        pageCount: 310,
-        isbn: '978-0547928227',
-        paperType: 'B5',
-        publisher: 'Houghton Mifflin',
-        shelfNumber: 7,
-        genre: 'Fantasy',
-      },
-    ];
+  ngOnInit() {
+    this.loadReservations();
+  }
 
-    this.reservedItems = mockItems;
-    this.loading = false;
+  loadReservations(): void {
+    this.loading.set(true);
+    this.reservationService.getMyReservations().subscribe({
+      next: (items) => {
+        this.reservations.set(items);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        console.error('Błąd podczas pobierania rezerwacji:', err);
+        this.loading.set(false);
+      },
+    });
+  }
 
-    this.itemsToDisplay = mockItems.slice(0, 2);
+  requestCancel(itemId: number): void {
+    this.cancellingItemId.set(itemId);
+  }
+
+  confirmCancel(): void {
+    const itemId = this.cancellingItemId();
+    if (!itemId) return;
+
+    this.reservationService.cancelReservation(itemId).subscribe({
+      next: () => {
+        this.cancellingItemId.set(null);
+        this.loadReservations();
+      },
+      error: (err) => {
+        console.error('Błąd podczas anulowania rezerwacji:', err);
+        this.cancellingItemId.set(null);
+      },
+    });
+  }
+
+  cancelConfirmation(): void {
+    this.cancellingItemId.set(null);
   }
 
   openBooksDialog(): void {
     this.dialog.open(ActiveBooksDialog, {
       width: '600px',
-
       panelClass: 'user-reservations-dialog',
       autoFocus: true,
       data: {

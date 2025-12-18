@@ -139,5 +139,11 @@ public class BookController {
         return ResponseEntity.ok(bookService.getPopularBooks(limit));
     }
 
+    @GetMapping("/{id}/availability")
+    public ResponseEntity<org.pollub.library.item.model.dto.BookAvailabilityDto> getBookAvailability(
+            @PathVariable Long id) {
+        return ResponseEntity.ok(bookService.getBookAvailability(id));
+    }
+
 
 }
