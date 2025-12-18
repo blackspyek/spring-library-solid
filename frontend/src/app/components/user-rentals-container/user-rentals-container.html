@@ -8,12 +8,14 @@
   } @else {
     @for (item of itemsToDisplay; track item.id) {
       <app-profile-book-item
+        [itemId]="item.id"
         [title]="item.title"
         [author]="item.author"
         [coverText]="item.title"
         [date]="item.dueDate!"
         [statusType]="'rent'"
         [imageUrl]="item.imageUrl"
+        (rentalExtended)="onRentalExtended($event)"
       ></app-profile-book-item>
     }
 

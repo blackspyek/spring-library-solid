@@ -1,23 +1,41 @@
-import { Component, Input, computed, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  computed,
+  ChangeDetectionStrategy,
+  inject,
+} from '@angular/core';
 import { CommonModule, DatePipe, NgOptimizedImage } from '@angular/common';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import {
+  ExtendRentalDialog,
+  ExtendRentalDialogData,
+} from '../extend-rental-dialog/extend-rental-dialog';
 
 type ItemStatus = 'rent' | 'reservation';
 
 @Component({
   selector: 'app-profile-book-item',
   standalone: true,
-  imports: [CommonModule, DatePipe, NgOptimizedImage],
+  imports: [CommonModule, DatePipe, NgOptimizedImage, MatDialogModule],
   templateUrl: './profile-book-item.html',
   styleUrl: './profile-book-item.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfileBookItemComponent {
+  private dialog = inject(MatDialog);
+
+  @Input() itemId!: number;
   @Input() title!: string;
   @Input() author!: string;
   @Input() date!: string;
   @Input() coverText!: string;
   @Input() imageUrl?: string;
   @Input() statusType: ItemStatus = 'rent';
+
+  @Output() rentalExtended = new EventEmitter<number>();
 
   coverColor = computed(() => {
     return this.statusType === 'rent' ? 'var(--base-green)' : 'var(--base-purple)';
@@ -46,7 +64,31 @@ export class ProfileBookItemComponent {
   });
 
   onButtonClick() {
-    //todo: prolonguj lub anuluj
-    console.log(`${this.buttonLabel()} dla: ${this.title}`);
+    if (this.statusType === 'rent') {
+      this.openExtendRentalDialog();
+    } else {
+      // TODO: anuluj rezerwację
+      console.log(`Anuluj dla: ${this.title}`);
+    }
+  }
+
+  private openExtendRentalDialog(): void {
+    const dialogData: ExtendRentalDialogData = {
+      itemId: this.itemId,
+      bookTitle: this.title,
+    };
+
+    const dialogRef = this.dialog.open(ExtendRentalDialog, {
+      width: '500px',
+      panelClass: 'extend-rental-dialog',
+      autoFocus: true,
+      data: dialogData,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === true) {
+        this.rentalExtended.emit(this.itemId);
+      }
+    });
   }
 }

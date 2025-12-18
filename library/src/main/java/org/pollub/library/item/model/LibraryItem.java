@@ -39,6 +39,9 @@ public abstract class LibraryItem {
     private LocalDateTime rentedAt;
     private LocalDateTime dueDate;
 
+    @Column(name = "rent_extended")
+    private Boolean rentExtended = false;
+
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
