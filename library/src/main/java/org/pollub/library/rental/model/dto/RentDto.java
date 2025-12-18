@@ -13,4 +13,8 @@ public class RentDto {
     @NotNull(message = "User id is required")
     @Positive(message = "User id must be a positive number")
     private Long userId;
+
+    @NotNull(message = "Branch id is required")
+    @Positive(message = "Branch id must be a positive number")
+    private Long branchId;
 }

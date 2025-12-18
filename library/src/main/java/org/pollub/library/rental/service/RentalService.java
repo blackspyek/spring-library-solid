@@ -2,6 +2,8 @@ package org.pollub.library.rental.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.pollub.library.branch.model.LibraryBranch;
+import org.pollub.library.branch.repository.ILibraryBranchRepository;
 import org.pollub.library.exception.RentalException;
 import org.pollub.library.item.model.ItemStatus;
 import org.pollub.library.item.model.LibraryItem;
@@ -26,6 +28,7 @@ public class RentalService implements IRentalService{
     private final IUserService userService;
     private final IRentalValidator rentalValidator;
     private final IRentalHistoryRepository rentalHistoryRepository;
+    private final ILibraryBranchRepository libraryBranchRepository;
 
     @Override
     public List<LibraryItem> getRentedItems(long userId) {
@@ -41,12 +44,18 @@ public class RentalService implements IRentalService{
     @Override
     public LibraryItem rentItem(RentDto rentDto) {
         LibraryItem libraryItem = getLibraryItemOrThrow(rentDto.getLibraryItemId());
+        LibraryBranch branch = getBranchOrThrow(rentDto.getBranchId());
 
         User user = userService.findById(rentDto.getUserId());
         this.rentalValidator.validateAbilityToRentOrThrow(user.getId(), libraryItem);
-        setLibraryItemToBeRentedByUser(libraryItem, user);
+        setLibraryItemToBeRentedByUser(libraryItem, user, branch);
 
         return saveOrThrow(libraryItem);
+    }
+
+    private LibraryBranch getBranchOrThrow(Long branchId) {
+        return libraryBranchRepository.findById(branchId)
+                .orElseThrow(() -> new RentalException("Library branch not found"));
     }
 
     private LibraryItem getLibraryItemOrThrow(long itemId) {
@@ -60,8 +69,9 @@ public class RentalService implements IRentalService{
                 .orElseThrow(() -> new RentalException("LibraryItem cannot be saved"));
     }
 
-    private void setLibraryItemToBeRentedByUser(LibraryItem libraryItem, User user) {
+    private void setLibraryItemToBeRentedByUser(LibraryItem libraryItem, User user, LibraryBranch branch) {
         libraryItem.setRentedByUser(user);
+        libraryItem.setRentedFromBranch(branch);
         libraryItem.setStatus(ItemStatus.RENTED);
         libraryItem.setRentedAt(LocalDateTime.now());
         libraryItem.setDueDate(libraryItem.calculateDueTime());
@@ -87,6 +97,7 @@ public class RentalService implements IRentalService{
             RentalHistory history = RentalHistory.builder()
                     .item(libraryItem)
                     .user(libraryItem.getRentedByUser())
+                    .branch(libraryItem.getRentedFromBranch())
                     .rentedAt(libraryItem.getRentedAt())
                     .returnedAt(LocalDateTime.now())
                     .build();
@@ -96,6 +107,7 @@ public class RentalService implements IRentalService{
 
     private static void updateBookToBeAvailableToRent(LibraryItem libraryItem) {
         libraryItem.setRentedByUser(null);
+        libraryItem.setRentedFromBranch(null);
         libraryItem.setStatus(ItemStatus.AVAILABLE);
         libraryItem.setRentedAt(null);
         libraryItem.setDueDate(null);

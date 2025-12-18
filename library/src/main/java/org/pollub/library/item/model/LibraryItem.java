@@ -32,6 +32,10 @@ public abstract class LibraryItem {
     @JsonBackReference
     private User rentedByUser;
 
+    @ManyToOne
+    @JoinColumn(name = "rented_from_branch_id")
+    private LibraryBranch rentedFromBranch;
+
     private LocalDateTime rentedAt;
     private LocalDateTime dueDate;
 

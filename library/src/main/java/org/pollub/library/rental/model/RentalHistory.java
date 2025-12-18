@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import org.pollub.library.branch.model.LibraryBranch;
 import org.pollub.library.item.model.LibraryItem;
 import org.pollub.library.user.model.User;
 
@@ -29,6 +30,10 @@ public class RentalHistory {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "branch_id", nullable = false)
+    private LibraryBranch branch;
 
     @Column(name = "rented_at", nullable = false)
     private LocalDateTime rentedAt;
