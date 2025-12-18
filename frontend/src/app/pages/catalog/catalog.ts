@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, OnInit, signal, inject, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CustomSelect } from '../../components/custom-select/custom-select';
 import { SelectOption, SingleBook } from '../../types';
@@ -8,7 +8,8 @@ import { FormsModule } from '@angular/forms';
 import { debounceTime, Subject, forkJoin } from 'rxjs';
 import { SortSelectComponent } from '../../components/sort-select/sort-select';
 import { MatIconModule } from '@angular/material/icon';
-import {ActivatedRoute} from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 
 @Component({
   selector: 'app-catalog',
@@ -26,6 +27,7 @@ import {ActivatedRoute} from '@angular/router';
 })
 export class Catalog implements OnInit {
   private bookService = inject(BookService);
+  private liveAnnouncer = inject(LiveAnnouncer);
 
   books: SingleBook[] = [];
   currentPage = 0;
@@ -162,6 +164,7 @@ export class Catalog implements OnInit {
           this.books = response.content;
           this.totalPages = response.totalPages;
           this.totalElements = response.totalElements;
+          this.announceResults();
         },
         error: (error) => {
           console.error('Error loading books:', error);
@@ -231,5 +234,43 @@ export class Catalog implements OnInit {
     }
 
     return pages;
+  }
+
+  /**
+   * Ogłasza wyniki dla czytników ekranu
+   */
+  private announceResults(): void {
+    let message = `Znaleziono ${this.totalElements} pozycji`;
+    if (this.selectedGenre) {
+      message += ` w kategorii ${this.selectedGenre}`;
+    }
+    this.liveAnnouncer.announce(message, 'polite');
+  }
+
+  /**
+   * Obsługa klawisza Escape - czyści wszystkie filtry
+   */
+  @HostListener('document:keydown.escape')
+  onEscapeKey(): void {
+    if (this.searchQuery || this.selectedStatus || this.selectedPublisher || this.selectedGenre) {
+      this.clearAllFilters();
+    }
+  }
+
+  /**
+   * Czyści wszystkie aktywne filtry i odświeża wyniki
+   */
+  clearAllFilters(): void {
+    this.searchQuery = '';
+    this.selectedStatus = null;
+    this.selectedPublisher = null;
+    this.selectedGenre = null;
+    this.currentSelectionStatus.set(null);
+    this.currentSelectionPublisher.set(null);
+    this.currentSelectionOther.set(null);
+    this.sortBy = null;
+    this.currentPage = 0;
+    this.loadBooks();
+    this.liveAnnouncer.announce('Wszystkie filtry zostały wyczyszczone', 'assertive');
   }
 }

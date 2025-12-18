@@ -16,11 +16,29 @@
   display: block;
   pointer-events: auto;
 }
+
 .select-button {
+  &:focus-visible {
+    outline: 2px solid var(--base-blue-lighter);
+    outline-offset: 2px;
+  }
 
   &.active {
     border-color: transparent;
     box-shadow: 0 0 0 2px #1A365B;
+  }
+}
+
+// Podświetlenie opcji przy nawigacji klawiaturą
+.option-highlighted {
+  outline: 2px solid var(--base-blue-lighter);
+  outline-offset: -2px;
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .select-options {
+    transition: none;
   }
 }
 

@@ -1,107 +1,157 @@
-<div
+<!-- Skip link - widoczny tylko przy fokusie -->
+<a
+  href="#catalog-results"
+  class="skip-link"
+>
+  Przejdź do wyników wyszukiwania
+</a>
+
+<!-- Wizualnie ukryty nagłówek dla czytników ekranu -->
+<h1 class="sr-only">Katalog książek</h1>
+
+<main
   class="flex flex-col text-[color:var(--base-gray-darker)] w-full px-8 items-center justify-center"
+  role="main"
 >
   <div class="w-full max-w-[1400px] mx-auto px-4">
-    <div
-      class="mt-10 flex items-center gap-2.5 bg-[color:var(--search-bar-catalog)] w-full rounded-lg shadow-md p-3 px-[18px] text-lg"
-    >
-      <mat-icon
-        class="text-2xl text-[color:var(--base-gray-darker-catalog)]"
-        fontIcon="search"
-      ></mat-icon>
-      <input
-        type="text"
-        [(ngModel)]="searchQuery"
-        (ngModelChange)="onSearchChange()"
-        class="w-full bg-transparent outline-none text-lg text-[color:var(--base-gray-darker-catalog)]"
-        placeholder="Wyszukaj tytuł lub autora..."/>
-    </div>
-
-    <div
-      class="mt-[1vh] flex flex-col w-full items-center gap-4 sm:flex-row sm:justify-between sm:items-start"
-    >
-      <div class="flex flex-col gap-2 w-full sm:flex-row sm:items-center sm:w-auto sm:gap-[0.5vw]">
-        <app-custom-select
-          placeholder="Status"
-          [options]="statusOptions"
-          [(selected)]="currentSelectionStatus"
-        ></app-custom-select>
-
-        <app-custom-select
-          placeholder="Wydawnictwo"
-          [options]="publishers"
-          [(selected)]="currentSelectionPublisher"
-        ></app-custom-select>
-      </div>
-
+    <!-- Sekcja wyszukiwania -->
+    <section role="search" aria-label="Wyszukiwanie książek">
+      <label for="catalog-search" class="sr-only">Wyszukaj tytuł lub autora</label>
       <div
-        class="flex flex-wrap items-center justify-center sm:justify-end gap-2 w-full sm:w-auto"
-        id="buttonGroup"
+        class="mt-10 flex items-center gap-2.5 bg-[color:var(--search-bar-catalog)] w-full rounded-lg shadow-md p-3 px-[18px] text-lg"
       >
-        @for (category of genres; track category) {
-          <button
-            (click)="setGenre(category)"
-            [ngClass]="
-              'flex items-center text-sm rounded-md py-[3px] px-2 shadow-md outline-none transition-colors cursor-pointer ' +
-              (isGenreSelected(category)
-                ? 'bg-[color:var(--base-blue-lighter-catalog)] border-1 border-[color:var(--base-blue-lighter)] text-[color:var(--white-to-yellow)]'
-                : 'bg-[color:var(--search-bar-catalog)] text-[color:var(--base-gray-darker-catalog)]')
-            "
-          >
-            {{ category }}
-          </button>
-        }
-
-        @if (otherGenres.length > 0) {
-          <app-custom-select
-            placeholder="Inne"
-            [options]="otherGenres"
-            [(selected)]="currentSelectionOther"
-            [activeValues]="selectedGenre ? [selectedGenre] : []"
-          ></app-custom-select>
-        }
+        <mat-icon
+          class="text-2xl text-[color:var(--base-gray-darker-catalog)]"
+          fontIcon="search"
+          aria-hidden="true"
+        ></mat-icon>
+        <input
+          id="catalog-search"
+          type="text"
+          [(ngModel)]="searchQuery"
+          (ngModelChange)="onSearchChange()"
+          class="w-full bg-transparent outline-none text-lg text-[color:var(--base-gray-darker-catalog)]"
+          placeholder="Wyszukaj tytuł lub autora..."
+          aria-describedby="search-results-count"
+        />
       </div>
+    </section>
+
+    <!-- Sekcja filtrów -->
+    <section aria-label="Filtry katalogui">
+      <div
+        class="mt-[1vh] flex flex-col w-full items-center gap-4 sm:flex-row sm:justify-between sm:items-start"
+      >
+        <div class="flex flex-col gap-2 w-full sm:flex-row sm:items-center sm:w-auto sm:gap-[0.5vw]">
+          <app-custom-select
+            placeholder="Status"
+            [options]="statusOptions"
+            [(selected)]="currentSelectionStatus"
+            ariaLabel="Filtruj według statusu"
+          ></app-custom-select>
+
+          <app-custom-select
+            placeholder="Wydawnictwo"
+            [options]="publishers"
+            [(selected)]="currentSelectionPublisher"
+            ariaLabel="Filtruj według wydawnictwa"
+          ></app-custom-select>
+        </div>
+
+        <div
+          class="flex flex-wrap items-center justify-center sm:justify-end gap-2 w-full sm:w-auto"
+          role="group"
+          aria-label="Filtry gatunków"
+        >
+          @for (category of genres; track category; let i = $index) {
+            <button
+              type="button"
+              (click)="setGenre(category)"
+              [attr.aria-pressed]="isGenreSelected(category)"
+              [ngClass]="
+                'flex items-center text-sm rounded-md py-[3px] px-2 shadow-md outline-none transition-colors cursor-pointer ' +
+                (isGenreSelected(category)
+                  ? 'bg-[color:var(--base-blue-lighter-catalog)] border-1 border-[color:var(--base-blue-lighter)] text-[color:var(--white-to-yellow)]'
+                  : 'bg-[color:var(--search-bar-catalog)] text-[color:var(--base-gray-darker-catalog)]')
+              "
+            >
+              {{ category }}
+            </button>
+          }
+
+          @if (otherGenres.length > 0) {
+            <app-custom-select
+              placeholder="Inne"
+              [options]="otherGenres"
+              [(selected)]="currentSelectionOther"
+              [activeValues]="selectedGenre ? [selectedGenre] : []"
+              ariaLabel="Więcej gatunków"
+            ></app-custom-select>
+          }
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<!-- Sekcja wyników -->
+<section aria-label="Wyniki wyszukiwania">
+  <div class="flex flex-col sm:flex-row items-center justify-between mt-8 mb-2 mx-4 sm:mx-10 gap-2">
+    <div
+      id="search-results-count"
+      class="text-[color:var(--base-gray-darker)] text-sm text-center sm:text-left"
+      aria-live="polite"
+      aria-atomic="true"
+    >
+      Znaleziono
+      <span class="text-[color:var(--base-blue-lighter)] font-bold">{{ totalElements }}</span>
+      pozycji
+      @if (selectedGenre) {
+        w kategorii: <span class="font-bold">{{ selectedGenre }}</span>
+      }
+    </div>
+    <div>
+      <app-sort-select (sortChange)="onSortChange($event)"></app-sort-select>
     </div>
   </div>
-</div>
 
-<div class="flex flex-col sm:flex-row items-center justify-between mt-8 mb-2 mx-4 sm:mx-10 gap-2">
-  <div class="text-[color:var(--base-gray-darker)] text-sm text-center sm:text-left">
-    Znaleziono
-    <a href="#" class="text-[color:var(--base-blue-lighter)] font-bold">{{ totalElements }}</a>
-    pozycji
-    @if (selectedGenre) {
-      w kategorii: <span class="font-bold">{{ selectedGenre }}</span>
-    }
-  </div>
-  <div>
-    <app-sort-select (sortChange)="onSortChange($event)"></app-sort-select>
-  </div>
-</div>
-
-<div class="w-full rounded-[10px] bg-[color:var(--base-input-bg)] px-4 py-2 mb-2">
   <div
-    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-8 gap-3 justify-items-center"
+    id="catalog-results"
+    class="w-full rounded-[10px] bg-[color:var(--base-input-bg)] px-4 py-2 mb-2"
+    tabindex="-1"
+    role="region"
+    aria-label="Lista książek"
   >
-    @for (book of books; track book) {
-      <app-single-book
-        [book]="book"
-        [imgSrc]="book.imageUrl"
-        [title]="book.title"
-        [author]="book.author"
-      >
-      </app-single-book>
-    }
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-8 gap-3 justify-items-center"
+      role="list"
+    >
+      @for (book of books; track book) {
+        <app-single-book
+          role="listitem"
+          [book]="book"
+          [imgSrc]="book.imageUrl"
+          [title]="book.title"
+          [author]="book.author"
+        >
+        </app-single-book>
+      }
+    </div>
   </div>
-</div>
+</section>
 
-<div class="flex justify-center items-center w-full mt-2 mb-2 overflow-x-auto">
-  <nav class="flex flex-wrap justify-center gap-2 px-4 py-2" (click)="$event.stopPropagation()">
+<!-- Paginacja -->
+<nav
+  class="flex justify-center items-center w-full mt-2 mb-2 overflow-x-auto"
+  aria-label="Paginacja wyników"
+>
+  <div class="flex flex-wrap justify-center gap-2 px-4 py-2" (click)="$event.stopPropagation()">
     <button
       (click)="previousPage()"
       [disabled]="currentPage === 0"
       type="button"
       class="px-3 py-1 rounded-full bg-[color:var(--search-bar-catalog)] text-[color:var(--base-gray-darker-catalog)] font-bold hover:bg-[color:var(--hover-pagination)] disabled:cursor-not-allowed transition-opacity select-none cursor-pointer"
+      aria-label="Poprzednia strona"
     >
       &lt;
     </button>
@@ -111,6 +161,8 @@
         (click)="goToPage(pageNum)"
         [disabled]="pageNum === currentPage"
         type="button"
+        [attr.aria-label]="'Strona ' + (pageNum + 1)"
+        [attr.aria-current]="pageNum === currentPage ? 'page' : null"
         [class]="
           pageNum === currentPage
             ? 'px-3 py-1 rounded-full bg-[color:var(--base-blue-lighter)] text-[color:var(--nav-base-color)] font-bold shadow select-none cursor-default'
@@ -122,12 +174,16 @@
     }
 
     @if (totalPages > 5 && currentPage < totalPages - 3) {
-      <span class="px-2 py-1 text-[color:var(--base-gray-darker)] font-bold select-none">...</span>
+      <span
+        class="px-2 py-1 text-[color:var(--base-gray-darker)] font-bold select-none"
+        aria-hidden="true"
+      >...</span>
 
       <button
         (click)="goToPage(totalPages - 1)"
         type="button"
         class="px-3 py-1 rounded-full text-[color:var(--base-gray-darker)] font-bold hover:bg-[color:var(--hover-pagination)] hover:text-[color:var(--base-gray-darker-catalog)] disabled:opacity-50 select-none cursor-pointer"
+        [attr.aria-label]="'Strona ' + totalPages"
       >
         {{ totalPages }}
       </button>
@@ -138,8 +194,9 @@
       [disabled]="currentPage === totalPages - 1"
       type="button"
       class="px-3 py-1 rounded-full bg-[color:var(--search-bar-catalog)] text-[color:var(--base-gray-darker-catalog)] font-bold hover:bg-[color:var(--hover-pagination)] disabled:cursor-not-allowed transition-opacity select-none cursor-pointer"
+      aria-label="Następna strona"
     >
       &gt;
     </button>
-  </nav>
-</div>
+  </div>
+</nav>
