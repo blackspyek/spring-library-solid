@@ -11,15 +11,20 @@ import {
 } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { CommonModule } from '@angular/common';
 import * as L from 'leaflet';
 import { LibraryBranch, LibrarySelectorDialogData } from '../../types';
 import { BranchService } from '../../services/branch-service';
+import { ReservationService } from '../../services/reservation.service';
+import { AuthService } from '../../services/auth-service';
+import { Router } from '@angular/router';
 
 // Fix for default marker icons in Leaflet with Angular
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
@@ -30,6 +35,7 @@ const shadowUrl = 'assets/marker-shadow.png';
   selector: 'app-library-selector-dialog',
   standalone: true,
   imports: [
+    CommonModule,
     FormsModule,
     MatDialogModule,
     MatButtonModule,
@@ -37,6 +43,7 @@ const shadowUrl = 'assets/marker-shadow.png';
     MatInputModule,
     MatFormFieldModule,
     MatRadioModule,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './library-selector-dialog.html',
   styleUrl: './library-selector-dialog.scss',
@@ -47,6 +54,9 @@ export class LibrarySelectorDialog implements OnInit, AfterViewInit, OnDestroy {
 
   private dialogRef = inject(MatDialogRef<LibrarySelectorDialog>);
   private branchService = inject(BranchService);
+  private reservationService = inject(ReservationService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
   public data: LibrarySelectorDialogData = inject(MAT_DIALOG_DATA);
 
   private map: L.Map | null = null;
@@ -57,6 +67,11 @@ export class LibrarySelectorDialog implements OnInit, AfterViewInit, OnDestroy {
   searchQuery = signal('');
   allBranches = signal<LibraryBranch[]>([]);
   selectedBranchId = signal<number | null>(null);
+  isLoading = signal(false);
+  showConfirmation = signal(false);
+  showSuccess = signal(false);
+  reservationExpiresAt = signal<string | null>(null);
+  errorMessage = signal<string | null>(null);
 
   filteredBranches = computed(() => {
     const query = this.searchQuery().toLowerCase().trim();
@@ -260,9 +275,69 @@ export class LibrarySelectorDialog implements OnInit, AfterViewInit, OnDestroy {
 
   onConfirm(): void {
     const selectedId = this.selectedBranchId();
-    if (selectedId) {
-      const selectedBranch = this.allBranches().find((b) => b.id === selectedId);
-      this.dialogRef.close(selectedBranch);
+    if (!selectedId) return;
+
+    // In availability mode, check auth before reserving
+    if (this.data.mode === 'availability') {
+      if (!this.authService.isLoggedIn()) {
+        this.dialogRef.close();
+        void this.router.navigate(['/zaloguj-sie']);
+        return;
+      }
+      this.showConfirmation.set(true);
+      return;
     }
+
+    // For favorite mode, just return the selected branch
+    const selectedBranch = this.allBranches().find((b) => b.id === selectedId);
+    this.dialogRef.close(selectedBranch);
+  }
+
+  onConfirmReservation(): void {
+    const branchId = this.selectedBranchId();
+    const bookId = this.data.bookId;
+
+    if (!branchId || !bookId) {
+      this.errorMessage.set('Brak wymaganych danych do rezerwacji');
+      return;
+    }
+
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
+
+    this.reservationService.createReservation({ libraryItemId: bookId, branchId }).subscribe({
+      next: (reservation) => {
+        this.isLoading.set(false);
+        this.reservationExpiresAt.set(reservation.expiresAt);
+        this.showConfirmation.set(false);
+        this.showSuccess.set(true);
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+        const message = err.error?.message || err.message || 'Wystąpił błąd podczas rezerwacji';
+        this.errorMessage.set(message);
+      },
+    });
+  }
+
+  closeSuccess(): void {
+    this.dialogRef.close({ success: true });
+  }
+
+  onCancelConfirmation(): void {
+    this.showConfirmation.set(false);
+    this.errorMessage.set(null);
+    // Reinitialize map after DOM renders the main content
+    setTimeout(() => {
+      this.initMap();
+      this.updateMapMarkers();
+    }, 100);
+  }
+
+  getSelectedBranchName(): string {
+    const selectedId = this.selectedBranchId();
+    if (!selectedId) return '';
+    const branch = this.allBranches().find((b) => b.id === selectedId);
+    return branch ? `Filia nr ${branch.branchNumber} - ${branch.address}, ${branch.city}` : '';
   }
 }

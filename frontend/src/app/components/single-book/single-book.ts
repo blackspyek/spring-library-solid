@@ -1,8 +1,12 @@
 import { Component, inject, Input } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { NgOptimizedImage } from '@angular/common';
-import { SingleBook } from '../../types';
+import { SingleBook, LibrarySelectorDialogData } from '../../types';
 import { BookDetailsComponent } from '../book-details/book-details';
+import { LibrarySelectorDialog } from '../library-selector-dialog/library-selector-dialog';
+import { BookService } from '../../services/book.service';
+import { AuthService } from '../../services/auth-service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-single-book',
@@ -12,6 +16,9 @@ import { BookDetailsComponent } from '../book-details/book-details';
 })
 export class SingleBookComponent {
   private dialog = inject(MatDialog);
+  private bookService = inject(BookService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
   readonly placeholder = 'assets/book-placeholder.svg';
 
@@ -49,4 +56,28 @@ export class SingleBookComponent {
       autoFocus: false,
     });
   }
+
+  openAvailabilityDialog(): void {
+    this.bookService.getBookAvailability(this.book.id).subscribe({
+      next: (availability) => {
+        const dialogData: LibrarySelectorDialogData = {
+          mode: 'availability',
+          bookTitle: availability.title,
+          bookId: availability.id,
+          availableBranches: availability.availableAtBranches,
+        };
+
+        this.dialog.open(LibrarySelectorDialog, {
+          data: dialogData,
+          panelClass: 'custom-dialog-container',
+          maxWidth: '90vw',
+          autoFocus: false,
+        });
+      },
+      error: (err) => {
+        console.error('Failed to load book availability:', err);
+      },
+    });
+  }
 }
+

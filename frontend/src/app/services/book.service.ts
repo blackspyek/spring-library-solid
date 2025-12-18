@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { SingleBook, PageResponse } from '../types';
+import { SingleBook, PageResponse, BookAvailability } from '../types';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -73,5 +73,9 @@ export class BookService {
 
   getPopularBooks(limit = 10): Observable<SingleBook[]> {
     return this.http.get<SingleBook[]>(`${this.apiUrl}/popular?limit=${limit}`);
+  }
+
+  getBookAvailability(bookId: number): Observable<BookAvailability> {
+    return this.http.get<BookAvailability>(`${this.apiUrl}/${bookId}/availability`);
   }
 }

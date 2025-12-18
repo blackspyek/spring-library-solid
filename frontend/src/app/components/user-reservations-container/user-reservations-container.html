@@ -1,24 +1,75 @@
-@if (loading) {
+@if (loading()) {
   <div>Ładowanie zarezerwowanych książek...</div>
 } @else {
-  @if (reservedItems.length === 0) {
+  @if (reservations().length === 0) {
     <p class="text-[color:var(--base-gray-lighter)] text-lg text-center my-6">
       Brak aktywnych rezerwacji.
     </p>
   } @else {
-    @for (item of itemsToDisplay; track $index) {
-      <app-profile-book-item
-        [itemId]="item.id"
-        [title]="item.title"
-        [author]="item.author"
-        [coverText]="item.title"
-        [date]="item.dueDate!"
-        [statusType]="'reservation'"
-        [imageUrl]="item.imageUrl"
-      ></app-profile-book-item>
+    @for (item of itemsToDisplay; track item.id) {
+      <div
+        class="bg-[color:var(--gray-library-info)] rounded-xl p-3 border border-[color:var(--base-input-bg)] flex justify-between items-center mb-3 transition-shadow duration-300 hover:shadow-md"
+      >
+        <div class="flex items-center">
+          @if (item.item.imageUrl) {
+            <div
+              class="w-16 h-20 rounded-md mr-4 relative overflow-hidden bg-[color:var(--base-gray-lighter)]"
+            >
+              <img
+                [src]="item.item.imageUrl"
+                alt="Okładka książki {{ item.item.title }}"
+                class="object-cover w-full h-full"
+              />
+            </div>
+          } @else {
+            <div
+              class="w-16 h-20 rounded-md flex items-center justify-center mr-4 relative bg-[color:var(--base-purple)]"
+            >
+              <span
+                class="text-[color:var(--base-white)] text-xs font-light absolute whitespace-nowrap rotate-90"
+              >
+                {{ item.item.title }}
+              </span>
+            </div>
+          }
+          <div class="flex flex-col">
+            <p class="font-bold text-[color:var(--book-details-text-darker)] text-base">{{ item.item.title }}</p>
+            <p class="text-xs text-[color:var(--base-gray-darker-catalog)] mb-1">
+              Filia nr {{ item.branch.branchNumber }} - {{ item.branch.address }}, {{ item.branch.city }}
+            </p>
+            <p class="text-xs text-[color:var(--base-red)]">
+              Odbierz do: <span class="font-bold">{{ item.expiresAt | date: 'dd.MM.yyyy HH:mm' }}</span>
+            </p>
+          </div>
+        </div>
+
+        @if (cancellingItemId() === item.item.id) {
+          <div class="flex gap-2 ml-4">
+            <button
+              (click)="cancelConfirmation()"
+              class="font-semibold text-sm py-2 px-3 rounded-lg transition duration-150 border whitespace-nowrap cursor-pointer bg-[color:var(--white-to-yellow)] text-[color:var(--book-details-text-darker)] border-[color:var(--base-gray-lighter)] hover:bg-[color:var(--light-gray-to-light-yellow)]"
+            >
+              Nie
+            </button>
+            <button
+              (click)="confirmCancel()"
+              class="font-semibold text-sm py-2 px-3 rounded-lg transition duration-150 border whitespace-nowrap cursor-pointer bg-[color:var(--base-red)] text-white border-[color:var(--base-red)] hover:bg-red-700"
+            >
+              Tak, anuluj
+            </button>
+          </div>
+        } @else {
+          <button
+            (click)="requestCancel(item.item.id)"
+            class="font-semibold text-sm py-2 px-4 rounded-lg transition duration-150 border ml-4 whitespace-nowrap cursor-pointer bg-[color:var(--cancel-button)] text-[color:var(--base-red)] hover:bg-[color:var(--base-red-light)] border-[color:var(--base-red)]"
+          >
+            Anuluj
+          </button>
+        }
+      </div>
     }
 
-    @if (reservedItems.length > 2) {
+    @if (reservations().length > 2) {
       <button
         class="w-full py-2 px-4 mt-2 bg-[color:var(--white-to-yellow)] border border-[color:var(--base-gray-lighter)] text-[color:var(--book-details-text-darker)] font-normal rounded-lg hover:bg-[color:var(--light-gray-to-light-yellow)] transition duration-150 cursor-pointer"
         (click)="openBooksDialog()"

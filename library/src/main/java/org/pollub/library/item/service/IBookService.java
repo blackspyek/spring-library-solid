@@ -2,6 +2,7 @@ package org.pollub.library.item.service;
 
 import org.pollub.library.item.model.Book;
 import org.pollub.library.item.model.ItemStatus;
+import org.pollub.library.item.model.dto.BookAvailabilityDto;
 import org.pollub.library.item.model.dto.BookCreateDto;
 import org.springframework.data.domain.Page;
 
@@ -26,5 +27,6 @@ public interface IBookService {
     List<String> getAllStatuses();
     List<Book> getRecentBooks(int limit);
     List<Book> getPopularBooks(int limit);
+    BookAvailabilityDto getBookAvailability(Long id);
 
 }
