@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, catchError, map, of, throwError } from 'rxjs';
-import { SingleBook, RentalHistoryItem } from '../types';
+import { RentalHistoryItem, SingleBook } from '../types';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -23,18 +23,18 @@ export class RentalService {
           return of([]);
         }
         return throwError(() => new Error(`Błąd pobierania wypożyczeń: ${error.message}`));
-      }),
+      })
     );
   }
 
-  getRecentHistory(limit: number = 3): Observable<RentalHistoryItem[]> {
+  getRecentHistory(limit = 3): Observable<RentalHistoryItem[]> {
     const url = `${this.apiUrl}/history/recent?limit=${limit}`;
 
     return this.http.get<RentalHistoryItem[]>(url).pipe(
       catchError((error: HttpErrorResponse) => {
         console.error('Błąd pobierania ostatnich wypożyczeń:', error);
         return of([]);
-      }),
+      })
     );
   }
 
@@ -49,7 +49,17 @@ export class RentalService {
         catchError((error: HttpErrorResponse) => {
           console.error('Błąd eksportu historii wypożyczeń:', error);
           return throwError(() => new Error('Nie udało się pobrać historii wypożyczeń'));
-        }),
+        })
       );
+  }
+
+  extendRental(itemId: number): Observable<SingleBook> {
+    const url = `${this.apiUrl}/extend/${itemId}`;
+
+    return this.http.post<SingleBook>(url, {}).pipe(
+      catchError((error: HttpErrorResponse) => {
+        return throwError(() => error);
+      })
+    );
   }
 }

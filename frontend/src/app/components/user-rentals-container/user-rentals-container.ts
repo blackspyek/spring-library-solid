@@ -27,6 +27,10 @@ export class UserRentalsContainer implements OnInit {
   itemsToDisplay: SingleBook[] = [];
 
   ngOnInit() {
+    this.loadRentedItems();
+  }
+
+  private loadRentedItems(): void {
     this.userService
       .getUserId()
       .pipe(
@@ -49,14 +53,24 @@ export class UserRentalsContainer implements OnInit {
       });
   }
 
+  onRentalExtended(itemId: number): void {
+    this.loadRentedItems();
+  }
+
   openBooksDialog(): void {
-    this.dialog.open(ActiveBooksDialog, {
+    const dialogRef = this.dialog.open(ActiveBooksDialog, {
       width: '600px',
       panelClass: 'user-rentals-dialog',
       autoFocus: true,
       data: {
         type: 'rent',
       },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === true) {
+        this.loadRentedItems();
+      }
     });
   }
 }

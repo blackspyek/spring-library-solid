@@ -140,7 +140,6 @@ html.high-contrast {
   --base-red: #784008;
   --base-purple: #784008;
   --base-red-light: #ffed00;
-
 }
 
 html {
@@ -187,6 +186,7 @@ body {
 .notification-settings-dialog .mat-mdc-dialog-surface,
 .library-selector-dialog .mat-mdc-dialog-surface,
 .user-rentals-dialog .mat-mdc-dialog-surface,
-.user-reservations-dialog .mat-mdc-dialog-surface {
+.user-reservations-dialog .mat-mdc-dialog-surface,
+.extend-rental-dialog .mat-mdc-dialog-surface{
   background-color: var(--white-to-yellow) !important;
 }

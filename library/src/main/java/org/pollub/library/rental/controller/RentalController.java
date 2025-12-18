@@ -78,16 +78,13 @@ public class RentalController {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN')")
-    @PostMapping("/{itemId}/extend")
-    public ResponseEntity<LibraryItem> extendLoan(
-            @PathVariable Long itemId,
-            @RequestParam(defaultValue = "7") int days) {
-        return ResponseEntity.ok(rentalService.extendLoan(itemId, days));
-    }
-
-    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN')")
     @GetMapping("/all-rented")
     public ResponseEntity<List<LibraryItem>> getAllRentedItems() {
         return ResponseEntity.ok(rentalService.getAllRentedItems());
+    }
+
+    @PostMapping("/extend/{itemId}")
+    public ResponseEntity<LibraryItem> extendRental(@PathVariable Long itemId) {
+        return ResponseEntity.ok(rentalService.extendRental(itemId));
     }
 }
