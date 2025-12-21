@@ -1,6 +1,4 @@
-<div
-  class="flex flex-col w-full min-h-screen px-4 md:px-8 py-6 text-[color:var(--base-gray-darker)]"
->
+<div class="flex flex-col w-full min-h-screen px-4 md:px-8 py-6 text-[color:var(--base-gray-darker)]">
   <div class="flex items-center justify-between mb-6">
     <h1 class="text-2xl md:text-3xl font-bold text-[color:var(--base-blue-dark)]">
       Zarządzanie wypożyczeniami
@@ -8,157 +6,195 @@
   </div>
 
   @if (actionMessage()) {
-    <div
-      [class]="
-        'mb-4 p-4 rounded-lg text-white font-medium ' +
-        (actionMessage()?.type === 'success' ? 'bg-green-600' : 'bg-red-600')
-      "
-    >
+    <div [class]="'mb-4 p-4 rounded-lg font-medium ' +
+      (actionMessage()?.customBg || (actionMessage()?.type === 'success' ? 'bg-[color:var(--green-600-to-yellow)]' : 'bg-[color:var(--delete-red)]')) + ' ' +
+      (actionMessage()?.customText || 'text-[color:var(--base-form-bg)]')">
       {{ actionMessage()?.text }}
     </div>
   }
 
+  <div class="mb-6 bg-[color:var(--book-bg)] rounded-xl shadow-md p-4">
+    <div class="flex items-center gap-4">
+      <label class="text-sm font-medium text-[color:var(--base-gray-darker)]">Twoja Filia:</label>
+      @if (isLoadingBranch()) {
+        <div class="flex items-center gap-2 text-[color:var(--base-gray-lighter)]">
+          <div class="animate-spin h-4 w-4 border-2 border-blue-500 border-t-transparent rounded-full"></div>
+          <span>Ładowanie...</span>
+        </div>
+      } @else if (employeeBranchError()) {
+        <div class="text-[color:var(--base-red)] font-medium">
+          {{ employeeBranchError() }}
+        </div>
+      } @else if (employeeBranch()) {
+        <div class="flex-1 px-4 py-2 bg-[color:var(--base-input-bg)] border border-gray-300 rounded-lg text-[color:var(--base-font-color)]">
+          {{ employeeBranch()?.name }} - {{ employeeBranch()?.city }}, {{ employeeBranch()?.address }}
+        </div>
+      }
+    </div>
+  </div>
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
     <div class="flex flex-col gap-4">
-      <div class="bg-[color:var(--base-form-bg)] rounded-xl shadow-md p-6">
-        <h2 class="text-lg font-semibold mb-4 text-[color:var(--base-blue-dark)]">
-          Wyszukaj czytelnika
-        </h2>
 
-        <div class="flex gap-2 mb-4">
-          <div
-            class="flex-1 flex items-center gap-2 bg-[color:var(--base-input-bg)] border border-gray-300 rounded-lg px-4 py-2"
-          >
-            <mat-icon class="text-[color:var(--base-gray-lighter)]">search</mat-icon>
-            <input
-              type="text"
-              [(ngModel)]="userSearchQuery"
-              (ngModelChange)="onUserSearchChange()"
-              placeholder="Email, nazwa użytkownika lub ID..."
-              class="flex-1 bg-transparent outline-none text-[color:var(--base-font-color)]"
-            />
-            @if (userSearchQuery) {
-              <button (click)="clearUser()" class="text-gray-400 hover:text-gray-600">
-                <mat-icon>close</mat-icon>
-              </button>
-            }
-          </div>
-          <button
-            (click)="openQrScanner()"
-            class="flex items-center justify-center px-4 py-2 bg-[color:var(--base-blue-dark)] text-white rounded-lg hover:bg-[color:var(--base-blue-darker)] transition-colors"
-            title="Skanuj QR"
-          >
+      <div class="bg-[color:var(--white-to-yellow)] rounded-xl shadow-md p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold text-[color:var(--base-blue-dark-to-black)]">
+            Wyszukaj czytelnika
+          </h2>
+          <button (click)="openQrScanner()" class="p-2 text-[color:var(--base-blue-dark-to-black)] hover:bg-[color:var(--gray-50-to-darkyellow)] rounded-full" title="Skanuj QR">
             <mat-icon>qr_code_scanner</mat-icon>
           </button>
         </div>
 
-        @if (isSearchingUser()) {
-          <div class="flex items-center gap-2 text-[color:var(--base-gray-lighter)]">
-            <div
-              class="animate-spin h-4 w-4 border-2 border-blue-500 border-t-transparent rounded-full"
-            ></div>
-            <span>Szukam...</span>
+        @if (!selectedUser()) {
+          <div class="flex gap-2 mb-4">
+            <div class="flex-1 flex items-center gap-2 bg-[color:var(--base-input-bg)] border border-[color:var(--gray-300-to-black)] rounded-lg px-4 py-2">
+              <mat-icon class="text-[color:var(--base-gray-lighter)]">search</mat-icon>
+              <input
+                type="text"
+                [(ngModel)]="userSearchQuery"
+                (ngModelChange)="onUserSearchChange()"
+                placeholder="Szukaj (email, imię)..."
+                class="flex-1 bg-transparent outline-none text-[color:var(--base-font-color)]"
+              />
+            </div>
+          </div>
+
+          <div class="max-h-60 [scrollbar-width:thin] [scrollbar-color:black_transparent] [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-black [&::-webkit-scrollbar-thumb]:rounded-[3px] overflow-y-auto border border-[color:var(--gray-to-black)] rounded-lg mb-4">
+            @if (isLoadingUsers()) {
+              <div class="p-4 text-center text-[color:var(--text-gray-to-black)]">Ładowanie...</div>
+            } @else if (filteredUsers().length === 0) {
+              <div class="p-4 text-center text-[color:var(--text-gray-to-black)]">Brak użytkowników</div>
+            } @else {
+              @for (user of filteredUsers(); track user.id) {
+                <div
+                  (click)="selectUser(user)"
+                  class="flex items-center justify-between p-3 border-b border-[color:var(--light-gray-to-darkgray)] hover:bg-[color:var(--gray-50-to-darkyellow)] cursor-pointer transition-colors last:border-0"
+                >
+                  <div class="flex flex-col">
+                    <div class="flex items-center gap-2">
+                      <span class="font-medium text-[color:var(--base-blue-dark-to-black)]">
+                         {{ (user.first_name && user.last_name) ? user.first_name + ' ' + user.last_name : (user.name ? user.name + ' ' + user.surname : user.email) }}
+                      </span>
+                    </div>
+
+                    <div class="flex items-center gap-2 mt-0.5">
+                      <span class="text-xs text-[color:var(--gray-500-to-black)]">{{ user.email }}</span>
+
+                      <div class="flex gap-1">
+                        @for (roleItem of (user.roles || user.authorities || []); track $index) {
+                          <span class="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-[color:var(--blue-100)] text-[color:var(--blue-800)] border border-[color:var(--blue-200)]">
+                              {{ getRoleName(roleItem).replace('ROLE_', '') }}
+                            </span>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                  <mat-icon class="text-[color:var(--gray-500-to-black)] text-sm">chevron_right</mat-icon>
+                </div>
+              }
+            }
           </div>
         }
 
-        @if (userSearchError()) {
-          <div class="text-red-500 text-sm">{{ userSearchError() }}</div>
-        }
-
         @if (selectedUser()) {
-          <div
-            class="mt-4 p-4 bg-[color:var(--blue-50)] rounded-lg border border-[color:var(--blue-500)]"
-          >
-            <div class="flex items-center justify-between">
+          <div class="mt-4 p-4 bg-[color:var(--blue-100)] rounded-lg border border-[color:var(--blue-500)] animate-fade-in">
+            <div class="flex items-start justify-between">
               <div>
-                <h3 class="font-semibold text-[color:var(--base-blue-dark)]">
-                  {{ selectedUser()?.first_name }} {{ selectedUser()?.last_name }}
+                <h3 class="font-semibold text-[color:var(--base-blue-dark)] text-lg">
+                  {{ (selectedUser()?.first_name && selectedUser()?.last_name) ? selectedUser()?.first_name + ' ' + selectedUser()?.last_name : (selectedUser()?.name ? selectedUser()?.name + ' ' + selectedUser()?.surname : selectedUser()?.username) }}
                 </h3>
+
                 <p class="text-sm text-[color:var(--base-gray-lighter)]">
                   {{ selectedUser()?.email }}
                 </p>
-                <p class="text-sm text-[color:var(--base-gray-lighter)]">
-                  Tel: {{ selectedUser()?.phone_number || '-' }}
+                <p class="text-sm text-[color:var(--base-gray-lighter)] mb-2">
+                  ID: {{ selectedUser()?.id }}
                 </p>
+
+                <p class="text-sm text-[color:var(--base-gray-lighter)] mb-2">
+                  Rola:
+                  @for (item of (selectedUser()?.roles || selectedUser()?.authorities || []); track $index; let isLast = $last) {
+                    <span class="font-medium text-[color:var(--base-gray-darker)]">
+                      {{ getRoleName(item) }}{{ !isLast ? ', ' : '' }}
+                    </span>
+                  } @empty {
+                    <span>Brak ról</span>
+                  }
+                </p>
+                @if (isAdmin()) {
+                  <div class="flex gap-2 mt-3">
+                    <button
+                      (click)="openEditRoleDialog()"
+                      class="text-xs px-3 py-1 bg-[color:var(--base-blue-lighter)] text-[color:var(--base-form-bg)] rounded hover:opacity-90"
+                    >
+                      Zmień rolę
+                    </button>
+                    <button
+                      (click)="openDeleteConfirmDialog()"
+                      class="text-xs px-3 py-1 bg-[color:var(--delete-red)] text-[color:var(--base-form-bg)]  rounded hover:opacity-90"
+                    >
+                      Usuń
+                    </button>
+                  </div>
+                }
               </div>
-              <button
-                (click)="clearUser()"
-                class="text-gray-400 hover:text-gray-600"
-                title="Wyczyść"
-              >
+              <button (click)="clearUser()" class="text-[color:var(--placeholder-gray)] hover:[color:var( --availability-red)] transition-colors" title="Zamknij">
                 <mat-icon>close</mat-icon>
               </button>
             </div>
           </div>
         }
+
+        @if (isLibrarian() && !selectedUser()) {
+          <div class="mt-6 border-t pt-4 text-[color:var(--base-blue-dark-to-black)]">
+            <button
+              (click)="toggleAddUserForm()"
+              class="flex items-center gap-2 text-sm font-medium text-[color:var(--base-blue-dark-to-black)] hover:underline mb-2"
+            >
+              <mat-icon class="text-base">{{ isAddingUser() ? 'remove' : 'add' }}</mat-icon>
+              {{ isAddingUser() ? 'Anuluj' : 'Dodaj nowego czytelnika' }}
+            </button>
+
+            @if (isAddingUser()) {
+              <app-add-user
+                (cancel)="closeAddUser()"
+                (userCreated)="onUserCreated()"
+              ></app-add-user>
+            }
+          </div>
+        }
       </div>
 
       @if (selectedUser()) {
-        <div class="bg-[color:var(--base-form-bg)] rounded-xl shadow-md p-6">
-          <h2 class="text-lg font-semibold mb-4 text-[color:var(--base-blue-dark)]">
-            Wypożyczenia czytelnika ({{ userLoans().length }})
+        <div class="bg-[color:var(--white-to-yellow)] rounded-xl shadow-md p-6">
+          <h2 class="text-lg font-semibold mb-4 text-[color:var(--base-blue-dark-to-black)]">
+            Wypożyczenia ({{ userLoans().length }})
           </h2>
 
           @if (userLoans().length === 0) {
-            <p class="text-[color:var(--base-gray-lighter)] text-center py-4">
-              Brak aktywnych wypożyczeń
-            </p>
+            <p class="text-[color:var(--base-gray-lighter-to-black)] text-center py-4">Brak wypożyczeń</p>
           } @else {
-            <div class="flex flex-col gap-3 max-h-[400px] overflow-y-auto">
+            <div class="flex flex-col gap-3 max-h-[400px] overflow-y-auto [scrollbar-width:thin] [scrollbar-color:black_transparent] [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-black [&::-webkit-scrollbar-thumb]:rounded-[3px]">
               @for (loan of userLoans(); track loan.id) {
-                <div
-                  [class]="
-                    'flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-lg border ' +
-                    (isOverdue(loan.dueDate)
-                      ? 'bg-red-50 border-red-300'
-                      : 'bg-gray-50 border-gray-200')
-                  "
-                >
+                <div [class]="'flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-lg border ' + (isOverdue(loan.dueDate) ? 'bg-red-50 border-red-300' : 'bg-[color:var(--gray-50-to-black)] border-[color:var(--gray-300-to-black)]')" >
                   <div class="flex items-center gap-3 mb-2 sm:mb-0">
                     @if (loan.imageUrl) {
-                      <img
-                        [src]="loan.imageUrl"
-                        [alt]="loan.title"
-                        class="w-12 h-16 object-cover rounded"
-                      />
+                      <img [src]="loan.imageUrl" [alt]="loan.title" class="w-12 h-16 object-cover rounded" />
                     }
                     <div>
-                      <h4 class="font-medium text-[color:var(--base-font-color)]">
-                        {{ loan.title }}
-                      </h4>
+                      <h4 class="font-medium text-[color:var(--base-font-color)]">{{ loan.title }}</h4>
                       <p class="text-sm text-[color:var(--base-gray-lighter)]">{{ loan.author }}</p>
                       <p class="text-xs mt-1">
-                        <span class="text-[color:var(--base-gray-lighter)]">Termin: </span>
-                        <span
-                          [class]="
-                            isOverdue(loan.dueDate)
-                              ? 'text-red-600 font-semibold'
-                              : 'text-[color:var(--base-font-color)]'
-                          "
-                        >
+                        <span class="text-[color:var(--base-gray-lighter)]">Do: </span>
+                        <span [class]="isOverdue(loan.dueDate) ? 'text-red-600 font-semibold' : 'text-[color:var(--base-font-color)]'">
                           {{ formatDate(loan.dueDate) }}
                         </span>
-                        @if (isOverdue(loan.dueDate)) {
-                          <span class="ml-1 text-red-600">(przeterminowane)</span>
-                        }
                       </p>
                     </div>
                   </div>
                   <div class="flex gap-2 w-full sm:w-auto">
-                    <button
-                      (click)="extendLoan(loan)"
-                      [disabled]="isProcessing()"
-                      class="flex-1 sm:flex-none px-3 py-1.5 text-sm bg-[color:var(--base-blue-lighter)] text-white rounded-md hover:opacity-90 transition-opacity disabled:opacity-50"
-                    >
-                      +7 dni
-                    </button>
-                    <button
-                      (click)="returnBook(loan)"
-                      [disabled]="isProcessing()"
-                      class="flex-1 sm:flex-none px-3 py-1.5 text-sm bg-green-600 text-white rounded-md hover:opacity-90 transition-opacity disabled:opacity-50"
-                    >
-                      Zwróć
-                    </button>
+                    <button (click)="extendLoan(loan)" [disabled]="isProcessing()" class="flex-1 sm:flex-none px-3 py-1.5 text-sm bg-[color:var(--base-blue-lighter)] text-[color:var(--base-form-bg)] rounded-md hover:opacity-90 disabled:opacity-50">+7 dni</button>
+                    <button (click)="returnBook(loan)" [disabled]="isProcessing()" class="flex-1 sm:flex-none px-3 py-1.5 text-sm bg-[color:var(--green-600-to-yellow)] text-[color:var(--base-form-bg)] rounded-md hover:opacity-90 disabled:opacity-50">Zwróć</button>
                   </div>
                 </div>
               }
@@ -168,92 +204,39 @@
       }
     </div>
 
-    <div class="bg-[color:var(--base-form-bg)] rounded-xl shadow-md p-6">
-      <h2 class="text-lg font-semibold mb-4 text-[color:var(--base-blue-dark)]">
-        Dostępne książki do wypożyczenia
+    <div class="bg-[color:var(--white-to-yellow)] rounded-xl shadow-md p-6 h-fit">
+      <h2 class="text-lg font-semibold mb-4 text-[color:var(--base-blue-dark-to-black)]">
+        Dostępne książki
       </h2>
-
-      <div
-        class="flex items-center gap-2 bg-[color:var(--base-input-bg)] border border-gray-300 rounded-lg px-4 py-2 mb-4"
-      >
+      <div class="flex items-center gap-2 bg-[color:var(--base-input-bg)] border border-[color:var(--gray-300-to-black)] rounded-lg px-4 py-2 mb-4">
         <mat-icon class="text-[color:var(--base-gray-lighter)]">search</mat-icon>
-        <input
-          type="text"
-          [(ngModel)]="bookSearchQuery"
-          (ngModelChange)="onBookSearchChange()"
-          placeholder="Szukaj po tytule, autorze lub ISBN..."
-          class="flex-1 bg-transparent outline-none text-[color:var(--base-font-color)]"
-        />
+        <input type="text" [(ngModel)]="bookSearchQuery" (ngModelChange)="onBookSearchChange()" placeholder="Szukaj książki..." class="flex-1 bg-transparent outline-none text-[color:var(--base-font-color)]" />
         @if (bookSearchQuery) {
-          <button
-            (click)="bookSearchQuery = ''; onBookSearchChange()"
-            class="text-gray-400 hover:text-gray-600"
-          >
-            <mat-icon>close</mat-icon>
-          </button>
+          <button (click)="bookSearchQuery = ''; onBookSearchChange()" class="text-[color:var(--gray-500-to-black)] hover:text-gray-600"><mat-icon>close</mat-icon></button>
         }
       </div>
 
       @if (isLoadingBooks()) {
         <div class="flex items-center justify-center py-8">
-          <div
-            class="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full"
-          ></div>
+          <div class="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full"></div>
         </div>
       } @else {
-        <div class="text-sm text-[color:var(--base-gray-lighter)] mb-3">
-          Znaleziono: {{ filteredBooks().length }} pozycji
-        </div>
-
-        <div class="flex flex-col gap-2 max-h-[500px] overflow-y-auto">
+        <div class="text-sm text-[color:var(--base-blue-lighter-catalog)] mb-3">Znaleziono: {{ filteredBooks().length }}</div>
+        <div class="flex flex-col gap-2 max-h-[600px] overflow-y-auto [scrollbar-width:thin] [scrollbar-color:black_transparent] [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-black [&::-webkit-scrollbar-thumb]:rounded-[3px]">
           @for (book of filteredBooks(); track book.id) {
-            <div
-              class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200 hover:bg-[color:var(--hover-reserve)] transition-colors"
-            >
+            <div class="flex items-center justify-between p-3 bg-[color:var(--gray-50-to-black)] rounded-lg border border-[color:var(--gray-300-to-black)] hover:bg-[color:var(--hover-reserve)] transition-colors">
               <div class="flex items-center gap-3">
-                @if (book.imageUrl) {
-                  <img
-                    [src]="book.imageUrl"
-                    [alt]="book.title"
-                    class="w-10 h-14 object-cover rounded"
-                  />
-                } @else {
-                  <div class="w-10 h-14 bg-gray-300 rounded flex items-center justify-center">
-                    <mat-icon class="text-gray-500">book</mat-icon>
-                  </div>
-                }
+                @if (book.imageUrl) { <img [src]="book.imageUrl" [alt]="book.title" class="w-10 h-14 object-cover rounded" /> }
+                @else { <div class="w-10 h-14 bg-gray-300 rounded flex items-center justify-center"><mat-icon class="text-gray-500">book</mat-icon></div> }
                 <div>
-                  <h4 class="font-medium text-[color:var(--base-font-color)] text-sm">
-                    {{ book.title }}
-                  </h4>
-                  <p class="text-xs text-[color:var(--base-gray-lighter)]">{{ book.author }}</p>
-                  @if (book.isbn) {
-                    <p class="text-xs text-[color:var(--base-gray-lighter)]">
-                      ISBN: {{ book.isbn }}
-                    </p>
-                  }
+                  <h4 class="font-medium text-[color:var(--base-font-color)] text-sm line-clamp-1">{{ book.title }}</h4>
+                  <p class="text-xs text-[color:var(--base-gray-lighter)] line-clamp-1">{{ book.author }}</p>
                 </div>
               </div>
-              <button
-                (click)="rentBook(book)"
-                [disabled]="!selectedUser() || isProcessing()"
-                [class]="
-                  'px-4 py-2 text-sm rounded-md transition-all ' +
-                  (selectedUser()
-                    ? 'bg-[color:var(--base-blue-dark)] text-white hover:opacity-90'
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed')
-                "
-                [title]="selectedUser() ? 'Wypożycz' : 'Najpierw wybierz czytelnika'"
-              >
+              <button (click)="rentBook(book)" [disabled]="!selectedUser() || isProcessing()" [class]="'px-3 py-1.5 text-xs font-medium rounded transition-all whitespace-nowrap ' + (selectedUser() ? 'bg-[color:var(--base-blue-dark)] text-[color:var(--base-input-bg)] hover:opacity-90' : 'bg-[color:var(--gray-200-to-yellow)] text-[color:var(--gray-400-to-black)] cursor-not-allowed')">
                 Wypożycz
               </button>
             </div>
-          }
-
-          @if (filteredBooks().length === 0 && !isLoadingBooks()) {
-            <p class="text-center text-[color:var(--base-gray-lighter)] py-8">
-              Brak dostępnych książek
-            </p>
           }
         </div>
       }
@@ -263,4 +246,20 @@
 
 @if (showQrScanner()) {
   <app-qr-scanner (scanned)="onQrCodeScanned($event)" (closed)="closeQrScanner()"></app-qr-scanner>
+}
+
+@if (showEditRoleModal() && selectedUser()) {
+  <app-edit-user-role
+    [user]="selectedUser()!"
+    (cancel)="showEditRoleModal.set(false)"
+    (roleUpdated)="onRoleUpdated()">
+  </app-edit-user-role>
+}
+
+@if (showDeleteConfirmModal() && selectedUser()) {
+  <app-delete-user
+    [user]="selectedUser()!"
+    (cancel)="showDeleteConfirmModal.set(false)"
+    (userDeleted)="onUserDeleted()">
+  </app-delete-user>
 }

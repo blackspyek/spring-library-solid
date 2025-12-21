@@ -10,10 +10,13 @@ import org.pollub.library.user.model.Role;
 import org.pollub.library.user.model.RoleSetDto;
 import org.pollub.library.user.model.User;
 import org.pollub.library.user.repository.IUserRepository;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -65,7 +68,11 @@ public class UserService implements IUserService {
         if (!userRepository.existsById(id)) {
             throw new UserNotFoundException("User with ID " + id + " not found");
         }
-        userRepository.deleteById(id);
+        try {
+            userRepository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalArgumentException("Nie można usunąć użytkownika, który posiada aktywną historię (wypożyczenia/rezerwacje).");
+        }
     }
     @Override
     @Transactional
@@ -106,4 +113,27 @@ public class UserService implements IUserService {
         return user.getFavouriteBranch();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public LibraryBranch getEmployeeBranch(String username) {
+        User user = userRepository.findByUsernameWithEmployeeBranch(username.toLowerCase())
+                .orElseThrow(() -> new UserNotFoundException(username));
+        return user.getEmployeeBranch();
+    }
+
+    private static final int MIN_SEARCH_QUERY_LENGTH = 3;
+    private static final int MAX_SEARCH_RESULTS = 10;
+
+    @Override
+    public List<User> searchUsers(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return List.of();
+        }
+        return userRepository.searchUsers(query.trim());
+    }
+
+    @Override
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
 }

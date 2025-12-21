@@ -64,6 +64,9 @@ public class User implements IUser {
     @JoinColumn(name = "favourite_branch_id")
     private LibraryBranch favouriteBranch;
 
+    @OneToOne
+    @JoinColumn(name = "employee_branch_id")
+    private LibraryBranch employeeBranch;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

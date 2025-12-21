@@ -14,11 +14,17 @@ export interface LibraryBranch {
 export interface User {
   id: number;
   email: string;
-  first_name: string;
-  last_name: string;
-  phone_number: string;
-  roles: Role[];
+  username: string;
+  name: string;
+  surname: string;
+  phone: string;
+  first_name?: string;
+  last_name?: string;
+  phone_number?: string;
+  roles?: Role[];
+  authorities?: { authority: string }[];
   favouriteBranch?: LibraryBranch;
+  employeeBranch?: LibraryBranch;
 }
 export interface SelectOption {
   label: string;

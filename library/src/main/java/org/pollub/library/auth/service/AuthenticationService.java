@@ -26,12 +26,13 @@ public class AuthenticationService implements IAuthenticationService {
     public User registerUser(RegisterUserDto registerUserDto) {
         userValidator.validateNewUser(registerUserDto);
         User user = userFactory.createUser(registerUserDto);
+        user.setUsername(registerUserDto.getEmail());
         return userRepository.save(user);
     }
 
     @Override
     public User authenticateUser(LoginUserDto loginUserDto) {
-        User user = userRepository.findByEmail(loginUserDto.getEmail())
+        User user = userRepository.findByEmailWithEmployeeBranch(loginUserDto.getEmail())
                 .orElseThrow(InvalidCredentialsException::new);
 
         userValidator.validateUserStatus(user);

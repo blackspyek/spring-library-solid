@@ -7,6 +7,7 @@ import { environment } from '../../environments/environment';
 export interface RentRequest {
   libraryItemId: number;
   userId: number;
+  branchId: number;
 }
 
 @Injectable({
@@ -22,6 +23,10 @@ export class LoanService {
 
   getAvailableItems(): Observable<SingleBook[]> {
     return this.http.get<SingleBook[]>(`${this.API_URL}/available`);
+  }
+
+  getAvailableItemsByBranch(branchId: number): Observable<SingleBook[]> {
+    return this.http.get<SingleBook[]>(`${this.API_URL}/available/branch/${branchId}`);
   }
 
   getAllRentedItems(): Observable<SingleBook[]> {

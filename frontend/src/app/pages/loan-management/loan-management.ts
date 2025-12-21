@@ -1,17 +1,29 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 import { LoanService } from '../../services/loan.service';
-import { UserService } from '../../services/user.service';
-import { SingleBook, User } from '../../types';
-import { debounceTime, Subject, catchError, of, forkJoin } from 'rxjs';
+import { UserService, CreateUserRequest } from '../../services/user.service';
+import { Role, SingleBook, User, LibraryBranch } from '../../types';
+import { debounceTime, Subject } from 'rxjs';
 import { QrScannerComponent } from '../../components/qr-scanner/qr-scanner';
+import { DeleteUserComponent } from '../../components/delete-user/delete-user';
+import { EditUserRoleComponent } from '../../components/edit-user/edit-user';
+import { AuthService } from '../../services/auth-service';
+import {AddUser} from '../../components/add-user/add-user';
 
 @Component({
   selector: 'app-loan-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIcon, QrScannerComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatIcon,
+    QrScannerComponent,
+    EditUserRoleComponent,
+    DeleteUserComponent,
+    AddUser
+  ],
   templateUrl: './loan-management.html',
   styleUrl: './loan-management.scss',
   changeDetection: ChangeDetectionStrategy.Default,
@@ -19,33 +31,44 @@ import { QrScannerComponent } from '../../components/qr-scanner/qr-scanner';
 export class LoanManagement implements OnInit {
   private loanService = inject(LoanService);
   private userService = inject(UserService);
+  private authService = inject(AuthService);
 
+  isAdmin = computed(() => this.authService.hasRole(Role.ROLE_ADMIN));
+  isLibrarian = computed(() => this.authService.isLibrarian());
+
+  // <--- ZMIANA: Zmienne z V1 (niezbędne do logiki filii)
+  employeeBranch = signal<LibraryBranch | null>(null);
+  employeeBranchError = signal<string | null>(null);
+  isLoadingBranch = signal(false);
+
+  allUsers = signal<User[]>([]);
+  filteredUsers = signal<User[]>([]);
   userSearchQuery = '';
+  isLoadingUsers = signal(false);
+
   selectedUser = signal<User | null>(null);
   userLoans = signal<SingleBook[]>([]);
-  userSearchError = signal<string | null>(null);
-  isSearchingUser = signal(false);
+  isAddingUser = signal(false);
 
   bookSearchQuery = '';
   availableBooks = signal<SingleBook[]>([]);
   filteredBooks = signal<SingleBook[]>([]);
   isLoadingBooks = signal(false);
-
-  showQrScanner = signal(false);
-
-  isProcessing = signal(false);
-  actionMessage = signal<{ type: 'success' | 'error'; text: string } | null>(null);
-
-  private userSearchSubject = new Subject<string>();
   private bookSearchSubject = new Subject<string>();
 
-  constructor() {
-    this.userSearchSubject.pipe(debounceTime(400)).subscribe((query) => {
-      if (query.trim()) {
-        this.searchUser(query.trim());
-      }
-    });
+  showQrScanner = signal(false);
+  isProcessing = signal(false);
+  actionMessage = signal<{
+    type: 'success' | 'error';
+    text: string;
+    customBg?: string;
+    customText?: string;
+  } | null>(null);
+  showEditRoleModal = signal(false);
+  showDeleteConfirmModal = signal(false);
 
+
+  constructor() {
     this.bookSearchSubject.pipe(debounceTime(300)).subscribe((query) => {
       this.filterBooks(query);
     });
@@ -53,51 +76,87 @@ export class LoanManagement implements OnInit {
 
   ngOnInit() {
     this.loadAvailableBooks();
+    this.loadAllUsers();
+    this.loadEmployeeBranch();
+  }
+
+  loadEmployeeBranch() {
+    this.isLoadingBranch.set(true);
+    this.employeeBranchError.set(null);
+    this.userService.getEmployeeBranch().subscribe({
+      next: (branch) => {
+        this.isLoadingBranch.set(false);
+        if (branch) {
+          this.employeeBranch.set(branch);
+        } else {
+          if (this.isLibrarian() && !this.isAdmin()) {
+            this.employeeBranchError.set('Bibliotekarka nie jest zatrudniona w żadnej bibliotece');
+          }
+        }
+      },
+      error: () => {
+        this.isLoadingBranch.set(false);
+        if (this.isLibrarian() && !this.isAdmin()) {
+          this.employeeBranchError.set('Błąd pobierania danych o filii');
+        }
+      },
+    });
+  }
+
+  getRoleName(roleCtx: any): string {
+    if (!roleCtx) return '';
+    if (typeof roleCtx === 'object' && 'authority' in roleCtx) {
+      return roleCtx.authority;
+    }
+    return roleCtx as string;
+  }
+
+  loadAllUsers() {
+    this.isLoadingUsers.set(true);
+    this.userService.getAllUsers().subscribe({
+      next: (users) => {
+        this.allUsers.set(users);
+        this.filterUsers(this.userSearchQuery);
+        this.isLoadingUsers.set(false);
+      },
+      error: () => {
+        this.showMessage('error', 'Nie udało się pobrać listy użytkowników');
+        this.isLoadingUsers.set(false);
+      }
+    });
   }
 
   onUserSearchChange() {
-    this.userSearchSubject.next(this.userSearchQuery);
+    this.filterUsers(this.userSearchQuery);
   }
 
-  searchUser(query: string) {
-    this.isSearchingUser.set(true);
-    this.userSearchError.set(null);
-
-    this.userService
-      .findByUsername(query)
-      .pipe(
-        catchError(() => this.userService.findByEmail(query)),
-        catchError(() => {
-          // Try parsing as ID
-          const id = parseInt(query, 10);
-          if (!isNaN(id)) {
-            return this.userService.findById(id);
-          }
-          return of(null);
-        }),
-      )
-      .subscribe({
-        next: (user) => {
-          this.isSearchingUser.set(false);
-          if (user) {
-            this.selectUser(user);
-          } else {
-            this.userSearchError.set('Nie znaleziono użytkownika');
-            this.selectedUser.set(null);
-            this.userLoans.set([]);
-          }
-        },
-        error: () => {
-          this.isSearchingUser.set(false);
-          this.userSearchError.set('Błąd podczas wyszukiwania użytkownika');
-        },
-      });
+  filterUsers(query: string) {
+    const q = query.toLowerCase().trim();
+    if (!q) {
+      this.filteredUsers.set(this.allUsers());
+      return;
+    }
+    const filtered = this.allUsers().filter(u =>
+      (u.email && u.email.toLowerCase().includes(q)) ||
+      (u.first_name && u.first_name.toLowerCase().includes(q)) ||
+      (u.last_name && u.last_name.toLowerCase().includes(q)) ||
+      (u.name && u.name.toLowerCase().includes(q)) || // Obsługa starego pola
+      (u.surname && u.surname.toLowerCase().includes(q)) || // Obsługa starego pola
+      (u.id.toString() === q)
+    );
+    this.filteredUsers.set(filtered);
   }
 
   selectUser(user: User) {
     this.selectedUser.set(user);
-    this.userSearchError.set(null);
     this.loadUserLoans(user.id);
+    this.userSearchQuery = '';
+    this.filterUsers('');
+  }
+
+  clearUser() {
+    this.selectedUser.set(null);
+    this.userLoans.set([]);
   }
 
   loadUserLoans(userId: number) {
@@ -107,39 +166,55 @@ export class LoanManagement implements OnInit {
     });
   }
 
-  clearUser() {
-    this.selectedUser.set(null);
-    this.userLoans.set([]);
-    this.userSearchQuery = '';
-    this.userSearchError.set(null);
+  toggleAddUserForm() {
+    this.isAddingUser.update(v => !v);
+  }
+  onUserCreated() {
+    this.showMessage('success',
+      'Użytkownik został pomyślnie utworzony',
+      'bg-[color:var(--green-600-to-yellow)]',
+      'text-[color:var(--green-800-to-black)]'
+      );
+    this.isAddingUser.set(false);
+    this.loadAllUsers();
   }
 
-  openQrScanner() {
-    this.showQrScanner.set(true);
+  closeAddUser() {
+    this.isAddingUser.set(false);
   }
 
-  closeQrScanner() {
-    this.showQrScanner.set(false);
+  openEditRoleDialog() { if (this.selectedUser()) this.showEditRoleModal.set(true); }
+  onRoleUpdated() {
+    this.showEditRoleModal.set(false);
+    this.showMessage('success', 'Rola zaktualizowana');
+    this.loadAllUsers();
+    if(this.selectedUser()) {
+      this.userService.findById(this.selectedUser()!.id).subscribe(u => this.selectedUser.set(u));
+    }
   }
 
+  openDeleteConfirmDialog() { if (this.selectedUser()) this.showDeleteConfirmModal.set(true); }
+  onUserDeleted() {
+    this.showDeleteConfirmModal.set(false);
+    this.showMessage('success', 'Użytkownik usunięty');
+    this.clearUser();
+    this.loadAllUsers();
+  }
+
+  openQrScanner() { this.showQrScanner.set(true); }
+  closeQrScanner() { this.showQrScanner.set(false); }
   onQrCodeScanned(readerId: string) {
     this.closeQrScanner();
-    const id = parseInt(readerId, 10);
-    if (!isNaN(id)) {
-      this.isSearchingUser.set(true);
-      this.userService.findById(id).subscribe({
-        next: (user) => {
-          this.isSearchingUser.set(false);
-          this.selectUser(user);
-          this.userSearchQuery = user.email;
-        },
-        error: () => {
-          this.isSearchingUser.set(false);
-          this.userSearchError.set('Nie znaleziono użytkownika o podanym ID');
-        },
-      });
+    // Szukamy lokalnie w załadowanych, jeśli nie ma - dociągamy z API
+    const found = this.allUsers().find(u => u.id.toString() === readerId);
+    if (found) {
+      this.selectUser(found);
     } else {
-      this.userSearchError.set('Nieprawidłowy kod QR');
+      // Fallback do API (jak w V1)
+      this.userService.findById(parseInt(readerId)).subscribe({
+        next: (u) => this.selectUser(u),
+        error: () => this.showMessage('error', 'Brak użytkownika o tym ID')
+      });
     }
   }
 
@@ -151,15 +226,11 @@ export class LoanManagement implements OnInit {
         this.filteredBooks.set(books);
         this.isLoadingBooks.set(false);
       },
-      error: () => {
-        this.isLoadingBooks.set(false);
-      },
+      error: () => this.isLoadingBooks.set(false),
     });
   }
 
-  onBookSearchChange() {
-    this.bookSearchSubject.next(this.bookSearchQuery);
-  }
+  onBookSearchChange() { this.bookSearchSubject.next(this.bookSearchQuery); }
 
   filterBooks(query: string) {
     const lowerQuery = query.toLowerCase().trim();
@@ -167,34 +238,48 @@ export class LoanManagement implements OnInit {
       this.filteredBooks.set(this.availableBooks());
       return;
     }
-
-    const filtered = this.availableBooks().filter(
-      (book) =>
-        book.title.toLowerCase().includes(lowerQuery) ||
-        book.author.toLowerCase().includes(lowerQuery) ||
-        book.isbn?.toLowerCase().includes(lowerQuery),
+    const filtered = this.availableBooks().filter(b =>
+      b.title.toLowerCase().includes(lowerQuery) ||
+      b.author.toLowerCase().includes(lowerQuery) ||
+      b.isbn?.toLowerCase().includes(lowerQuery)
     );
     this.filteredBooks.set(filtered);
   }
 
   rentBook(book: SingleBook) {
     const user = this.selectedUser();
+    const branch = this.employeeBranch(); // <--- ZMIANA: Pobranie filii
+
     if (!user) {
-      this.showMessage('error', 'Najpierw wybierz użytkownika');
+      this.showMessage('error', 'Wybierz użytkownika');
+      return;
+    }
+
+    // <--- ZMIANA: Walidacja filii (z V1)
+    if (!branch && !this.isAdmin()) { // Admin może czasem wypożyczyć bez kontekstu filii (zależnie od logiki backendu), ale librarian nie
+      this.showMessage('error', 'Błąd: Nie rozpoznano Twojej filii bibliotecznej.');
       return;
     }
 
     this.isProcessing.set(true);
-    this.loanService.rentItem({ libraryItemId: book.id, userId: user.id }).subscribe({
+
+    // <--- ZMIANA: Przekazanie branchId (połączenie V1 i V2)
+    // Zakładam, że LoanService.rentItem przyjmuje obiekt, który może (lub musi) zawierać branchId
+    const rentRequest: any = { libraryItemId: book.id, userId: user.id };
+    if (branch) {
+      rentRequest.branchId = branch.id;
+    }
+
+    this.loanService.rentItem(rentRequest).subscribe({
       next: () => {
         this.isProcessing.set(false);
-        this.showMessage('success', `Książka "${book.title}" została wypożyczona`);
+        this.showMessage('success', 'Książka wypożyczona');
         this.loadAvailableBooks();
         this.loadUserLoans(user.id);
       },
       error: (err) => {
         this.isProcessing.set(false);
-        this.showMessage('error', err.error?.message || 'Błąd podczas wypożyczania');
+        this.showMessage('error', this.extractErrorMessage(err));
       },
     });
   }
@@ -204,16 +289,13 @@ export class LoanManagement implements OnInit {
     this.loanService.returnItem(book.id).subscribe({
       next: () => {
         this.isProcessing.set(false);
-        this.showMessage('success', `Książka "${book.title}" została zwrócona`);
-        const user = this.selectedUser();
-        if (user) {
-          this.loadUserLoans(user.id);
-        }
+        this.showMessage('success', 'Książka zwrócona');
+        if (this.selectedUser()) this.loadUserLoans(this.selectedUser()!.id);
         this.loadAvailableBooks();
       },
       error: (err) => {
         this.isProcessing.set(false);
-        this.showMessage('error', err.error?.message || 'Błąd podczas zwracania');
+        this.showMessage('error', this.extractErrorMessage(err));
       },
     });
   }
@@ -223,33 +305,33 @@ export class LoanManagement implements OnInit {
     this.loanService.extendLoan(book.id, 7).subscribe({
       next: () => {
         this.isProcessing.set(false);
-        this.showMessage('success', `Termin zwrotu książki "${book.title}" przedłużony o 7 dni`);
-        const user = this.selectedUser();
-        if (user) {
-          this.loadUserLoans(user.id);
-        }
+        this.showMessage('success', 'Przedłużono zwrot o 7 dni');
+        if (this.selectedUser()) this.loadUserLoans(this.selectedUser()!.id);
       },
       error: (err) => {
         this.isProcessing.set(false);
-        this.showMessage('error', err.error?.message || 'Błąd podczas przedłużania');
+        this.showMessage('error', this.extractErrorMessage(err));
       },
     });
   }
 
-  // ========== HELPERS ==========
+  // <--- ZMIANA: Helper do błędów z V1
+  extractErrorMessage(err: any): string {
+    if (err.error?.errors?.error && Array.isArray(err.error.errors.error)) {
+      return err.error.errors.error.join('. ');
+    }
+    if (err.error?.message) return err.error.message;
+    return 'Wystąpił błąd operacji';
+  }
 
-  showMessage(type: 'success' | 'error', text: string) {
-    this.actionMessage.set({ type, text });
+  showMessage(type: 'success' | 'error', text: string, customBg?: string, customText?: string) {
+    this.actionMessage.set({type, text, customBg, customText});
     setTimeout(() => this.actionMessage.set(null), 4000);
   }
 
   formatDate(dateString?: string): string {
     if (!dateString) return '-';
-    return new Date(dateString).toLocaleDateString('pl-PL', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    });
+    return new Date(dateString).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
   }
 
   isOverdue(dueDate?: string): boolean {
