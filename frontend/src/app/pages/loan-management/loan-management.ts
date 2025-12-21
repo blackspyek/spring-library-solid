@@ -20,23 +20,19 @@ export class LoanManagement implements OnInit {
   private loanService = inject(LoanService);
   private userService = inject(UserService);
 
-  // User search
   userSearchQuery = '';
   selectedUser = signal<User | null>(null);
   userLoans = signal<SingleBook[]>([]);
   userSearchError = signal<string | null>(null);
   isSearchingUser = signal(false);
 
-  // Book search for new rental
   bookSearchQuery = '';
   availableBooks = signal<SingleBook[]>([]);
   filteredBooks = signal<SingleBook[]>([]);
   isLoadingBooks = signal(false);
 
-  // QR Scanner
   showQrScanner = signal(false);
 
-  // Action states
   isProcessing = signal(false);
   actionMessage = signal<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -44,14 +40,12 @@ export class LoanManagement implements OnInit {
   private bookSearchSubject = new Subject<string>();
 
   constructor() {
-    // Debounced user search
     this.userSearchSubject.pipe(debounceTime(400)).subscribe((query) => {
       if (query.trim()) {
         this.searchUser(query.trim());
       }
     });
 
-    // Debounced book filter
     this.bookSearchSubject.pipe(debounceTime(300)).subscribe((query) => {
       this.filterBooks(query);
     });
@@ -61,8 +55,6 @@ export class LoanManagement implements OnInit {
     this.loadAvailableBooks();
   }
 
-  // ========== USER SEARCH ==========
-
   onUserSearchChange() {
     this.userSearchSubject.next(this.userSearchQuery);
   }
@@ -71,7 +63,6 @@ export class LoanManagement implements OnInit {
     this.isSearchingUser.set(true);
     this.userSearchError.set(null);
 
-    // Try to find by username first, then by email
     this.userService
       .findByUsername(query)
       .pipe(
@@ -123,8 +114,6 @@ export class LoanManagement implements OnInit {
     this.userSearchError.set(null);
   }
 
-  // ========== QR SCANNER ==========
-
   openQrScanner() {
     this.showQrScanner.set(true);
   }
@@ -153,8 +142,6 @@ export class LoanManagement implements OnInit {
       this.userSearchError.set('Nieprawidłowy kod QR');
     }
   }
-
-  // ========== AVAILABLE BOOKS ==========
 
   loadAvailableBooks() {
     this.isLoadingBooks.set(true);
@@ -189,8 +176,6 @@ export class LoanManagement implements OnInit {
     );
     this.filteredBooks.set(filtered);
   }
-
-  // ========== LOAN ACTIONS ==========
 
   rentBook(book: SingleBook) {
     const user = this.selectedUser();

@@ -34,7 +34,6 @@ export class BookDetailsComponent implements OnInit {
   }
 
   private loadFavouriteBranchAvailability(): void {
-    // Check if user is logged in first
     if (!this.authService.isLoggedIn()) {
       this.showLoginPrompt.set(true);
       return;
@@ -46,8 +45,7 @@ export class BookDetailsComponent implements OnInit {
         this.favouriteBranchName.set(
           `Miejska Biblioteka Publiczna im. H. Łopacińskiego Filia nr ${branch.branchNumber}`
         );
-        
-        // Check if book is available at this branch
+
         this.bookService.getBookAvailability(this.data.id).subscribe({
           next: (availability) => {
             const isAvailable = availability.availableAtBranches?.some(

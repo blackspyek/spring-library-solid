@@ -12,9 +12,6 @@ export class FeedbackService {
   private http = inject(HttpClient);
   private readonly apiUrl = environment.apiUrl + 'feedback';
 
-  /**
-   * Submit feedback to the backend.
-   */
   submitFeedback(request: FeedbackRequest): Observable<FeedbackResponse> {
     return this.http.post<FeedbackResponse>(this.apiUrl, request).pipe(
       catchError((error: HttpErrorResponse) => this.handleError(error))

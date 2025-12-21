@@ -86,7 +86,6 @@ export class Profile implements OnInit {
   }
 
   private parseOpeningHours(openingHoursStr: string): { days: string[]; hours: string[] } {
-    // Format: "Poniedziałek: 09:00-18:00|Wtorek: 09:00-18:00|..."
     const days: string[] = [];
     const hours: string[] = [];
 

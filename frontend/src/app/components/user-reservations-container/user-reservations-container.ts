@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-user-reservations-container',
   standalone: true,
-  imports: [ProfileBookItemComponent, CommonModule],
+  imports: [CommonModule],
   templateUrl: './user-reservations-container.html',
   styleUrl: './user-reservations-container.scss',
 })

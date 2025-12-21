@@ -26,10 +26,11 @@ export interface SelectOption {
   iconPath?: string;
 }
 export enum Role {
-  ROLE_ADMIN,
-  ROLE_READER,
-  ROLE_LIBRARIAN,
+  ROLE_ADMIN = 'ROLE_ADMIN',
+  ROLE_READER = 'ROLE_READER',
+  ROLE_LIBRARIAN = 'ROLE_LIBRARIAN',
 }
+
 
 export interface AuthResponse {
   token: string;
@@ -52,7 +53,6 @@ export interface LibrarySelectorDialogData {
   bookId?: number;
   availableBranches?: LibraryBranch[];
   currentFavouriteBranchId?: number;
-  /** Optional: provide all branches directly instead of loading from API */
   allBranches?: LibraryBranch[];
 }
 
@@ -131,7 +131,6 @@ export interface RentalHistoryItem {
   returnedAt: string;
 }
 
-// Feedback Dialog Types
 export type FeedbackCategory = 'accessibility' | 'navigation' | 'content' | 'other';
 
 export interface FeedbackRequest {

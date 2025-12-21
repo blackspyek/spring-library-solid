@@ -106,10 +106,7 @@ export class Navbar implements OnInit {
     }
   }
 
-  isLibrarian(): boolean {
-    console.log('Checking librarian status:', this.authService.isLibrarian());
-    return this.authService.isLibrarian();
-  }
+  isLibrarian = computed(() => this.authService.isLibrarian());
 
   openFeedbackDialog(): void {
     this.dialog.open(FeedbackDialog, {

@@ -20,12 +20,10 @@ export class UserService {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
 
-  // Cache for current user profile - shared between components
   private currentProfileCache$: Observable<UserProfile> | null = null;
   private cachedUsername: string | null = null;
 
   constructor() {
-    // Register logout callback to clear cache
     this.authService.registerLogoutCallback(() => this.clearProfileCache());
   }
 
@@ -59,7 +57,6 @@ export class UserService {
       );
     }
 
-    // Return cached observable if username matches
     if (this.currentProfileCache$ && this.cachedUsername === username) {
       return this.currentProfileCache$;
     }
@@ -71,7 +68,7 @@ export class UserService {
       map((profile) => this.replaceEmptyUserData(profile)),
       catchError((error) => {
         console.error(`Błąd pobierania profilu dla ${username} z ${profileUrl}:`, error);
-        this.currentProfileCache$ = null; // Clear cache on error
+        this.currentProfileCache$ = null;
 
         return of(
           this.replaceEmptyUserData({
@@ -85,13 +82,12 @@ export class UserService {
           }),
         );
       }),
-      shareReplay(1), // Cache the result and share between subscribers
+      shareReplay(1),
     );
 
     return this.currentProfileCache$;
   }
 
-  /** Clear profile cache - call after logout or profile update */
   clearProfileCache(): void {
     this.currentProfileCache$ = null;
     this.cachedUsername = null;

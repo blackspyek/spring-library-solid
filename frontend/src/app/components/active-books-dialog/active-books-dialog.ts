@@ -71,7 +71,6 @@ export class ActiveBooksDialog implements OnInit {
       });
   }
 
-  // temporary
   private getMockReservationItems(): DialogBookItem[] {
     return [
       {

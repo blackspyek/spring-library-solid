@@ -26,7 +26,6 @@ import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth-service';
 import { Router } from '@angular/router';
 
-// Fix for default marker icons in Leaflet with Angular
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
 const iconUrl = 'assets/marker-icon.png';
 const shadowUrl = 'assets/marker-shadow.png';
@@ -77,13 +76,11 @@ export class LibrarySelectorDialog implements OnInit, AfterViewInit, OnDestroy {
     const query = this.searchQuery().toLowerCase().trim();
     let branches = this.allBranches();
 
-    // In availability mode, filter to only available branches if provided
     if (this.data.mode === 'availability' && this.data.availableBranches) {
       const availableIds = new Set(this.data.availableBranches.map((b) => b.id));
       branches = branches.filter((b) => availableIds.has(b.id));
     }
 
-    // Apply search filter
     if (query) {
       branches = branches.filter(
         (b) =>
@@ -119,7 +116,6 @@ export class LibrarySelectorDialog implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Initialize icons
     this.defaultIcon = L.icon({
       iconRetinaUrl,
       iconUrl,
@@ -141,12 +137,10 @@ export class LibrarySelectorDialog implements OnInit, AfterViewInit, OnDestroy {
       className: 'selected-marker',
     });
 
-    // Set initial selection for favorite mode
     if (this.data.mode === 'favorite' && this.data.currentFavouriteBranchId) {
       this.selectedBranchId.set(this.data.currentFavouriteBranchId);
     }
 
-    // Load branches - use provided data or fetch from API
     if (this.data.allBranches && this.data.allBranches.length > 0) {
       this.allBranches.set(this.data.allBranches);
       setTimeout(() => this.updateMapMarkers(), 100);
@@ -179,7 +173,6 @@ export class LibrarySelectorDialog implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private initMap(): void {
-    // Center on Lublin
     const lublinCenter: L.LatLngExpression = [51.2465, 22.5684];
 
     this.map = L.map(this.mapContainer.nativeElement, {
@@ -192,7 +185,6 @@ export class LibrarySelectorDialog implements OnInit, AfterViewInit, OnDestroy {
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(this.map);
 
-    // Fix map container size issue
     setTimeout(() => {
       this.map?.invalidateSize();
     }, 100);
@@ -201,11 +193,9 @@ export class LibrarySelectorDialog implements OnInit, AfterViewInit, OnDestroy {
   private updateMapMarkers(): void {
     if (!this.map) return;
 
-    // Clear existing markers
     this.markers.forEach((marker) => marker.remove());
     this.markers = [];
 
-    // Add markers for filtered branches
     const branches = this.filteredBranches();
     branches.forEach((branch) => {
       const isSelected = branch.id === this.selectedBranchId();
@@ -222,7 +212,6 @@ export class LibrarySelectorDialog implements OnInit, AfterViewInit, OnDestroy {
       this.markers.push(marker);
     });
 
-    // Fit bounds to show all markers
     if (this.markers.length > 0) {
       const group = L.featureGroup(this.markers);
       this.map.fitBounds(group.getBounds().pad(0.1));
@@ -239,12 +228,10 @@ export class LibrarySelectorDialog implements OnInit, AfterViewInit, OnDestroy {
     this.selectedBranchId.set(branch.id);
     this.updateMapMarkers();
 
-    // Pan map to selected branch
     if (this.map) {
       this.map.setView([branch.latitude, branch.longitude], 15);
     }
 
-    // Scroll to selected item in the list
     this.scrollToSelectedBranch(branch.id);
   }
 
@@ -277,7 +264,6 @@ export class LibrarySelectorDialog implements OnInit, AfterViewInit, OnDestroy {
     const selectedId = this.selectedBranchId();
     if (!selectedId) return;
 
-    // In availability mode, check auth before reserving
     if (this.data.mode === 'availability') {
       if (!this.authService.isLoggedIn()) {
         this.dialogRef.close();
@@ -288,7 +274,6 @@ export class LibrarySelectorDialog implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    // For favorite mode, just return the selected branch
     const selectedBranch = this.allBranches().find((b) => b.id === selectedId);
     this.dialogRef.close(selectedBranch);
   }
@@ -327,7 +312,6 @@ export class LibrarySelectorDialog implements OnInit, AfterViewInit, OnDestroy {
   onCancelConfirmation(): void {
     this.showConfirmation.set(false);
     this.errorMessage.set(null);
-    // Reinitialize map after DOM renders the main content
     setTimeout(() => {
       this.initMap();
       this.updateMapMarkers();
