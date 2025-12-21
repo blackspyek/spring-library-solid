@@ -66,7 +66,7 @@ export class QrCodeComponent implements OnInit, OnDestroy {
         errorCorrectionLevel: 'H',
         color: {
           dark: '#000000',
-          light: '#0000', // przezroczyste tło (RGBA)
+          light: '#0000',
         },
       },
       (error: Error | null | undefined) => {

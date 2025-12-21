@@ -21,7 +21,6 @@ export class LibraryTest {
   selectedFavouriteBranch = signal<LibraryBranch | null>(null);
   selectedAvailabilityBranch = signal<LibraryBranch | null>(null);
 
-  // Mock data for testing - all 10 Lublin branches
   mockAllBranches: LibraryBranch[] = [
     {
       id: 1,
@@ -115,7 +114,6 @@ export class LibraryTest {
     },
   ];
 
-  // Subset for availability mode (only some branches have the book)
   mockAvailableBranches: LibraryBranch[] = this.mockAllBranches.slice(0, 3);
 
   openFavouriteSelector(): void {

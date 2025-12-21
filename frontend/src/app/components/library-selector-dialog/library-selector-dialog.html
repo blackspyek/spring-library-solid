@@ -1,6 +1,5 @@
 <div class="p-6 w-[850px] max-w-[90vw] box-border">
   @if (showSuccess()) {
-    <!-- Success View -->
     <div class="flex flex-col items-center justify-center min-h-[400px]">
       <mat-icon class="text-6xl text-green-500 mb-4">check_circle</mat-icon>
       <h3 class="text-xl font-semibold mb-2 text-[color:var(--base-gray-darker-catalog)]">
@@ -30,7 +29,6 @@
       </button>
     </div>
   } @else if (showConfirmation()) {
-    <!-- Confirmation View -->
     <div class="flex flex-col items-center justify-center min-h-[400px]">
       @if (isLoading()) {
         <mat-spinner diameter="48" class="mb-4"></mat-spinner>
@@ -73,7 +71,6 @@
       }
     </div>
   } @else {
-    <!-- Main Content -->
     <div class="flex justify-between items-start mb-2">
       <h2 class="pt-2 m-0 text-2xl font-semibold text-[color:var(--base-btn-secondary-bg)]">
         {{ dialogTitle }}

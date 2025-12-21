@@ -41,16 +41,13 @@ export class FeedbackDialog implements OnInit {
   private fb = inject(FormBuilder);
   private platformId = inject(PLATFORM_ID);
 
-  // Form
   feedbackForm!: FormGroup;
 
-  // State signals
   isLoading = signal(false);
   isSuccess = signal(false);
   errorMessage = signal<string | null>(null);
   isRateLimited = signal(false);
 
-  // Category options
   readonly categories: FeedbackCategoryOption[] = [
     { value: 'accessibility', label: 'Dostępność', icon: 'accessibility' },
     { value: 'navigation', label: 'Nawigacja', icon: 'navigation' },

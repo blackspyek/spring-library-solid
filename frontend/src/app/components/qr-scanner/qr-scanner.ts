@@ -36,7 +36,6 @@ export class QrScannerComponent implements AfterViewInit, OnDestroy {
   error = signal<string | null>(null);
   hasCamera = signal(true);
 
-  // Manual input fallback
   manualInput = '';
   showManualInput = signal(false);
 
@@ -107,7 +106,6 @@ export class QrScannerComponent implements AfterViewInit, OnDestroy {
 
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-        // Use BarcodeDetector if available (modern browsers)
         if ('BarcodeDetector' in window) {
           const barcodeDetector = new (window as any).BarcodeDetector({
             formats: ['qr_code'],
