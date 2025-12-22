@@ -10,10 +10,12 @@ import org.pollub.library.user.model.Role;
 import org.pollub.library.user.model.RoleSetDto;
 import org.pollub.library.user.model.User;
 import org.pollub.library.user.repository.IUserRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -104,6 +106,25 @@ public class UserService implements IUserService {
     public LibraryBranch getFavouriteBranch(String username) {
         User user = findByUsername(username);
         return user.getFavouriteBranch();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public LibraryBranch getEmployeeBranch(String username) {
+        User user = userRepository.findByUsernameWithEmployeeBranch(username.toLowerCase())
+                .orElseThrow(() -> new UserNotFoundException(username));
+        return user.getEmployeeBranch();
+    }
+
+    private static final int MIN_SEARCH_QUERY_LENGTH = 3;
+    private static final int MAX_SEARCH_RESULTS = 10;
+
+    @Override
+    public List<User> searchUsers(String query) {
+        if (query == null || query.trim().length() < MIN_SEARCH_QUERY_LENGTH) {
+            return List.of();
+        }
+        return userRepository.searchUsers(query.trim(), PageRequest.of(0, MAX_SEARCH_RESULTS));
     }
 
 }

@@ -39,6 +39,12 @@ public class RentalController {
         return ResponseEntity.ok(rentalService.getAvailableItems());
     }
 
+    @GetMapping("/available/branch/{branchId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN')")
+    public ResponseEntity<List<LibraryItem>> getAvailableItemsByBranch(@PathVariable Long branchId) {
+        return ResponseEntity.ok(rentalService.getAvailableItemsByBranch(branchId));
+    }
+
 
     @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN')")
     @PostMapping("/rent")

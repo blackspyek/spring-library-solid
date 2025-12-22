@@ -1,11 +1,20 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  signal,
+  inject,
+  computed,
+  effect,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 import { LoanService } from '../../services/loan.service';
 import { UserService } from '../../services/user.service';
+import { AuthService } from '../../services/auth-service';
 import { SingleBook, User } from '../../types';
-import { debounceTime, Subject, catchError, of, forkJoin } from 'rxjs';
+import { debounceTime, Subject } from 'rxjs';
 import { QrScannerComponent } from '../../components/qr-scanner/qr-scanner';
 
 @Component({
@@ -19,12 +28,21 @@ import { QrScannerComponent } from '../../components/qr-scanner/qr-scanner';
 export class LoanManagement implements OnInit {
   private loanService = inject(LoanService);
   private userService = inject(UserService);
+  private authService = inject(AuthService);
 
   userSearchQuery = '';
   selectedUser = signal<User | null>(null);
   userLoans = signal<SingleBook[]>([]);
   userSearchError = signal<string | null>(null);
   isSearchingUser = signal(false);
+  searchResults = signal<User[]>([]);
+
+  employeeBranch = this.authService.employeeOfBranch;
+  employeeBranchError = computed(() =>
+    this.employeeBranch() === null
+      ? 'Bibliotekarka nie jest obecnie zatrudniona w żadnej bibliotece'
+      : null
+  );
 
   bookSearchQuery = '';
   availableBooks = signal<SingleBook[]>([]);
@@ -38,21 +56,34 @@ export class LoanManagement implements OnInit {
 
   private userSearchSubject = new Subject<string>();
   private bookSearchSubject = new Subject<string>();
+  private booksLoaded = false;
+  private readonly MIN_SEARCH_QUERY_LENGTH = 3;
 
   constructor() {
     this.userSearchSubject.pipe(debounceTime(400)).subscribe((query) => {
-      if (query.trim()) {
-        this.searchUser(query.trim());
+      const trimmed = query.trim();
+      if (trimmed.length >= this.MIN_SEARCH_QUERY_LENGTH) {
+        this.searchUser(trimmed);
+      } else if (trimmed.length > 0) {
+        this.userSearchError.set(`Wpisz co najmniej ${this.MIN_SEARCH_QUERY_LENGTH} znaki`);
+        this.searchResults.set([]);
       }
     });
 
     this.bookSearchSubject.pipe(debounceTime(300)).subscribe((query) => {
       this.filterBooks(query);
     });
+
+    effect(() => {
+      const branch = this.employeeBranch();
+      if (branch && !this.booksLoaded) {
+        this.loadAvailableBooks();
+      }
+    });
   }
 
   ngOnInit() {
-    this.loadAvailableBooks();
+    // Książki zostaną załadowane przez effect gdy employeeBranch będzie dostępny
   }
 
   onUserSearchChange() {
@@ -62,41 +93,32 @@ export class LoanManagement implements OnInit {
   searchUser(query: string) {
     this.isSearchingUser.set(true);
     this.userSearchError.set(null);
+    this.searchResults.set([]);
 
-    this.userService
-      .findByUsername(query)
-      .pipe(
-        catchError(() => this.userService.findByEmail(query)),
-        catchError(() => {
-          // Try parsing as ID
-          const id = parseInt(query, 10);
-          if (!isNaN(id)) {
-            return this.userService.findById(id);
-          }
-          return of(null);
-        }),
-      )
-      .subscribe({
-        next: (user) => {
-          this.isSearchingUser.set(false);
-          if (user) {
-            this.selectUser(user);
-          } else {
-            this.userSearchError.set('Nie znaleziono użytkownika');
-            this.selectedUser.set(null);
-            this.userLoans.set([]);
-          }
-        },
-        error: () => {
-          this.isSearchingUser.set(false);
-          this.userSearchError.set('Błąd podczas wyszukiwania użytkownika');
-        },
-      });
+    this.userService.searchUsers(query).subscribe({
+      next: (users) => {
+        this.isSearchingUser.set(false);
+        if (users.length === 0) {
+          this.userSearchError.set('Nie znaleziono użytkownika');
+          this.selectedUser.set(null);
+          this.userLoans.set([]);
+        } else if (users.length === 1) {
+          this.selectUser(users[0]);
+        } else {
+          this.searchResults.set(users);
+        }
+      },
+      error: () => {
+        this.isSearchingUser.set(false);
+        this.userSearchError.set('Błąd podczas wyszukiwania użytkownika');
+      },
+    });
   }
 
   selectUser(user: User) {
     this.selectedUser.set(user);
     this.userSearchError.set(null);
+    this.searchResults.set([]);
     this.loadUserLoans(user.id);
   }
 
@@ -112,6 +134,7 @@ export class LoanManagement implements OnInit {
     this.userLoans.set([]);
     this.userSearchQuery = '';
     this.userSearchError.set(null);
+    this.searchResults.set([]);
   }
 
   openQrScanner() {
@@ -144,12 +167,20 @@ export class LoanManagement implements OnInit {
   }
 
   loadAvailableBooks() {
+    const branch = this.employeeBranch();
+    if (!branch) {
+      this.availableBooks.set([]);
+      this.filteredBooks.set([]);
+      return;
+    }
+
     this.isLoadingBooks.set(true);
-    this.loanService.getAvailableItems().subscribe({
+    this.loanService.getAvailableItemsByBranch(branch.id).subscribe({
       next: (books) => {
         this.availableBooks.set(books);
         this.filteredBooks.set(books);
         this.isLoadingBooks.set(false);
+        this.booksLoaded = true;
       },
       error: () => {
         this.isLoadingBooks.set(false);
@@ -172,31 +203,41 @@ export class LoanManagement implements OnInit {
       (book) =>
         book.title.toLowerCase().includes(lowerQuery) ||
         book.author.toLowerCase().includes(lowerQuery) ||
-        book.isbn?.toLowerCase().includes(lowerQuery),
+        book.isbn?.toLowerCase().includes(lowerQuery)
     );
     this.filteredBooks.set(filtered);
   }
 
   rentBook(book: SingleBook) {
     const user = this.selectedUser();
+    const branch = this.employeeBranch();
+
     if (!user) {
       this.showMessage('error', 'Najpierw wybierz użytkownika');
       return;
     }
 
+    if (!branch) {
+      this.showMessage('error', 'Bibliotekarka nie jest obecnie zatrudniona w żadnej bibliotece');
+      return;
+    }
+
     this.isProcessing.set(true);
-    this.loanService.rentItem({ libraryItemId: book.id, userId: user.id }).subscribe({
-      next: () => {
-        this.isProcessing.set(false);
-        this.showMessage('success', `Książka "${book.title}" została wypożyczona`);
-        this.loadAvailableBooks();
-        this.loadUserLoans(user.id);
-      },
-      error: (err) => {
-        this.isProcessing.set(false);
-        this.showMessage('error', err.error?.message || 'Błąd podczas wypożyczania');
-      },
-    });
+    this.loanService
+      .rentItem({ libraryItemId: book.id, userId: user.id, branchId: branch.id })
+      .subscribe({
+        next: () => {
+          this.isProcessing.set(false);
+          this.showMessage('success', `Książka "${book.title}" została wypożyczona`);
+          this.loadAvailableBooks();
+          this.loadUserLoans(user.id);
+        },
+        error: (err) => {
+          this.isProcessing.set(false);
+          const errorMessage = this.extractErrorMessage(err);
+          this.showMessage('error', errorMessage);
+        },
+      });
   }
 
   returnBook(book: SingleBook) {
@@ -236,7 +277,19 @@ export class LoanManagement implements OnInit {
     });
   }
 
-  // ========== HELPERS ==========
+  extractErrorMessage(err: any): string {
+    if (err.error?.errors?.error && Array.isArray(err.error.errors.error)) {
+      const errorMessages = err.error.errors.error;
+      if (errorMessages.includes('User cannot rent more items')) {
+        return 'Użytkownik nie może wypożyczyć więcej książek';
+      }
+      return errorMessages.join('. ');
+    }
+    if (err.error?.message && err.error.message !== 'An unexpected error occurred') {
+      return err.error.message;
+    }
+    return 'Błąd podczas wypożyczania';
+  }
 
   showMessage(type: 'success' | 'error', text: string) {
     this.actionMessage.set({ type, text });

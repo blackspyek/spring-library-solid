@@ -51,9 +51,12 @@ public class SecurityConfiguration {
                     .requestMatchers(HttpMethod.PUT, "/api/user/password").authenticated()
                     .requestMatchers(HttpMethod.PUT, "/api/user/favourite-branch").authenticated()
                     .requestMatchers(HttpMethod.GET, "/api/user/favourite-branch").authenticated()
+                    .requestMatchers(HttpMethod.GET, "/api/user/employee-branch").hasAnyRole("ADMIN", "LIBRARIAN")
+                    .requestMatchers(HttpMethod.GET, "/api/user/search").hasAnyRole("ADMIN", "LIBRARIAN")
 
                     .requestMatchers(HttpMethod.GET, "/api/rentals/user/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/rentals/available").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/rentals/available/branch/**").hasAnyRole("ADMIN", "LIBRARIAN")
                     .requestMatchers(HttpMethod.POST, "/api/rentals/rent").hasAnyRole("ADMIN", "LIBRARIAN")
                     .requestMatchers(HttpMethod.POST, "/api/rentals/return/**").hasAnyRole("ADMIN", "LIBRARIAN")
                     .requestMatchers(HttpMethod.GET, "/api/rentals/history/recent").authenticated()

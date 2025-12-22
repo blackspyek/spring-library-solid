@@ -8,6 +8,8 @@ import org.pollub.library.auth.model.LoginUserDto;
 import org.pollub.library.auth.model.RegisterUserDto;
 import org.pollub.library.auth.service.IAuthenticationServiceFacade;
 import org.pollub.library.auth.service.jwt.JwtTokenService;
+import org.pollub.library.branch.model.LibraryBranch;
+import org.pollub.library.user.service.IUserService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 public class AuthenticationController {
     private final IAuthenticationServiceFacade authServiceFacade;
     private final JwtTokenService jwtTokenService;
+    private final IUserService userService;
 
     @GetMapping("/me")
     public ResponseEntity<AuthResponse> getCurrentUser(@org.springframework.security.core.annotation.AuthenticationPrincipal org.springframework.security.core.userdetails.UserDetails userDetails) {
@@ -32,7 +35,8 @@ public class AuthenticationController {
         var roles = userDetails.getAuthorities().stream()
                 .map(auth -> org.pollub.library.user.model.Role.valueOf(auth.getAuthority()))
                 .toArray(org.pollub.library.user.model.Role[]::new);
-        return ResponseEntity.ok(new AuthResponse(null, roles, userDetails.getUsername()));
+        LibraryBranch employeeBranch = userService.getEmployeeBranch(userDetails.getUsername());
+        return ResponseEntity.ok(new AuthResponse(null, roles, userDetails.getUsername(), employeeBranch));
     }
 
 
@@ -48,7 +52,7 @@ public class AuthenticationController {
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginUserDto request) {
         AuthResponse response = authServiceFacade.login(request);
         ResponseCookie cookie = createJwtCookie(response.token());
-        AuthResponse bodyResponse = new AuthResponse(null,response.roles(), response.username());
+        AuthResponse bodyResponse = new AuthResponse(null, response.roles(), response.username(), response.employeeOfBranch());
 
 
         return ResponseEntity.ok()

@@ -31,7 +31,7 @@ public class AuthenticationService implements IAuthenticationService {
 
     @Override
     public User authenticateUser(LoginUserDto loginUserDto) {
-        User user = userRepository.findByEmail(loginUserDto.getEmail())
+        User user = userRepository.findByEmailWithEmployeeBranch(loginUserDto.getEmail())
                 .orElseThrow(InvalidCredentialsException::new);
 
         userValidator.validateUserStatus(user);

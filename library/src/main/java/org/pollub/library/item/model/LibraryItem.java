@@ -1,6 +1,7 @@
 package org.pollub.library.item.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.pollub.library.branch.model.LibraryBranch;
@@ -61,6 +62,7 @@ public abstract class LibraryItem {
             joinColumns = @JoinColumn(name = "item_id"),
             inverseJoinColumns = @JoinColumn(name = "branch_id")
     )
+    @JsonIgnore
     private Set<LibraryBranch> availableAtBranches = new HashSet<>();
 
     @PrePersist

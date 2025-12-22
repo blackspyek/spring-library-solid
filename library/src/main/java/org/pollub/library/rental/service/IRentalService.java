@@ -12,5 +12,6 @@ public interface IRentalService {
     LibraryItem extendRental(long itemId);
     List<LibraryItem> getRentedItems(long userId);
     List<LibraryItem> getAvailableItems();
+    List<LibraryItem> getAvailableItemsByBranch(Long branchId);
     List<LibraryItem> getAllRentedItems();
 }
