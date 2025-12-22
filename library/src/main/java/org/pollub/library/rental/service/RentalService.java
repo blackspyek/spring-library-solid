@@ -2,6 +2,7 @@ package org.pollub.library.rental.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.pollub.library.branch.model.LibraryBranch;
 import org.pollub.library.branch.repository.ILibraryBranchRepository;
 import org.pollub.library.exception.RentalException;
@@ -23,6 +24,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class RentalService implements IRentalService{
     private final ILibraryItemRepository<LibraryItem> libraryItemRepository;
     private final IUserService userService;
@@ -39,6 +41,14 @@ public class RentalService implements IRentalService{
     @Override
     public List<LibraryItem> getAvailableItems() {
         return libraryItemRepository.findByStatus(ItemStatus.AVAILABLE);
+    }
+
+    @Override
+    public List<LibraryItem> getAvailableItemsByBranch(Long branchId) {
+        log.info("Getting available items for branch ID: {}", branchId);
+        List<LibraryItem> items = libraryItemRepository.findByStatusAndBranchId(ItemStatus.AVAILABLE, branchId);
+        log.info("Found {} available items for branch ID: {}", items.size(), branchId);
+        return items;
     }
 
     @Override

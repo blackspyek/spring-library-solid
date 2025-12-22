@@ -10,6 +10,7 @@ import org.pollub.library.user.model.Role;
 import org.pollub.library.user.model.RoleSetDto;
 import org.pollub.library.user.model.User;
 import org.pollub.library.user.repository.IUserRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -115,12 +116,15 @@ public class UserService implements IUserService {
         return user.getEmployeeBranch();
     }
 
+    private static final int MIN_SEARCH_QUERY_LENGTH = 3;
+    private static final int MAX_SEARCH_RESULTS = 10;
+
     @Override
     public List<User> searchUsers(String query) {
-        if (query == null || query.trim().isEmpty()) {
+        if (query == null || query.trim().length() < MIN_SEARCH_QUERY_LENGTH) {
             return List.of();
         }
-        return userRepository.searchUsers(query.trim());
+        return userRepository.searchUsers(query.trim(), PageRequest.of(0, MAX_SEARCH_RESULTS));
     }
 
 }

@@ -1,10 +1,19 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  signal,
+  inject,
+  computed,
+  effect,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 import { LoanService } from '../../services/loan.service';
 import { UserService } from '../../services/user.service';
-import { SingleBook, User, LibraryBranch } from '../../types';
+import { AuthService } from '../../services/auth-service';
+import { SingleBook, User } from '../../types';
 import { debounceTime, Subject } from 'rxjs';
 import { QrScannerComponent } from '../../components/qr-scanner/qr-scanner';
 
@@ -19,6 +28,7 @@ import { QrScannerComponent } from '../../components/qr-scanner/qr-scanner';
 export class LoanManagement implements OnInit {
   private loanService = inject(LoanService);
   private userService = inject(UserService);
+  private authService = inject(AuthService);
 
   userSearchQuery = '';
   selectedUser = signal<User | null>(null);
@@ -27,9 +37,12 @@ export class LoanManagement implements OnInit {
   isSearchingUser = signal(false);
   searchResults = signal<User[]>([]);
 
-  employeeBranch = signal<LibraryBranch | null>(null);
-  employeeBranchError = signal<string | null>(null);
-  isLoadingBranch = signal(false);
+  employeeBranch = this.authService.employeeOfBranch;
+  employeeBranchError = computed(() =>
+    this.employeeBranch() === null
+      ? 'Bibliotekarka nie jest obecnie zatrudniona w żadnej bibliotece'
+      : null
+  );
 
   bookSearchQuery = '';
   availableBooks = signal<SingleBook[]>([]);
@@ -43,45 +56,34 @@ export class LoanManagement implements OnInit {
 
   private userSearchSubject = new Subject<string>();
   private bookSearchSubject = new Subject<string>();
+  private booksLoaded = false;
+  private readonly MIN_SEARCH_QUERY_LENGTH = 3;
 
   constructor() {
     this.userSearchSubject.pipe(debounceTime(400)).subscribe((query) => {
-      if (query.trim()) {
-        this.searchUser(query.trim());
+      const trimmed = query.trim();
+      if (trimmed.length >= this.MIN_SEARCH_QUERY_LENGTH) {
+        this.searchUser(trimmed);
+      } else if (trimmed.length > 0) {
+        this.userSearchError.set(`Wpisz co najmniej ${this.MIN_SEARCH_QUERY_LENGTH} znaki`);
+        this.searchResults.set([]);
       }
     });
 
     this.bookSearchSubject.pipe(debounceTime(300)).subscribe((query) => {
       this.filterBooks(query);
     });
+
+    effect(() => {
+      const branch = this.employeeBranch();
+      if (branch && !this.booksLoaded) {
+        this.loadAvailableBooks();
+      }
+    });
   }
 
   ngOnInit() {
-    this.loadAvailableBooks();
-    this.loadEmployeeBranch();
-  }
-
-  loadEmployeeBranch() {
-    this.isLoadingBranch.set(true);
-    this.employeeBranchError.set(null);
-    this.userService.getEmployeeBranch().subscribe({
-      next: (branch) => {
-        this.isLoadingBranch.set(false);
-        if (branch) {
-          this.employeeBranch.set(branch);
-        } else {
-          this.employeeBranchError.set(
-            'Bibliotekarka nie jest obecnie zatrudniona w żadnej bibliotece'
-          );
-        }
-      },
-      error: () => {
-        this.isLoadingBranch.set(false);
-        this.employeeBranchError.set(
-          'Bibliotekarka nie jest obecnie zatrudniona w żadnej bibliotece'
-        );
-      },
-    });
+    // Książki zostaną załadowane przez effect gdy employeeBranch będzie dostępny
   }
 
   onUserSearchChange() {
@@ -165,12 +167,20 @@ export class LoanManagement implements OnInit {
   }
 
   loadAvailableBooks() {
+    const branch = this.employeeBranch();
+    if (!branch) {
+      this.availableBooks.set([]);
+      this.filteredBooks.set([]);
+      return;
+    }
+
     this.isLoadingBooks.set(true);
-    this.loanService.getAvailableItems().subscribe({
+    this.loanService.getAvailableItemsByBranch(branch.id).subscribe({
       next: (books) => {
         this.availableBooks.set(books);
         this.filteredBooks.set(books);
         this.isLoadingBooks.set(false);
+        this.booksLoaded = true;
       },
       error: () => {
         this.isLoadingBooks.set(false);
@@ -266,7 +276,6 @@ export class LoanManagement implements OnInit {
       },
     });
   }
-
 
   extractErrorMessage(err: any): string {
     if (err.error?.errors?.error && Array.isArray(err.error.errors.error)) {

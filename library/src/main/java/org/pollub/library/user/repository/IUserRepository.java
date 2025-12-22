@@ -1,6 +1,7 @@
 package org.pollub.library.user.repository;
 
 import org.pollub.library.user.model.User;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,10 +18,13 @@ public interface IUserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.employeeBranch WHERE u.username = :username")
     Optional<User> findByUsernameWithEmployeeBranch(@Param("username") String username);
 
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.employeeBranch WHERE u.email = :email")
+    Optional<User> findByEmailWithEmployeeBranch(@Param("email") String email);
+
     @Query("SELECT u FROM User u WHERE " +
            "LOWER(u.username) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
            "LOWER(u.email) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
            "LOWER(u.name) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
            "LOWER(u.surname) LIKE LOWER(CONCAT('%', :query, '%'))")
-    List<User> searchUsers(@Param("query") String query);
+    List<User> searchUsers(@Param("query") String query, Pageable pageable);
 }

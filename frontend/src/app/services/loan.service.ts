@@ -25,6 +25,10 @@ export class LoanService {
     return this.http.get<SingleBook[]>(`${this.API_URL}/available`);
   }
 
+  getAvailableItemsByBranch(branchId: number): Observable<SingleBook[]> {
+    return this.http.get<SingleBook[]>(`${this.API_URL}/available/branch/${branchId}`);
+  }
+
   getAllRentedItems(): Observable<SingleBook[]> {
     return this.http.get<SingleBook[]>(`${this.API_URL}/all-rented`);
   }

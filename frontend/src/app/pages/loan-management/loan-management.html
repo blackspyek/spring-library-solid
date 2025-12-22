@@ -24,14 +24,7 @@
     <div class="mb-6 bg-[color:var(--book-bg)] rounded-xl shadow-md p-4">
       <div class="flex items-center gap-4">
         <label class="text-sm font-medium text-[color:var(--base-gray-darker)]">Filia:</label>
-        @if (isLoadingBranch()) {
-          <div class="flex items-center gap-2 text-[color:var(--base-gray-lighter)]">
-            <div
-              class="animate-spin h-4 w-4 border-2 border-blue-500 border-t-transparent rounded-full"
-            ></div>
-            <span>Ładowanie...</span>
-          </div>
-        } @else if (employeeBranchError()) {
+        @if (employeeBranchError()) {
           <div class="text-[color:var(--base-red)] [.high-contrast_&]:text-[color:var(--base-red)] font-medium">
             {{ employeeBranchError() }}
           </div>

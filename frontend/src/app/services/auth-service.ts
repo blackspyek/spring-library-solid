@@ -2,18 +2,20 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { catchError, Observable, of, tap } from 'rxjs';
-import { Role } from '../types';
+import { LibraryBranch, Role } from '../types';
 import { environment } from '../../environments/environment';
 interface BackendAuthResponse {
   token: null;
   roles: Role[];
   username: string;
   responseType: string;
+  employeeOfBranch: LibraryBranch | null;
 }
 interface AuthState {
   user: string | null;
   roles: Role[] | null;
   initialized: boolean;
+  employeeOfBranch: LibraryBranch | null;
 }
 @Injectable({
   providedIn: 'root',
@@ -28,11 +30,13 @@ export class AuthService {
     user: null,
     roles: null,
     initialized: false,
+    employeeOfBranch: null,
   });
 
   public currentUser = computed(() => this.authState().user);
   public isLoggedIn = computed(() => !!this.authState().user);
   public isInitialized = computed(() => this.authState().initialized);
+  public employeeOfBranch = computed(() => this.authState().employeeOfBranch);
 
     checkSession(): Observable<BackendAuthResponse | null> {
       return this.http.get<BackendAuthResponse>(`${this.API_URL}/me`).pipe(
@@ -41,6 +45,7 @@ export class AuthService {
             user: response.username,
             roles: response.roles,
             initialized: true,
+            employeeOfBranch: response.employeeOfBranch,
           });
         }),
         catchError(() => {
@@ -48,6 +53,7 @@ export class AuthService {
             user: null,
             roles: null,
             initialized: true,
+            employeeOfBranch: null,
           });
           return of(null);
         }),
@@ -76,6 +82,7 @@ export class AuthService {
           user: response.username,
           roles: response.roles,
           initialized: true,
+          employeeOfBranch: response.employeeOfBranch,
         });
         void this.router.navigate(['/profil']);
       }),
@@ -92,12 +99,12 @@ export class AuthService {
     this.http.post(`${this.API_URL}/logout`, {}).subscribe({
       next: () => {
         this.onLogoutCallbacks.forEach((cb) => cb());
-        this.authState.set({ user: null, roles: null, initialized: true });
+        this.authState.set({ user: null, roles: null, initialized: true, employeeOfBranch: null });
         void this.router.navigate(['/zaloguj-sie']);
       },
       error: () => {
         this.onLogoutCallbacks.forEach((cb) => cb());
-        this.authState.set({ user: null, roles: null, initialized: true });
+        this.authState.set({ user: null, roles: null, initialized: true, employeeOfBranch: null });
         void this.router.navigate(['/zaloguj-sie']);
       },
     });
