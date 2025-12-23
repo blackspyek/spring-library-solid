@@ -129,7 +129,7 @@ public class UserService implements IUserService {
         if (query == null || query.trim().isEmpty()) {
             return List.of();
         }
-        return userRepository.searchUsers(query.trim());
+        return userRepository.searchUsers(query.trim(), PageRequest.of(0, 50));
     }
 
     @Override
