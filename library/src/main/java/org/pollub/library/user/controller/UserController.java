@@ -52,7 +52,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<ApiTextResponse> deleteUserById(@PathVariable Long id) {
         userService.deleteUserById(id);
         return ResponseEntity.ok(new ApiTextResponse(true, "User deleted successfully"));
@@ -96,6 +96,13 @@ public class UserController {
     @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN')")
     public ResponseEntity<List<User>> searchUsers(@RequestParam String query) {
         List<User> users = userService.searchUsers(query);
+        return ResponseEntity.ok(users);
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN')")
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = userService.findAll();
         return ResponseEntity.ok(users);
     }
 

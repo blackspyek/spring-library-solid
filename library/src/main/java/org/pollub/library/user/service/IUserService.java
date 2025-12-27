@@ -18,5 +18,6 @@ public interface IUserService {
     LibraryBranch getFavouriteBranch(String username);
     LibraryBranch getEmployeeBranch(String username);
     ApiTextResponse changePassword(String username, ChangePasswordDto passwordDto);
+    List<User> findAll();
     List<User> searchUsers(String query);
 }

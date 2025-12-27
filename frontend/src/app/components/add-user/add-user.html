@@ -1,0 +1,113 @@
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-fade-in"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="add-user-title"
+>
+
+  @if (!showSuccessStep()) {
+    <div class="bg-[color:var(--base-form-bg)] rounded-xl shadow-xl w-full max-w-md p-6">
+      <h2 id="add-user-title" class="text-xl font-bold text-[color:var(--base-blue-dark)] mb-4">Dodaj nowego czytelnika</h2>
+
+      <div class="flex flex-col gap-4">
+        <div>
+          <label for="new-user-email" class="block text-sm font-medium text-[color:var(--base-gray-darker)] mb-1">Email (Login)</label>
+          <input
+            id="new-user-email"
+            type="email"
+            [(ngModel)]="email"
+            class="w-full border text-[color:var(--gray-dark)] border-[color:var(--gray-300-to-yellow)] rounded-lg px-3 py-2 outline-none focus:border-[color:var(--base-blue-dark)]"
+            placeholder="jan.kowalski@example.com"
+          />
+        </div>
+
+        <div>
+          <label for="new-user-pass" class="block text-sm font-medium text-[color:var(--base-gray-darker)] mb-1">Hasło tymczasowe</label>
+          <div class="relative">
+<!--            TODO: make password for user to change by mail after registering -->
+            <input
+              id="new-user-pass"
+              [type]="tempPasswordVisible() ? 'text' : 'password'"
+              [(ngModel)]="password"
+              class="w-full border text-[color:var(--gray-dark)] border-[color:var(--gray-300-to-yellow)] rounded-lg px-3 py-2 outline-none focus:border-[color:var(--base-blue-dark)] pr-10"
+              placeholder="Wpisz hasło"
+            />
+            <button
+              (click)="toggleTempPasswordInput()"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-[color:var(--gray-400-to-yellow)] hover:text-[color:var(--gray-600-to-yellow)]"
+              [attr.aria-label]="tempPasswordVisible() ? 'Ukryj hasło' : 'Pokaż hasło'"
+            >
+              <mat-icon class="text-base" aria-hidden="true">{{ tempPasswordVisible() ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      @if (errorMessage()) {
+        <div class="mt-4 p-2 bg-[color:var(--red-50-to-yellow)] text-[color:var(--red-600-to-black)] text-sm rounded border border-[color:var(--red-200-to-yellow)]" role="alert">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <div class="flex justify-end gap-3 mt-6">
+        <button
+          (click)="cancel.emit()"
+          class="px-4 py-2 text-[color:var(--base-blue-darker)] font-bold hover:bg-[color:var(--gray-100-to-yellow)] border-2 border-[color:var(--base-blue-darker)] rounded-lg transition-colors"
+        >
+          Anuluj
+        </button>
+        <button
+          (click)="submit()"
+          [disabled]="isProcessing()"
+          class="px-4 py-2 bg-[color:var(--base-blue-dark)] text-[color:var(--base-form-bg)] font-bold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+        >
+          {{ isProcessing() ? 'Zapisywanie...' : 'Zapisz' }}
+        </button>
+      </div>
+    </div>
+  }
+
+  @else {
+    <div class="bg-[color:var(--base-form-bg)] rounded-xl shadow-xl w-full max-w-md p-6">
+      <div class="flex items-center gap-3 mb-4">
+        <h2 id="add-user-title" class="text-xl font-bold text-[color:var(--base-gray-darker)]">Użytkownik utworzony!</h2>
+      </div>
+
+      <p class="text-sm text-[color:var(--base-gray-lighter)] mb-4">
+        Przekaż poniższe dane nowemu czytelnikowi.
+      </p>
+
+      <div class="bg-[color:var(--gray-to-black)] p-4 rounded-lg border border-[color:var(--gray-300-to-yellow)] flex flex-col gap-3">
+        <div>
+          <span class="text-xs uppercase text-[color:var(--gray-500-to-yellow)] font-bold">Email:</span>
+          <div class="text-lg font-mono text-[color:var(--base-blue-dark)]">{{ email() }}</div>
+        </div>
+
+        <div>
+          <span class="text-xs uppercase text-[color:var(--gray-500-to-yellow)] font-bold">Hasło tymczasowe:</span>
+          <div class="flex items-center justify-between mt-1">
+            <div class="text-lg font-mono text-[color:var(--base-blue-dark)]">
+              {{ resultPasswordVisible() ? password() : '••••••••••••' }}
+            </div>
+            <button
+              (click)="toggleResultPassword()"
+              class="text-[color:var(--gray-400-to-yellow)] hover:text-[color:var(--gray-600-to-yellow)]"
+              [attr.aria-label]="resultPasswordVisible() ? 'Ukryj hasło' : 'Pokaż hasło'"
+            >
+              <mat-icon aria-hidden="true">{{ resultPasswordVisible() ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end mt-6">
+        <button
+          (click)="finish()"
+          class="px-6 py-2 bg-[color:var(--base-blue-dark)] text-[color:var(--base-form-bg)] rounded-lg hover:opacity-90"
+        >
+          Zamknij
+        </button>
+      </div>
+    </div>
+  }
+</div>

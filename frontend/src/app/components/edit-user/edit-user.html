@@ -1,0 +1,48 @@
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-fade-in"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="edit-role-title"
+>
+  <div class="bg-[color:var(--base-form-bg)] rounded-xl shadow-xl w-full max-w-sm p-6">
+    <h2 id="edit-role-title" class="text-lg font-bold text-[color:var(--base-blue-dark)] mb-4">Zmień rolę użytkownika</h2>
+
+    <p class="mb-4 text-sm text-[color:var(--base-gray-darker)]">
+      Użytkownik: <strong>{{ user.email }}</strong>
+    </p>
+
+    @if (errorMessage()) {
+      <div class="mb-4 text-[color:var(--delete-red)] text-sm" role="alert">{{ errorMessage() }}</div>
+    }
+
+    <div class="mb-6">
+      <label for="role-select" class="block text-sm font-medium text-[color:var(--base-gray-darker)] mb-2">Wybierz nową rolę:</label>
+      <select
+        id="role-select"
+        [ngModel]="selectedRole()"
+        (ngModelChange)="selectedRole.set($event)"
+        class="w-full border border-[color:var(--gray-300-to-yellow)] rounded-lg px-3 py-2 bg-[color:var(--search-bar-catalog)] outline-none focus:border-[color:var(--base-blue-dark)]"
+      >
+        @for (role of availableRoles; track role) {
+          <option [value]="role">{{ role }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="flex justify-end gap-3">
+      <button
+        (click)="cancel.emit()"
+        class="px-4 py-2 bg-[color:var(--base-form-bg)] text-[color:var(--gray-500-to-yellow)] hover:bg-[color:var(--gray-50-to-gray)] border border-[color:var(--base-blue-dark)] rounded-lg transition-colors"
+      >
+        Anuluj
+      </button>
+      <button
+        (click)="save()"
+        [disabled]="isProcessing()"
+        class="px-4 py-2 bg-[color:var(--base-blue-dark)] text-[color:var(--base-white)] rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+      >
+        {{ isProcessing() ? 'Zapisywanie...' : 'Zapisz' }}
+      </button>
+    </div>
+  </div>
+</div>

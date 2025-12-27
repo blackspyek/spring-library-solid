@@ -26,6 +26,7 @@ public class AuthenticationService implements IAuthenticationService {
     public User registerUser(RegisterUserDto registerUserDto) {
         userValidator.validateNewUser(registerUserDto);
         User user = userFactory.createUser(registerUserDto);
+        user.setUsername(registerUserDto.getEmail());
         return userRepository.save(user);
     }
 

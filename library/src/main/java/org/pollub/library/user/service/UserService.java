@@ -10,6 +10,7 @@ import org.pollub.library.user.model.Role;
 import org.pollub.library.user.model.RoleSetDto;
 import org.pollub.library.user.model.User;
 import org.pollub.library.user.repository.IUserRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -67,7 +68,11 @@ public class UserService implements IUserService {
         if (!userRepository.existsById(id)) {
             throw new UserNotFoundException("User with ID " + id + " not found");
         }
-        userRepository.deleteById(id);
+        try {
+            userRepository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalArgumentException("Nie można usunąć użytkownika, który posiada aktywną historię (wypożyczenia/rezerwacje).");
+        }
     }
     @Override
     @Transactional
@@ -121,10 +126,14 @@ public class UserService implements IUserService {
 
     @Override
     public List<User> searchUsers(String query) {
-        if (query == null || query.trim().length() < MIN_SEARCH_QUERY_LENGTH) {
+        if (query == null || query.trim().isEmpty()) {
             return List.of();
         }
-        return userRepository.searchUsers(query.trim(), PageRequest.of(0, MAX_SEARCH_RESULTS));
+        return userRepository.searchUsers(query.trim(), PageRequest.of(0, 50));
     }
 
+    @Override
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
 }

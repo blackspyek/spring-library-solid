@@ -18,8 +18,13 @@ export interface User {
   name: string;
   surname: string;
   phone: string;
-  roles: Role[];
+  first_name?: string;
+  last_name?: string;
+  phone_number?: string;
+  roles?: Role[];
+  authorities?: { authority: string }[];
   favouriteBranch?: LibraryBranch;
+  employeeBranch?: LibraryBranch;
 }
 export interface SelectOption {
   label: string;

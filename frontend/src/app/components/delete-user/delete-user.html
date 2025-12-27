@@ -1,0 +1,36 @@
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-fade-in"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="delete-user-title"
+  aria-describedby="delete-user-desc"
+>
+  <div class="bg-[color:var(--base-form-bg)] rounded-xl shadow-xl w-full max-w-sm p-6">
+    <h2 id="delete-user-title" class="text-lg font-bold text-[color:var(--delete-red)] mb-2">Usuń użytkownika</h2>
+
+    <p id="delete-user-desc" class="text-sm text-[color:var(--base-gray-darker)] mb-6">
+      Czy na pewno chcesz usunąć użytkownika <strong>{{ user.email }}</strong>?<br>
+      Tej operacji nie można cofnąć.
+    </p>
+
+    @if (errorMessage()) {
+      <div class="mb-4 text-[color:var(--delete-red)] text-sm" role="alert">{{ errorMessage() }}</div>
+    }
+
+    <div class="flex justify-end gap-3">
+      <button
+        (click)="cancel.emit()"
+        class="px-4 py-2 bg-[color:var(--base-form-bg)] text-[color:var(--gray-500-to-yellow)] hover:bg-[color:var(--gray-50-to-gray)] border border-[color:var(--base-blue-dark)] rounded-lg transition-colors"
+      >
+        Anuluj
+      </button>
+      <button
+        (click)="confirm()"
+        [disabled]="isProcessing()"
+        class="px-4 py-2 bg-[color:var(--delete-red)] text-[color:var(--white-to-black)] rounded-lg hover:bg-[color:var(--red--700-to-darkyellow)] transition-colors disabled:opacity-50"
+      >
+        {{ isProcessing() ? 'Usuwanie...' : 'Usuń' }}
+      </button>
+    </div>
+  </div>
+</div>
