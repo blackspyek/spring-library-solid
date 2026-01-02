@@ -1,6 +1,7 @@
 # Library Microservices - Kubernetes Deployment
 
 ## Prerequisites
+
 - Kubernetes cluster (minikube, Docker Desktop, or cloud)
 - kubectl configured
 - NGINX Ingress Controller installed
@@ -55,11 +56,55 @@ docker build -t k8libraryproject/feedback-service:latest ./feedback-service
 ### 3. Access the services:
 
 Add to `/etc/hosts` (or C:\Windows\System32\drivers\etc\hosts):
+
 ```
 127.0.0.1 library.local
 ```
 
 Then access: `http://library.local/api/<service>`
+
+## Email Configuration (Gmail SMTP)
+
+### Setup Gmail App Password
+
+1. Enable 2-Step Verification on your Google Account:
+
+   - Go to: https://myaccount.google.com/security
+   - Click "2-Step Verification"
+
+2. Generate App Password:
+   - Go to: https://myaccount.google.com/apppasswords
+   - Select "Mail" and "Windows Computer"
+   - Copy the 16-character password
+
+### Update k8s/secrets.yaml
+
+⚠️ **IMPORTANT**: `k8s/secrets.yaml` is gitignored! Never commit credentials to GitHub!
+
+Edit `k8s/secrets.yaml` locally:
+
+```yaml
+stringData:
+  MAIL_USERNAME: "your-email@gmail.com"
+  MAIL_PASSWORD: "xxxx xxxx xxxx xxxx" # Your 16-char App Password
+```
+
+### Apply to Kubernetes
+
+```bash
+kubectl apply -f k8s/secrets.yaml
+```
+
+### Verify Configuration
+
+```bash
+# Check if secrets are loaded
+kubectl get secrets -n library
+kubectl describe secret library-secrets -n library
+
+# Check auth-service logs
+kubectl logs -f deployment/auth-service -n library
+```
 
 ## Verify Deployment
 

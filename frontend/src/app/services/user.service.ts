@@ -7,7 +7,18 @@ import { AuthService } from './auth.service';
 
 export interface CreateUserRequest {
   email: string;
-  password: string;
+  firstName: string;
+  lastName: string;
+  pesel: string;
+  phone: string;
+  address: {
+    street: string;
+    city: string;
+    postalCode: string;
+    country: string;
+    buildingNumber: string;
+    apartmentNumber?: string;
+  };
 }
 
 export interface RoleSetDto {
@@ -49,7 +60,7 @@ export class UserService {
           surname: 'Użytkownik',
           readerId: '',
           qrCode: '',
-        })
+        }),
       );
     }
 
@@ -74,10 +85,10 @@ export class UserService {
             surname: '',
             readerId: '',
             qrCode: '',
-          })
+          }),
         );
       }),
-      shareReplay(1)
+      shareReplay(1),
     );
 
     return this.currentProfileCache$;
@@ -131,7 +142,7 @@ export class UserService {
       catchError((error) => {
         console.error('Błąd zmiany hasła:', error);
         return throwError(() => error);
-      })
+      }),
     );
   }
 

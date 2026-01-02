@@ -3,12 +3,16 @@ package org.pollub.user.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.pollub.common.dto.BranchDto;
+import org.pollub.common.dto.UserAddressDto;
 import org.pollub.common.dto.UserDto;
 import org.pollub.user.dto.ApiTextResponse;
 import org.pollub.user.dto.ChangePasswordDto;
 import org.pollub.user.dto.CredentialsDto;
+import org.pollub.user.dto.ResetPasswordRequestDto;
+import org.pollub.user.dto.ResetPasswordResponseDto;
 import org.pollub.user.model.Role;
 import org.pollub.user.model.User;
+import org.pollub.user.model.UserAddress;
 import org.pollub.user.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -74,6 +78,12 @@ public class UserController {
         return ResponseEntity.ok(toDto(updated));
     }
 
+    @PutMapping("/{id}/address")
+    public ResponseEntity<UserDto> updateAddress(@PathVariable Long id, @RequestBody UserAddressDto addressDto) {
+        User updated = userService.updateAddress(id, addressDto);
+        return ResponseEntity.ok(toDto(updated));
+    }
+
     @PutMapping("/{id}/roles")
     public ResponseEntity<UserDto> updateRoles(@PathVariable Long id, @RequestBody Set<Role> roles) {
         User updated = userService.updateRoles(id, roles);
@@ -93,6 +103,16 @@ public class UserController {
     public ResponseEntity<ApiTextResponse> changePassword(@Valid @RequestBody ChangePasswordDto passwordDto, @AuthenticationPrincipal UserDetails userDetails) {
         String username = userDetails.getUsername();
         ApiTextResponse response = userService.changePassword(username, passwordDto);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Reset password for a user identified by email and PESEL.
+     * This endpoint is called by auth-service and should be accessible internally.
+     */
+    @PostMapping("/reset-password")
+    public ResponseEntity<ResetPasswordResponseDto> resetPassword(@Valid @RequestBody ResetPasswordRequestDto request) {
+        ResetPasswordResponseDto response = userService.resetPassword(request);
         return ResponseEntity.ok(response);
     }
 
@@ -181,7 +201,14 @@ public class UserController {
                     credentials.getUsernameOrEmail(), 
                     credentials.getPassword()
             );
-            return ResponseEntity.ok(toDto(user));
+            System.out.println("=== DEBUG /validate endpoint ===");
+            System.out.println("User from DB: " + user.getEmail());
+            System.out.println("user.isMustChangePassword() = " + user.isMustChangePassword());
+            
+            UserDto dto = toDto(user);
+            System.out.println("UserDto.mustChangePassword = " + dto.isMustChangePassword());
+            
+            return ResponseEntity.ok(dto);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(401).build();
         }
@@ -192,17 +219,50 @@ public class UserController {
      */
     @PostMapping
     public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
+        System.out.println("=== DEBUG UserController.createUser() ===");
+        System.out.println("Received UserDto.firstName = '" + userDto.getFirstName() + "'");
+        System.out.println("Received UserDto.lastName = '" + userDto.getLastName() + "'");
+        System.out.println("Received UserDto.name = '" + userDto.getName() + "'");
+        System.out.println("Received UserDto.surname = '" + userDto.getSurname() + "'");
+        System.out.println("Received UserDto.email = '" + userDto.getEmail() + "'");
+        System.out.println("Received UserDto.pesel = '" + userDto.getPesel() + "'");
         try {
+            UserAddress address = null;
+            if (userDto.getAddress() != null) {
+                address = UserAddress.builder()
+                        .street(userDto.getAddress().getStreet())
+                        .city(userDto.getAddress().getCity())
+                        .postalCode(userDto.getAddress().getPostalCode())
+                        .country(userDto.getAddress().getCountry())
+                        .buildingNumber(userDto.getAddress().getBuildingNumber())
+                        .apartmentNumber(userDto.getAddress().getApartmentNumber())
+                        .build();
+            }
+            
             User user = User.builder()
                     .username(userDto.getUsername())
                     .email(userDto.getEmail())
                     .name(userDto.getFirstName())
                     .surname(userDto.getLastName())
                     .password(userDto.getPassword())
+                    .pesel(userDto.getPesel())
+                    .phone(userDto.getPhone())
+                    .address(address)
                     .roles(Set.of(Role.ROLE_READER))
                     .enabled(true)
                     .build();
+            
+            System.out.println("=== DEBUG User entity przed zapisem ===");
+            System.out.println("User.name = '" + user.getName() + "'");
+            System.out.println("User.surname = '" + user.getSurname() + "'");
+            
             User created = userService.createUser(user);
+            
+            System.out.println("=== DEBUG User entity po zapisie ===");
+            System.out.println("created.name = '" + created.getName() + "'");
+            System.out.println("created.surname = '" + created.getSurname() + "'");
+            System.out.println("created.id = " + created.getId());
+            
             return ResponseEntity.ok(toDto(created));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
@@ -224,6 +284,37 @@ public class UserController {
                         .collect(Collectors.toSet()))
                 .favouriteBranchId(user.getFavouriteBranchId())
                 .employeeBranchId(user.getEmployeeBranchId())
+                .pesel(user.getPesel())
+                .address(addressToDto(user.getAddress()))
+                .mustChangePassword(user.isMustChangePassword())
+                .build();
+    }
+
+    private UserAddressDto addressToDto(UserAddress address) {
+        if (address == null) {
+            return null;
+        }
+        return UserAddressDto.builder()
+                .street(address.getStreet())
+                .city(address.getCity())
+                .postalCode(address.getPostalCode())
+                .country(address.getCountry())
+                .buildingNumber(address.getBuildingNumber())
+                .apartmentNumber(address.getApartmentNumber())
+                .build();
+    }
+
+    private UserAddress dtoToAddress(UserAddressDto dto) {
+        if (dto == null) {
+            return null;
+        }
+        return UserAddress.builder()
+                .street(dto.getStreet())
+                .city(dto.getCity())
+                .postalCode(dto.getPostalCode())
+                .country(dto.getCountry())
+                .buildingNumber(dto.getBuildingNumber())
+                .apartmentNumber(dto.getApartmentNumber())
                 .build();
     }
 }

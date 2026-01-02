@@ -2,11 +2,14 @@ package org.pollub.user.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.pollub.user.validation.ValidPesel;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -71,6 +74,19 @@ public class User implements UserDetails {
      */
     @Column(name = "employee_branch_id")
     private Long employeeBranchId;
+
+    @Column(unique = true)
+    @ValidPesel
+    private String pesel;
+
+    @Embedded
+    @NotNull
+    @Valid
+    private UserAddress address;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private boolean mustChangePassword = true;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

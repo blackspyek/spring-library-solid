@@ -54,7 +54,9 @@ manifests:
     - k8s/branch-service.yaml
     - k8s/catalog-service.yaml
     - k8s/rental-service.yaml
+    - k8s/rental-reminder-cronjob.yaml
     - k8s/reservation-service.yaml
+    - k8s/reservation-cleanup-cronjob.yaml
     - k8s/feedback-service.yaml
     - k8s/frontend.yaml
     - k8s/frontend-service.yaml

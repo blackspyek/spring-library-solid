@@ -59,6 +59,7 @@ public class SecurityConfig {
                 // So we can remove permitAll() and rely on InternalAuthFilter setting authentication.
                 // But we must support user registration by public users.
                 .requestMatchers(HttpMethod.POST, "/api/users").permitAll() // Registration
+                .requestMatchers(HttpMethod.POST, "/api/users/reset-password").permitAll() // Password reset (called by auth-service)
                 .requestMatchers("/actuator/**").permitAll()
                 // All other endpoints require authentication (JWT or Internal Token)
                 .anyRequest().authenticated()

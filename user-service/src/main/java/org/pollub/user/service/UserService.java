@@ -2,16 +2,22 @@ package org.pollub.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.pollub.common.dto.BranchDto;
+import org.pollub.common.dto.UserAddressDto;
 import org.pollub.common.exception.ResourceNotFoundException;
 import org.pollub.user.client.BranchServiceClient;
 import org.pollub.user.dto.ApiTextResponse;
 import org.pollub.user.dto.ChangePasswordDto;
+import org.pollub.user.dto.ResetPasswordRequestDto;
+import org.pollub.user.dto.ResetPasswordResponseDto;
+import org.pollub.user.exception.FavouriteLibraryNotSetException;
 import org.pollub.user.exception.UserNotFoundException;
 import org.pollub.user.model.Role;
 import org.pollub.user.model.User;
+import org.pollub.user.model.UserAddress;
 import org.pollub.user.repository.IUserRepository;
 import org.pollub.user.service.utils.UserFactory;
 import org.pollub.user.service.utils.UserValidator;
+import org.pollub.user.util.PasswordGenerator;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -76,6 +82,21 @@ public class UserService implements  IUserService {
     }
 
     @Transactional
+    public User updateAddress(Long id, UserAddressDto addressDto) {
+        User user = findById(id);
+        UserAddress address = UserAddress.builder()
+                .street(addressDto.getStreet())
+                .city(addressDto.getCity())
+                .postalCode(addressDto.getPostalCode())
+                .country(addressDto.getCountry())
+                .buildingNumber(addressDto.getBuildingNumber())
+                .apartmentNumber(addressDto.getApartmentNumber())
+                .build();
+        user.setAddress(address);
+        return userRepository.save(user);
+    }
+
+    @Transactional
     public User updateRoles(Long id, Set<Role> roles) {
         User user = findById(id);
         user.setRoles(roles);
@@ -124,9 +145,11 @@ public class UserService implements  IUserService {
     public BranchDto getFavouriteBranch(Long userId) {
         User user = findById(userId);
         Long branchId = user.getFavouriteBranchId();
-        
+
         if (branchId == null) {
-            throw new ResourceNotFoundException("Użytkownik nie ma ustawionej ulubionej biblioteki");
+            throw new FavouriteLibraryNotSetException(
+                    userId
+            );
         }
         
         return branchServiceClient.getBranchById(branchId)
@@ -167,6 +190,7 @@ public class UserService implements  IUserService {
 
         String encodedPassword = passwordEncoder.encode(passwordDto.getNewPassword());
         user.setPassword(encodedPassword);
+        user.setMustChangePassword(false);  // User changed password after first login
 
         userRepository.save(user);
         return new ApiTextResponse(true, "Password for user " + username + " changed successfully");
@@ -193,5 +217,40 @@ public class UserService implements  IUserService {
             throw new ResourceNotFoundException("User", id);
         }
         userRepository.deleteById(id);
+    }
+
+    /**
+     * Reset password for a user identified by email and PESEL.
+     * Generates a new temporary password, sets mustChangePassword to true, and returns the new password.
+     */
+    @Transactional
+    public ResetPasswordResponseDto resetPassword(ResetPasswordRequestDto request) {
+        // Find user by email and PESEL
+        User user = userRepository.findByEmailAndPesel(request.getEmail(), request.getPesel())
+                .orElse(null);
+        
+        // Always return success message for security (don't reveal if user exists)
+        if (user == null) {
+            return ResetPasswordResponseDto.builder()
+                    .success(false)
+                    .message("Jeśli podane dane są poprawne, nowe hasło zostanie wysłane na podany adres email.")
+                    .build();
+        }
+        
+        // Generate new temporary password
+        String temporaryPassword = PasswordGenerator.generatePassword();
+        
+        // Encode and save new password
+        String encodedPassword = passwordEncoder.encode(temporaryPassword);
+        user.setPassword(encodedPassword);
+        user.setMustChangePassword(true);
+        userRepository.save(user);
+        
+        return ResetPasswordResponseDto.builder()
+                .email(user.getEmail())
+                .temporaryPassword(temporaryPassword)
+                .success(true)
+                .message("Nowe hasło zostało wygenerowane i zostanie wysłane na podany adres email.")
+                .build();
     }
 }

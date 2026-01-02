@@ -25,4 +25,8 @@ public interface IUserRepository extends JpaRepository<User, Long> {
     List<User> searchUsers(@Param("query") String query, Pageable pageable);
     
     List<User> findByEmployeeBranchId(Long branchId);
+    
+    Optional<User> findByEmailAndPesel(String email, String pesel);
+
+    Optional<User> findByPesel(String pesel);
 }

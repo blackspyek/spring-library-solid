@@ -29,3 +29,8 @@ kubectl apply -f k8s/postgres-service.yaml
 ### Terminal 2: kubectl port-forward svc/postgres 5432:5432 -n library
 
 ### Terminal 3: minikube tunnel
+
+>> wsl --shutdown 
+>> diskpart
+> DISKPART> select vdisk file="<path to vhdx file>"
+> DISKPART> compact vdisk

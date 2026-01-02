@@ -56,6 +56,7 @@ public class SecurityConfig {
                 // Public endpoints
                 .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/auth/logout").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/auth/reset-password").permitAll()
                 .requestMatchers("/api/auth/validate").permitAll()
                 .requestMatchers("/api/auth/health").permitAll()
                 .requestMatchers("/actuator/**").permitAll()

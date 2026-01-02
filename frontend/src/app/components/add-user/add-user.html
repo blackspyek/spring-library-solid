@@ -4,108 +4,467 @@
   aria-modal="true"
   aria-labelledby="add-user-title"
 >
-
   @if (!showSuccessStep()) {
-    <div class="bg-[color:var(--base-form-bg)] rounded-xl shadow-xl w-full max-w-md p-6">
-      <h2 id="add-user-title" class="text-xl font-bold text-[color:var(--base-blue-dark)] mb-4">Dodaj nowego czytelnika</h2>
+    <div
+      class="bg-[color:var(--base-form-bg)] rounded-xl shadow-2xl w-full max-w-2xl p-8 max-h-[90vh] overflow-y-auto"
+    >
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="flex items-center gap-3 mb-2">
+          <div
+            class="w-10 h-10 rounded-full bg-[color:var(--base-blue-dark)] flex items-center justify-center"
+          >
+            <mat-icon class="text-[color:var(--base-form-bg)]">person_add</mat-icon>
+          </div>
+          <h2 id="add-user-title" class="text-2xl font-bold text-[color:var(--base-blue-dark)]">
+            Dodaj nowego czytelnika
+          </h2>
+        </div>
+        <p class="text-sm text-[color:var(--gray-500-to-yellow)] ml-14">
+          Wypełnij wszystkie pola oznaczone *
+        </p>
+      </div>
 
-      <div class="flex flex-col gap-4">
-        <div>
-          <label for="new-user-email" class="block text-sm font-medium text-[color:var(--base-gray-darker)] mb-1">Email (Login)</label>
-          <input
-            id="new-user-email"
-            type="email"
-            [(ngModel)]="email"
-            class="w-full border text-[color:var(--gray-dark)] border-[color:var(--gray-300-to-yellow)] rounded-lg px-3 py-2 outline-none focus:border-[color:var(--base-blue-dark)]"
-            placeholder="jan.kowalski@example.com"
-          />
+      <div class="flex flex-col gap-6">
+        <!-- Section 1: Dane logowania -->
+        <div
+          class="bg-[color:var(--gray-to-black)] bg-opacity-40 rounded-lg p-5 border border-[color:var(--gray-300-to-yellow)] border-opacity-50"
+        >
+          <div class="flex items-center gap-2 mb-4">
+            <mat-icon class="text-[color:var(--base-blue-dark)]">security</mat-icon>
+            <h3 class="text-sm font-bold text-[color:var(--base-blue-dark)]">Dane logowania</h3>
+          </div>
+
+          <div class="flex flex-col gap-4">
+            <!-- Email -->
+            <div>
+              <label
+                for="new-user-email"
+                class="block text-sm font-medium text-[color:var(--base-gray-darker)] mb-2"
+              >
+                <span class="text-red-500">*</span> Email
+              </label>
+              <div class="relative">
+                <div
+                  class="absolute left-3 top-1/2 -translate-y-1/2 text-[color:var(--gray-400-to-yellow)]"
+                >
+                  <mat-icon class="text-base">email</mat-icon>
+                </div>
+                <input
+                  id="new-user-email"
+                  name="email"
+                  type="email"
+                  [(ngModel)]="email"
+                  [class.border-red-500]="fieldErrors()['email']"
+                  [class.border-2]="fieldErrors()['email']"
+                  class="w-full border text-[color:var(--gray-dark)] border-[color:var(--gray-300-to-yellow)] rounded-lg pl-10 pr-3 py-2.5 outline-none focus:border-[color:var(--base-blue-dark)] focus:border-2"
+                  placeholder="jan.kowalski@example.com"
+                />
+              </div>
+              @if (fieldErrors()['email']) {
+                <p class="text-xs text-red-600 mt-1.5 flex items-center gap-1">
+                  <mat-icon class="text-sm">error_outline</mat-icon>
+                  {{ fieldErrors()['email'][0] }}
+                </p>
+              }
+            </div>
+
+            <!-- Hasło - USUNIĘTE: hasło generowane po stronie serwera i wysyłane emailem -->
+          </div>
         </div>
 
-        <div>
-          <label for="new-user-pass" class="block text-sm font-medium text-[color:var(--base-gray-darker)] mb-1">Hasło tymczasowe</label>
-          <div class="relative">
-<!--            TODO: make password for user to change by mail after registering -->
-            <input
-              id="new-user-pass"
-              [type]="tempPasswordVisible() ? 'text' : 'password'"
-              [(ngModel)]="password"
-              class="w-full border text-[color:var(--gray-dark)] border-[color:var(--gray-300-to-yellow)] rounded-lg px-3 py-2 outline-none focus:border-[color:var(--base-blue-dark)] pr-10"
-              placeholder="Wpisz hasło"
-            />
-            <button
-              (click)="toggleTempPasswordInput()"
-              class="absolute right-3 top-1/2 -translate-y-1/2 text-[color:var(--gray-400-to-yellow)] hover:text-[color:var(--gray-600-to-yellow)]"
-              [attr.aria-label]="tempPasswordVisible() ? 'Ukryj hasło' : 'Pokaż hasło'"
-            >
-              <mat-icon class="text-base" aria-hidden="true">{{ tempPasswordVisible() ? 'visibility_off' : 'visibility' }}</mat-icon>
-            </button>
+        <!-- Section 2: Dane osobiste -->
+        <div
+          class="bg-[color:var(--gray-to-black)] bg-opacity-40 rounded-lg p-5 border border-[color:var(--gray-300-to-yellow)] border-opacity-50"
+        >
+          <div class="flex items-center gap-2 mb-4">
+            <mat-icon class="text-[color:var(--base-blue-dark)]">person</mat-icon>
+            <h3 class="text-sm font-bold text-[color:var(--base-blue-dark)]">Dane osobiste</h3>
+          </div>
+
+          <div class="flex flex-col gap-4">
+            <!-- PESEL -->
+            <div>
+              <label
+                for="new-user-pesel"
+                class="block text-sm font-medium text-[color:var(--base-gray-darker)] mb-2"
+              >
+                <span class="text-red-500">*</span> PESEL (11 cyfr)
+              </label>
+              <div class="relative">
+                <div
+                  class="absolute left-3 top-1/2 -translate-y-1/2 text-[color:var(--gray-400-to-yellow)]"
+                >
+                  <mat-icon class="text-base">badge</mat-icon>
+                </div>
+                <input
+                  id="new-user-pesel"
+                  name="pesel"
+                  type="text"
+                  [(ngModel)]="pesel"
+                  [class.border-red-500]="fieldErrors()['pesel']"
+                  [class.border-2]="fieldErrors()['pesel']"
+                  class="w-full border text-[color:var(--gray-dark)] border-[color:var(--gray-300-to-yellow)] rounded-lg pl-10 pr-3 py-2.5 outline-none focus:border-[color:var(--base-blue-dark)] focus:border-2"
+                  placeholder="12345678901"
+                  maxlength="11"
+                />
+              </div>
+              @if (fieldErrors()['pesel']) {
+                <p class="text-xs text-red-600 mt-1.5 flex items-center gap-1">
+                  <mat-icon class="text-sm">error_outline</mat-icon>
+                  {{ fieldErrors()['pesel'][0] }}
+                </p>
+              }
+            </div>
+
+            <!-- Imię i Nazwisko -->
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label
+                  for="new-user-fname"
+                  class="block text-sm font-medium text-[color:var(--base-gray-darker)] mb-2"
+                >
+                  <span class="text-red-500">*</span> Imię
+                </label>
+                <input
+                  id="new-user-fname"
+                  name="firstName"
+                  type="text"
+                  [(ngModel)]="firstName"
+                  [class.border-red-500]="fieldErrors()['firstName']"
+                  [class.border-2]="fieldErrors()['firstName']"
+                  class="w-full border text-[color:var(--gray-dark)] border-[color:var(--gray-300-to-yellow)] rounded-lg px-3 py-2.5 outline-none focus:border-[color:var(--base-blue-dark)] focus:border-2"
+                  placeholder="Jan"
+                />
+                @if (fieldErrors()['firstName']) {
+                  <p class="text-xs text-red-600 mt-1.5 flex items-center gap-1">
+                    <mat-icon class="text-sm">error_outline</mat-icon>
+                    {{ fieldErrors()['firstName'][0] }}
+                  </p>
+                }
+              </div>
+              <div>
+                <label
+                  for="new-user-lname"
+                  class="block text-sm font-medium text-[color:var(--base-gray-darker)] mb-2"
+                >
+                  <span class="text-red-500">*</span> Nazwisko
+                </label>
+                <input
+                  id="new-user-lname"
+                  name="lastName"
+                  type="text"
+                  [(ngModel)]="lastName"
+                  [class.border-red-500]="fieldErrors()['lastName']"
+                  [class.border-2]="fieldErrors()['lastName']"
+                  class="w-full border text-[color:var(--gray-dark)] border-[color:var(--gray-300-to-yellow)] rounded-lg px-3 py-2.5 outline-none focus:border-[color:var(--base-blue-dark)] focus:border-2"
+                  placeholder="Kowalski"
+                />
+                @if (fieldErrors()['lastName']) {
+                  <p class="text-xs text-red-600 mt-1.5 flex items-center gap-1">
+                    <mat-icon class="text-sm">error_outline</mat-icon>
+                    {{ fieldErrors()['lastName'][0] }}
+                  </p>
+                }
+              </div>
+            </div>
+
+            <!-- Telefon -->
+            <div>
+              <label
+                for="new-user-phone"
+                class="block text-sm font-medium text-[color:var(--base-gray-darker)] mb-2"
+              >
+                <span class="text-red-500">*</span> Telefon
+              </label>
+              <div class="relative">
+                <div
+                  class="absolute left-3 top-1/2 -translate-y-1/2 text-[color:var(--gray-400-to-yellow)]"
+                >
+                  <mat-icon class="text-base">phone</mat-icon>
+                </div>
+                <input
+                  id="new-user-phone"
+                  name="phone"
+                  type="tel"
+                  [(ngModel)]="phone"
+                  [class.border-red-500]="fieldErrors()['phone']"
+                  [class.border-2]="fieldErrors()['phone']"
+                  class="w-full border text-[color:var(--gray-dark)] border-[color:var(--gray-300-to-yellow)] rounded-lg pl-10 pr-3 py-2.5 outline-none focus:border-[color:var(--base-blue-dark)] focus:border-2"
+                  placeholder="+48 123 456 789"
+                />
+              </div>
+              @if (fieldErrors()['phone']) {
+                <p class="text-xs text-red-600 mt-1.5 flex items-center gap-1">
+                  <mat-icon class="text-sm">error_outline</mat-icon>
+                  {{ fieldErrors()['phone'][0] }}
+                </p>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Adres -->
+        <div
+          class="bg-[color:var(--gray-to-black)] bg-opacity-40 rounded-lg p-5 border border-[color:var(--gray-300-to-yellow)] border-opacity-50"
+        >
+          <div class="flex items-center gap-2 mb-4">
+            <mat-icon class="text-[color:var(--base-blue-dark)]">location_on</mat-icon>
+            <h3 class="text-sm font-bold text-[color:var(--base-blue-dark)]">Dane adresowe</h3>
+          </div>
+
+          <div class="flex flex-col gap-4">
+            <!-- Ulica -->
+            <div>
+              <label
+                for="new-user-street"
+                class="block text-sm font-medium text-[color:var(--base-gray-darker)] mb-2"
+              >
+                <span class="text-red-500">*</span> Ulica
+              </label>
+              <div class="relative">
+                <div
+                  class="absolute left-3 top-1/2 -translate-y-1/2 text-[color:var(--gray-400-to-yellow)]"
+                >
+                  <mat-icon class="text-base">streetview</mat-icon>
+                </div>
+                <input
+                  id="new-user-street"
+                  name="street"
+                  type="text"
+                  [(ngModel)]="street"
+                  [class.border-red-500]="fieldErrors()['street']"
+                  [class.border-2]="fieldErrors()['street']"
+                  class="w-full border text-[color:var(--gray-dark)] border-[color:var(--gray-300-to-yellow)] rounded-lg pl-10 pr-3 py-2.5 outline-none focus:border-[color:var(--base-blue-dark)] focus:border-2"
+                  placeholder="ul. Główna"
+                />
+              </div>
+              @if (fieldErrors()['street']) {
+                <p class="text-xs text-red-600 mt-1.5 flex items-center gap-1">
+                  <mat-icon class="text-sm">error_outline</mat-icon>
+                  {{ fieldErrors()['street'][0] }}
+                </p>
+              }
+            </div>
+
+            <!-- Numer budynku i mieszkania -->
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label
+                  for="new-user-building"
+                  class="block text-sm font-medium text-[color:var(--base-gray-darker)] mb-2"
+                >
+                  <span class="text-red-500">*</span> Numer budynku
+                </label>
+                <input
+                  id="new-user-building"
+                  name="buildingNumber"
+                  type="text"
+                  [(ngModel)]="buildingNumber"
+                  [class.border-red-500]="fieldErrors()['buildingNumber']"
+                  [class.border-2]="fieldErrors()['buildingNumber']"
+                  class="w-full border text-[color:var(--gray-dark)] border-[color:var(--gray-300-to-yellow)] rounded-lg px-3 py-2.5 outline-none focus:border-[color:var(--base-blue-dark)] focus:ring-1 focus:ring-[color:var(--base-blue-dark)]"
+                  placeholder="42"
+                />
+                @if (fieldErrors()['buildingNumber']) {
+                  <p class="text-xs text-red-600 mt-1.5 flex items-center gap-1">
+                    <mat-icon class="text-sm">error_outline</mat-icon>
+                    {{ fieldErrors()['buildingNumber'][0] }}
+                  </p>
+                }
+              </div>
+              <div>
+                <label
+                  for="new-user-apartment"
+                  class="block text-sm font-medium text-[color:var(--base-gray-darker)] mb-2"
+                  >Numer mieszkania</label
+                >
+                <input
+                  id="new-user-apartment"
+                  name="apartmentNumber"
+                  type="text"
+                  [(ngModel)]="apartmentNumber"
+                  class="w-full border text-[color:var(--gray-dark)] border-[color:var(--gray-300-to-yellow)] rounded-lg px-3 py-2.5 outline-none focus:border-[color:var(--base-blue-dark)] focus:border-2"
+                  placeholder="12"
+                />
+              </div>
+            </div>
+
+            <!-- Kod pocztowy i Miasto -->
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label
+                  for="new-user-postal"
+                  class="block text-sm font-medium text-[color:var(--base-gray-darker)] mb-2"
+                >
+                  <span class="text-red-500">*</span> Kod pocztowy
+                </label>
+                <input
+                  id="new-user-postal"
+                  name="postalCode"
+                  type="text"
+                  [(ngModel)]="postalCode"
+                  [class.border-red-500]="fieldErrors()['postalCode']"
+                  [class.border-2]="fieldErrors()['postalCode']"
+                  class="w-full border text-[color:var(--gray-dark)] border-[color:var(--gray-300-to-yellow)] rounded-lg px-3 py-2.5 outline-none focus:border-[color:var(--base-blue-dark)] focus:ring-1 focus:ring-[color:var(--base-blue-dark)]"
+                  placeholder="12-345"
+                />
+                @if (fieldErrors()['postalCode']) {
+                  <p class="text-xs text-red-600 mt-1.5 flex items-center gap-1">
+                    <mat-icon class="text-sm">error_outline</mat-icon>
+                    {{ fieldErrors()['postalCode'][0] }}
+                  </p>
+                }
+              </div>
+              <div>
+                <label
+                  for="new-user-city"
+                  class="block text-sm font-medium text-[color:var(--base-gray-darker)] mb-2"
+                >
+                  <span class="text-red-500">*</span> Miasto
+                </label>
+                <input
+                  id="new-user-city"
+                  name="city"
+                  type="text"
+                  [(ngModel)]="city"
+                  [class.border-red-500]="fieldErrors()['city']"
+                  [class.border-2]="fieldErrors()['city']"
+                  class="w-full border text-[color:var(--gray-dark)] border-[color:var(--gray-300-to-yellow)] rounded-lg px-3 py-2.5 outline-none focus:border-[color:var(--base-blue-dark)] focus:border-2"
+                  placeholder="Warszawa"
+                />
+                @if (fieldErrors()['city']) {
+                  <p class="text-xs text-red-600 mt-1.5 flex items-center gap-1">
+                    <mat-icon class="text-sm">error_outline</mat-icon>
+                    {{ fieldErrors()['city'][0] }}
+                  </p>
+                }
+              </div>
+            </div>
+
+            <!-- Kraj -->
+            <div>
+              <label
+                for="new-user-country"
+                class="block text-sm font-medium text-[color:var(--base-gray-darker)] mb-2"
+              >
+                <span class="text-red-500">*</span> Kraj
+              </label>
+              <input
+                id="new-user-country"
+                name="country"
+                type="text"
+                [(ngModel)]="country"
+                [class.border-red-500]="fieldErrors()['country']"
+                [class.border-2]="fieldErrors()['country']"
+                class="w-full border text-[color:var(--gray-dark)] border-[color:var(--gray-300-to-yellow)] rounded-lg px-3 py-2.5 outline-none focus:border-[color:var(--base-blue-dark)] focus:border-2"
+                placeholder="Polska"
+              />
+              @if (fieldErrors()['country']) {
+                <p class="text-xs text-red-600 mt-1.5 flex items-center gap-1">
+                  <mat-icon class="text-sm">error_outline</mat-icon>
+                  {{ fieldErrors()['country'][0] }}
+                </p>
+              }
+            </div>
           </div>
         </div>
       </div>
 
+      <!-- Error Alert -->
       @if (errorMessage()) {
-        <div class="mt-4 p-2 bg-[color:var(--red-50-to-yellow)] text-[color:var(--red-600-to-black)] text-sm rounded border border-[color:var(--red-200-to-yellow)]" role="alert">
-          {{ errorMessage() }}
+        <div
+          class="mt-6 p-4 bg-red-50 text-red-700 text-sm rounded-lg border border-red-300 flex items-start gap-3"
+          role="alert"
+        >
+          <mat-icon class="text-lg flex-shrink-0 mt-0.5">warning</mat-icon>
+          <div>{{ errorMessage() }}</div>
         </div>
       }
 
-      <div class="flex justify-end gap-3 mt-6">
+      <!-- Action Buttons -->
+      <div
+        class="flex justify-end gap-3 mt-8 pt-6 border-t border-[color:var(--gray-300-to-yellow)]"
+      >
         <button
+          type="button"
           (click)="cancel.emit()"
-          class="px-4 py-2 text-[color:var(--base-blue-darker)] font-bold hover:bg-[color:var(--gray-100-to-yellow)] border-2 border-[color:var(--base-blue-darker)] rounded-lg transition-colors"
+          class="px-6 py-2.5 text-[color:var(--base-blue-darker)] font-semibold hover:bg-[color:var(--gray-100-to-yellow)] border-2 border-[color:var(--base-blue-darker)] rounded-lg transition-colors duration-200"
         >
           Anuluj
         </button>
         <button
+          type="button"
           (click)="submit()"
           [disabled]="isProcessing()"
-          class="px-4 py-2 bg-[color:var(--base-blue-dark)] text-[color:var(--base-form-bg)] font-bold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+          class="px-6 py-2.5 bg-[color:var(--base-blue-dark)] text-[color:var(--base-form-bg)] font-semibold rounded-lg hover:opacity-90 transition-opacity duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
         >
-          {{ isProcessing() ? 'Zapisywanie...' : 'Zapisz' }}
+          @if (isProcessing()) {
+            <span>⏳ Zapisywanie...</span>
+          } @else {
+            <mat-icon class="text-sm">save</mat-icon>
+            <span>Zapisz</span>
+          }
         </button>
       </div>
     </div>
-  }
-
-  @else {
+  } @else {
     <div class="bg-[color:var(--base-form-bg)] rounded-xl shadow-xl w-full max-w-md p-6">
       <div class="flex items-center gap-3 mb-4">
-        <h2 id="add-user-title" class="text-xl font-bold text-[color:var(--base-gray-darker)]">Użytkownik utworzony!</h2>
+        <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
+          <mat-icon class="text-green-600 text-2xl">mark_email_read</mat-icon>
+        </div>
+        <h2 id="add-user-title" class="text-xl font-bold text-[color:var(--base-gray-darker)]">
+          Czytelnik dodany!
+        </h2>
       </div>
 
-      <p class="text-sm text-[color:var(--base-gray-lighter)] mb-4">
-        Przekaż poniższe dane nowemu czytelnikowi.
-      </p>
+      <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+        <p class="text-sm text-[color:var(--base-gray-darker)] mb-2">
+          <strong>Email wysłany na adres:</strong>
+        </p>
+        <p class="text-lg font-mono text-[color:var(--base-blue-dark)] break-all">
+          {{ email() }}
+        </p>
+      </div>
 
-      <div class="bg-[color:var(--gray-to-black)] p-4 rounded-lg border border-[color:var(--gray-300-to-yellow)] flex flex-col gap-3">
-        <div>
-          <span class="text-xs uppercase text-[color:var(--gray-500-to-yellow)] font-bold">Email:</span>
-          <div class="text-lg font-mono text-[color:var(--base-blue-dark)]">{{ email() }}</div>
-        </div>
-
-        <div>
-          <span class="text-xs uppercase text-[color:var(--gray-500-to-yellow)] font-bold">Hasło tymczasowe:</span>
-          <div class="flex items-center justify-between mt-1">
-            <div class="text-lg font-mono text-[color:var(--base-blue-dark)]">
-              {{ resultPasswordVisible() ? password() : '••••••••••••' }}
-            </div>
-            <button
-              (click)="toggleResultPassword()"
-              class="text-[color:var(--gray-400-to-yellow)] hover:text-[color:var(--gray-600-to-yellow)]"
-              [attr.aria-label]="resultPasswordVisible() ? 'Ukryj hasło' : 'Pokaż hasło'"
+      <div
+        class="bg-[color:var(--gray-to-black)] p-4 rounded-lg border border-[color:var(--gray-300-to-yellow)]"
+      >
+        <p class="text-sm text-[color:var(--base-gray-darker)] mb-3">
+          📧 <strong>Nowy czytelnik otrzyma:</strong>
+        </p>
+        <ul class="text-sm text-[color:var(--base-gray-lighter)] space-y-2">
+          <li class="flex items-start gap-2">
+            <span>✓</span>
+            <span
+              >Login (email):
+              <span class="font-mono text-[color:var(--base-blue-dark)]">{{ email() }}</span></span
             >
-              <mat-icon aria-hidden="true">{{ resultPasswordVisible() ? 'visibility_off' : 'visibility' }}</mat-icon>
-            </button>
-          </div>
-        </div>
+          </li>
+          <li class="flex items-start gap-2">
+            <span>✓</span>
+            <span>Tymczasowe hasło w wiadomości email</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span>✓</span>
+            <span>Instrukcje do zmiany hasła przy pierwszym logowaniu</span>
+          </li>
+        </ul>
       </div>
+
+      <p class="text-xs text-[color:var(--gray-500-to-yellow)] mt-4 text-center">
+        Jeśli nie otrzymał wiadomości, sprawdź folder spam
+      </p>
 
       <div class="flex justify-end mt-6">
         <button
+          type="button"
           (click)="finish()"
-          class="px-6 py-2 bg-[color:var(--base-blue-dark)] text-[color:var(--base-form-bg)] rounded-lg hover:opacity-90"
+          class="px-6 py-2.5 bg-[color:var(--base-blue-dark)] text-[color:var(--base-form-bg)] font-semibold rounded-lg hover:opacity-90 transition-opacity flex items-center gap-2"
         >
-          Zamknij
+          <mat-icon class="text-sm">done</mat-icon>
+          <span>Zamknij</span>
         </button>
       </div>
     </div>

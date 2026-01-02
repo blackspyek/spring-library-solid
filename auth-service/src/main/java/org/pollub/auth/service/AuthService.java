@@ -6,7 +6,11 @@ import org.pollub.auth.client.UserServiceClient;
 import org.pollub.auth.dto.AuthResponse;
 import org.pollub.auth.dto.LoginUserDto;
 import org.pollub.auth.dto.RegisterUserDto;
+import org.pollub.auth.dto.ResetPasswordRequestDto;
+import org.pollub.auth.dto.ResetPasswordResponseDto;
 import org.pollub.auth.security.JwtTokenProvider;
+import org.pollub.auth.util.PasswordGenerator;
+import org.pollub.common.dto.UserAddressDto;
 import org.pollub.common.dto.UserDto;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,6 +25,7 @@ public class AuthService implements IAuthService {
     private final UserServiceClient userServiceClient;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     @Override
     public AuthResponse login(LoginUserDto request) {
@@ -32,6 +37,11 @@ public class AuthService implements IAuthService {
                 request.getPassword()
         ).orElseThrow(() -> new IllegalArgumentException("Invalid credentials"));
         
+        log.debug("=== DEBUG AuthService.login() ===");
+        log.debug("validatedUser.isMustChangePassword() = {}", validatedUser.isMustChangePassword());
+        System.out.println("=== DEBUG AuthService.login() ===");
+        System.out.println("validatedUser.isMustChangePassword() = " + validatedUser.isMustChangePassword());
+        
         // Generate JWT token
         String token = jwtTokenProvider.generateToken(
                 validatedUser.getId(),
@@ -41,7 +51,7 @@ public class AuthService implements IAuthService {
         
         log.info("Login successful for user: {}", validatedUser.getUsername());
         
-        return AuthResponse.builder()
+        AuthResponse response = AuthResponse.builder()
                 .accessToken(token)
                 .tokenType("Bearer")
                 .expiresIn(jwtTokenProvider.getExpirationMs() / 1000)
@@ -50,22 +60,64 @@ public class AuthService implements IAuthService {
                 .email(validatedUser.getEmail())
                 .roles(validatedUser.getRoles())
                 .employeeOfBranch(validatedUser.getEmployeeBranchId())
+                .mustChangePassword(validatedUser.isMustChangePassword())
                 .build();
+        
+        System.out.println("AuthResponse.mustChangePassword = " + response.isMustChangePassword());
+        
+        return response;
     }
 
     @Override
     public AuthResponse register(RegisterUserDto request) {
         log.info("Registration attempt for: {}", request.getEmail());
         
+        // Generate temporary password
+        String temporaryPassword = PasswordGenerator.generatePassword();
+        
+        UserAddressDto addressDto = UserAddressDto.builder()
+                .street(request.getAddress().getStreet())
+                .city(request.getAddress().getCity())
+                .postalCode(request.getAddress().getPostalCode())
+                .country(request.getAddress().getCountry())
+                .buildingNumber(request.getAddress().getBuildingNumber())
+                .apartmentNumber(request.getAddress().getApartmentNumber())
+                .build();
+
+        log.info("Creating user in user-service: {}", request.getFirstName() + " " + request.getLastName());
+        log.debug("=== DEBUG AuthService.register() ===");
+        log.debug("RegisterUserDto.firstName = '{}'", request.getFirstName());
+        log.debug("RegisterUserDto.lastName = '{}'", request.getLastName());
+        log.debug("RegisterUserDto.email = '{}'", request.getEmail());
+        log.debug("RegisterUserDto.pesel = '{}'", request.getPesel());
+        
         UserDto newUser = UserDto.builder()
                 .username(request.getEmail())
                 .email(request.getEmail())
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
-                .password(request.getPassword())
+                .password(temporaryPassword)
+                .pesel(request.getPesel())
+                .phone(request.getPhone())
+                .address(addressDto)
                 .build();
         
+        log.debug("=== DEBUG UserDto przed wysłaniem do user-service ===");
+        log.debug("UserDto.firstName = '{}'", newUser.getFirstName());
+        log.debug("UserDto.lastName = '{}'", newUser.getLastName());
+        log.debug("UserDto.username = '{}'", newUser.getUsername());
+        log.debug("UserDto.email = '{}'", newUser.getEmail());
+        
         UserDto createdUser = userServiceClient.createUser(newUser);
+        
+        log.debug("=== DEBUG UserDto po utworzeniu w user-service ===");
+        log.debug("createdUser.name = '{}'", createdUser.getName());
+        log.debug("createdUser.surname = '{}'", createdUser.getSurname());
+        log.debug("createdUser.firstName = '{}'", createdUser.getFirstName());
+        log.debug("createdUser.lastName = '{}'", createdUser.getLastName());
+        
+        // Send temporary password email
+        emailService.sendTemporaryPasswordEmail(createdUser.getEmail(), temporaryPassword);
         
         // Generate JWT token
         String token = jwtTokenProvider.generateToken(
@@ -84,6 +136,7 @@ public class AuthService implements IAuthService {
                 .username(createdUser.getUsername())
                 .email(createdUser.getEmail())
                 .roles(createdUser.getRoles())
+                .mustChangePassword(true)  // Nowy użytkownik musi zmienić hasło
                 .build();
     }
     
@@ -117,6 +170,49 @@ public class AuthService implements IAuthService {
                        user.getRoles()
                 )
                 .employeeOfBranch(user.getEmployeeBranchId())
+                .mustChangePassword(user.isMustChangePassword())
+                .build();
+    }
+
+    /**
+     * Reset password for a user identified by email and PESEL.
+     * Generates a new temporary password, updates the user, and sends an email with the new password.
+     */
+    @Override
+    public ResetPasswordResponseDto resetPassword(ResetPasswordRequestDto request) {
+        log.info("Password reset attempt for email: {}", request.getEmail());
+        
+        // Call user-service to reset password and get the new temporary password
+        var userServiceResponse = userServiceClient.resetPassword(request.getEmail(), request.getPesel());
+        
+        if (userServiceResponse.isEmpty()) {
+            log.warn("Password reset failed - user-service returned empty response for email: {}", request.getEmail());
+            return ResetPasswordResponseDto.builder()
+                    .success(false)
+                    .message("Jeśli podane dane są poprawne, nowe hasło zostanie wysłane na podany adres email.")
+                    .build();
+        }
+        
+        var response = userServiceResponse.get();
+        
+        // If user was found and password was reset, send email
+        if (response.success() && response.temporaryPassword() != null) {
+            try {
+                emailService.sendPasswordResetEmail(response.email(), response.temporaryPassword());
+                log.info("Password reset successful for email: {}", response.email());
+            } catch (Exception e) {
+                log.error("Failed to send password reset email to: {}", response.email(), e);
+                return ResetPasswordResponseDto.builder()
+                        .success(false)
+                        .message("Wystąpił błąd podczas wysyłania emaila. Spróbuj ponownie później.")
+                        .build();
+            }
+        }
+        
+        // Always return a generic success message for security
+        return ResetPasswordResponseDto.builder()
+                .success(true)
+                .message("Jeśli podane dane są poprawne, nowe hasło zostanie wysłane na podany adres email.")
                 .build();
     }
 }

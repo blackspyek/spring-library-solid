@@ -122,17 +122,11 @@
   </form>
 
   <div class="text-center mt-6">
-    <a href="#" class="font-medium text-sm text-[var(--base-eye-catching-link)] cursor-pointer">
+    <a
+      [routerLink]="['/zapomnialem-hasla']"
+      class="font-medium text-sm text-[var(--base-eye-catching-link)] cursor-pointer"
+    >
       Zapomniałeś hasła?
     </a>
-    <p class="font-medium text-sm text-[var(--base-form-lighter-text)]">
-      Nie masz jeszcze aktywnego konta?
-      <a
-        [routerLink]="['/zweryfikuj-email']"
-        class="text-[var(--base-eye-catching-link)] cursor-pointer"
-      >
-        Ponów e-mail aktywacyjny!
-      </a>
-    </p>
   </div>
 </div>

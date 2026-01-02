@@ -21,6 +21,7 @@ public class AuthResponse {
     private String username;
     private String email;
     private Long employeeOfBranch;
-    private Set<String> roles; // Using String[] to avoid dependency on user-service Role enum if possible, or we need to move Role to common
+    private Set<String> roles;
+    private boolean mustChangePassword;
 
 }

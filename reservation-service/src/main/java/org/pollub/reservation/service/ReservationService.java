@@ -10,7 +10,7 @@ import org.pollub.reservation.model.ReservationStatus;
 import org.pollub.reservation.model.dto.ReservationCatalogRequestDto;
 import org.pollub.reservation.model.dto.ReservationDto;
 import org.pollub.reservation.repository.ReservationRepository;
-import org.springframework.scheduling.annotation.Scheduled;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -138,7 +138,6 @@ public class ReservationService implements  IReservationService {
 
 
     @Override
-    @Scheduled(fixedRate = 3600000) // Every hour
     @Transactional
     public void cleanupExpiredReservations() {
         List<ReservationHistory> expired = reservationRepository

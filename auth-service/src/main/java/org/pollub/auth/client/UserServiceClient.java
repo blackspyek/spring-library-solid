@@ -115,4 +115,29 @@ public class UserServiceClient {
             return Optional.empty();
         }
     }
+
+    /**
+     * Reset password for a user identified by email and PESEL.
+     * Returns the new temporary password if successful.
+     */
+    public Optional<ResetPasswordResponseDto> resetPassword(String email, String pesel) {
+        try {
+            ResetPasswordResponseDto response = webClientBuilder.build()
+                    .post()
+                    .uri(userServiceUrl + "/api/users/reset-password")
+                    .bodyValue(new ResetPasswordRequestDto(email, pesel))
+                    .retrieve()
+                    .bodyToMono(ResetPasswordResponseDto.class)
+                    .block();
+            return Optional.ofNullable(response);
+        } catch (Exception e) {
+            log.error("Error resetting password for email: {}", email, e);
+            return Optional.empty();
+        }
+    }
+
+    // DTOs for reset password
+    public record ResetPasswordRequestDto(String email, String pesel) {}
+
+    public record ResetPasswordResponseDto(String email, String temporaryPassword, boolean success, String message) {}
 }

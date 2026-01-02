@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDateTime;
 
 @Repository
 public interface IRentalHistoryRepository extends JpaRepository<RentalHistory, Long> {
@@ -38,4 +39,10 @@ public interface IRentalHistoryRepository extends JpaRepository<RentalHistory, L
             LIMIT :limit
             """, nativeQuery = true)
     List<Long> findTopItemIdsByRentalCount(@Param("limit") int limit);
+
+    List<RentalHistory> findByDueDateBetweenAndStatus(
+            LocalDateTime start,
+            LocalDateTime end,
+            RentalStatus status
+    );
 }

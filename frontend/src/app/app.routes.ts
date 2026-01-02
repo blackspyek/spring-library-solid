@@ -5,6 +5,8 @@ import { Layout } from './components/layout/layout';
 import { ResendEmail } from './pages/resend-email/resend-email';
 import { Profile } from './pages/profile/profile';
 import { LoanManagement } from './pages/loan-management/loan-management';
+import { ChangePassword } from './pages/change-password/change-password';
+import { ForgotPassword } from './pages/forgot-password/forgot-password';
 import { authGuard } from './guards/auth-guard';
 import { Home } from './pages/home/home';
 
@@ -22,8 +24,17 @@ export const routes: Routes = [
         component: Login,
       },
       {
+        path: 'zapomnialem-hasla',
+        component: ForgotPassword,
+      },
+      {
         path: 'zweryfikuj-email',
         component: ResendEmail,
+      },
+      {
+        path: 'zmiana-hasla',
+        component: ChangePassword,
+        canActivate: [authGuard],
       },
       {
         path: 'profil',

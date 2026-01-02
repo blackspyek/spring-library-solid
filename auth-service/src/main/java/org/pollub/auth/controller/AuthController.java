@@ -2,9 +2,12 @@ package org.pollub.auth.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.pollub.auth.dto.AuthResponse;
 import org.pollub.auth.dto.LoginUserDto;
 import org.pollub.auth.dto.RegisterUserDto;
+import org.pollub.auth.dto.ResetPasswordRequestDto;
+import org.pollub.auth.dto.ResetPasswordResponseDto;
 import org.pollub.auth.security.JwtTokenProvider;
 import org.pollub.auth.service.IAuthService;
 import org.springframework.http.HttpHeaders;
@@ -19,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
     
     private final IAuthService authService;
@@ -35,7 +39,13 @@ public class AuthController {
                 .employeeOfBranch(response.getEmployeeOfBranch())
                 .userId(response.getUserId())
                 .email(response.getEmail())
+                .mustChangePassword(response.isMustChangePassword())
                 .build();
+
+        log.info("User {} logged in successfully", response.getUsername());
+        //log debug info about mustChangePassword
+        log.debug("=== DEBUG AuthController.login() ===");
+        log.debug("response.isMustChangePassword() = {}", response.isMustChangePassword());
 
 
         return ResponseEntity.ok()
@@ -108,5 +118,15 @@ public class AuthController {
     public ResponseEntity<AuthResponse> getCurrentUser() {
         String username = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
         return ResponseEntity.ok(authService.getCurrentUser(username));
+    }
+
+    /**
+     * Reset password endpoint - verifies email and PESEL, generates new password, and sends email.
+     */
+    @PostMapping("/reset-password")
+    public ResponseEntity<ResetPasswordResponseDto> resetPassword(@Valid @RequestBody ResetPasswordRequestDto request) {
+        log.info("Password reset request received for email: {}", request.getEmail());
+        ResetPasswordResponseDto response = authService.resetPassword(request);
+        return ResponseEntity.ok(response);
     }
 }

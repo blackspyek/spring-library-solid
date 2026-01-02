@@ -11,12 +11,14 @@ interface BackendAuthResponse {
   username: string;
   responseType: string;
   employeeOfBranch: LibraryBranch | null;
+  mustChangePassword: boolean;
 }
 interface AuthState {
   user: string | null;
   roles: Role[] | null;
   initialized: boolean;
   employeeOfBranch: LibraryBranch | null;
+  mustChangePassword: boolean;
 }
 @Injectable({
   providedIn: 'root',
@@ -33,12 +35,14 @@ export class AuthService {
     roles: null,
     initialized: false,
     employeeOfBranch: null,
+    mustChangePassword: false,
   });
 
   public currentUser = computed(() => this.authState().user);
   public isLoggedIn = computed(() => !!this.authState().user);
   public isInitialized = computed(() => this.authState().initialized);
   public employeeOfBranch = computed(() => this.authState().employeeOfBranch);
+  public mustChangePassword = computed(() => this.authState().mustChangePassword);
 
   checkSession(): Observable<BackendAuthResponse | null> {
     return this.http.get<any>(`${this.API_URL}/me`).pipe(
@@ -50,19 +54,25 @@ export class AuthService {
             map(() => {
               const fullBranch = this.branchService.getBranchFromStore(branchData);
               return { ...response, employeeOfBranch: fullBranch || null };
-            })
+            }),
           );
         }
         // If it looks like an object or is null, return as is
         return of(response);
       }),
       tap((response: BackendAuthResponse) => {
+        const mustChange = (response as any).mustChangePassword || false;
         this.authState.set({
           user: response.username,
           roles: response.roles,
           initialized: true,
           employeeOfBranch: response.employeeOfBranch,
+          mustChangePassword: mustChange,
         });
+        // Redirect to password change page if user must change password
+        if (mustChange) {
+          void this.router.navigate(['/zmiana-hasla']);
+        }
       }),
       catchError(() => {
         this.authState.set({
@@ -70,9 +80,10 @@ export class AuthService {
           roles: null,
           initialized: true,
           employeeOfBranch: null,
+          mustChangePassword: false,
         });
         return of(null);
-      })
+      }),
     );
   }
 
@@ -101,26 +112,47 @@ export class AuthService {
   }): Observable<BackendAuthResponse> {
     return this.http.post<any>(`${this.API_URL}/login`, credentials).pipe(
       switchMap((response) => {
+        console.log('=== DEBUG raw response from /login ===');
+        console.log('Raw response:', JSON.stringify(response));
+        console.log('Raw mustChangePassword:', response.mustChangePassword);
+
         const branchData = response.employeeOfBranch;
         if (branchData && typeof branchData === 'number') {
           return this.branchService.loadBranches().pipe(
             map(() => {
               const fullBranch = this.branchService.getBranchFromStore(branchData);
-              return { ...response, employeeOfBranch: fullBranch || null };
-            })
+              return {
+                ...response,
+                employeeOfBranch: fullBranch || null,
+                mustChangePassword: response.mustChangePassword,
+              };
+            }),
           );
         }
         return of(response);
       }),
       tap((response: BackendAuthResponse) => {
+        const mustChange = response.mustChangePassword || false;
+        console.log('=== DEBUG login() response ===');
+        console.log('mustChangePassword from response:', response.mustChangePassword);
+        console.log('mustChange value:', mustChange);
+
         this.authState.set({
           user: response.username,
           roles: response.roles,
           initialized: true,
           employeeOfBranch: response.employeeOfBranch,
+          mustChangePassword: mustChange,
         });
-        void this.router.navigate(['/profil']);
-      })
+        // If user must change password, redirect to password change page
+        if (mustChange) {
+          console.log('Redirecting to /zmiana-hasla');
+          void this.router.navigate(['/zmiana-hasla']);
+        } else {
+          console.log('Redirecting to /profil');
+          void this.router.navigate(['/profil']);
+        }
+      }),
     );
   }
 
@@ -134,14 +166,49 @@ export class AuthService {
     this.http.post(`${this.API_URL}/logout`, {}).subscribe({
       next: () => {
         this.onLogoutCallbacks.forEach((cb) => cb());
-        this.authState.set({ user: null, roles: null, initialized: true, employeeOfBranch: null });
+        this.authState.set({
+          user: null,
+          roles: null,
+          initialized: true,
+          employeeOfBranch: null,
+          mustChangePassword: false,
+        });
         void this.router.navigate(['/zaloguj-sie']);
       },
       error: () => {
         this.onLogoutCallbacks.forEach((cb) => cb());
-        this.authState.set({ user: null, roles: null, initialized: true, employeeOfBranch: null });
+        this.authState.set({
+          user: null,
+          roles: null,
+          initialized: true,
+          employeeOfBranch: null,
+          mustChangePassword: false,
+        });
         void this.router.navigate(['/zaloguj-sie']);
       },
     });
+  }
+
+  /**
+   * Clear mustChangePassword flag after user successfully changes password
+   */
+  clearMustChangePassword(): void {
+    this.authState.update((state) => ({
+      ...state,
+      mustChangePassword: false,
+    }));
+  }
+
+  /**
+   * Reset password by email and PESEL
+   */
+  resetPassword(request: {
+    email: string;
+    pesel: string;
+  }): Observable<{ success: boolean; message: string }> {
+    return this.http.post<{ success: boolean; message: string }>(
+      `${this.API_URL}/reset-password`,
+      request,
+    );
   }
 }

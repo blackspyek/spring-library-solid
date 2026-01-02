@@ -24,6 +24,12 @@ public class UserFactory {
                 uidGenerator.generateUid()
         );
         user.setEnabled(true);
+        user.setPesel(userDto.getPesel());
+        user.setAddress(userDto.getAddress());
+        user.setPhone(userDto.getPhone());
+        user.setName(userDto.getName());
+        user.setSurname(userDto.getSurname());
+
         return user;
     }
 

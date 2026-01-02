@@ -29,6 +29,9 @@ public class UserDto {
     private Long favouriteBranchId;
     private Long employeeBranchId;
     private String password;
+    private String pesel;
+    private UserAddressDto address;
+    private boolean mustChangePassword;
     
     /**
      * Get primary role - returns first role or null
