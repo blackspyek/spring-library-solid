@@ -190,10 +190,17 @@
                           {{ formatDate(loan.dueDate) }}
                         </span>
                       </p>
+                      @if (loan.rentedFromBranchId) {
+                        <p class="text-xs text-[color:var(--base-gray-lighter)] mt-0.5">
+                          Filia: {{ getBranchName(loan.rentedFromBranchId) }}
+                        </p>
+                      }
                     </div>
                   </div>
                   <div class="flex gap-2 w-full sm:w-auto">
-                    <button (click)="extendLoan(loan)" [disabled]="isProcessing()" class="flex-1 sm:flex-none px-3 py-1.5 text-sm bg-[color:var(--base-blue-lighter)] text-[color:var(--base-form-bg)] rounded-md hover:opacity-90 disabled:opacity-50">+7 dni</button>
+                    <button (click)="extendLoan(loan)" [disabled]="isProcessing() || loan.rentExtended" class="flex-1 sm:flex-none px-3 py-1.5 text-sm bg-[color:var(--base-blue-lighter)] text-[color:var(--base-form-bg)] rounded-md hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed">
+                       {{ loan.rentExtended ? 'Przedłużono' : '+7 dni' }}
+                    </button>
                     <button (click)="returnBook(loan)" [disabled]="isProcessing()" class="flex-1 sm:flex-none px-3 py-1.5 text-sm bg-[color:var(--green-600-to-yellow)] text-[color:var(--base-form-bg)] rounded-md hover:opacity-90 disabled:opacity-50">Zwróć</button>
                   </div>
                 </div>

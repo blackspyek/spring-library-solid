@@ -10,7 +10,7 @@ import { environment } from '../../environments/environment';
 export class BookService {
   private http = inject(HttpClient);
 
-  private apiUrl = environment.apiUrl + 'book';
+  private apiUrl = environment.apiUrl + 'items/book';
 
   getBooksPaginated(page: number, size = 16): Observable<PageResponse<SingleBook>> {
     return this.http.get<PageResponse<SingleBook>>(

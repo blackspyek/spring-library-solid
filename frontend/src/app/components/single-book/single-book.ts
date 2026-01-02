@@ -5,7 +5,7 @@ import { SingleBook, LibrarySelectorDialogData } from '../../types';
 import { BookDetailsComponent } from '../book-details/book-details';
 import { LibrarySelectorDialog } from '../library-selector-dialog/library-selector-dialog';
 import { BookService } from '../../services/book.service';
-import { AuthService } from '../../services/auth-service';
+import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -64,7 +64,7 @@ export class SingleBookComponent {
           mode: 'availability',
           bookTitle: availability.title,
           bookId: availability.id,
-          availableBranches: availability.availableAtBranches,
+          availableBranchIds: availability.availableAtBranches,
         };
 
         this.dialog.open(LibrarySelectorDialog, {

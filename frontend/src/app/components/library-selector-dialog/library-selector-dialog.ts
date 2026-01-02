@@ -21,9 +21,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
 import * as L from 'leaflet';
 import { LibraryBranch, LibrarySelectorDialogData } from '../../types';
-import { BranchService } from '../../services/branch-service';
+import { BranchService } from '../../services/branch.service';
 import { ReservationService } from '../../services/reservation.service';
-import { AuthService } from '../../services/auth-service';
+import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
@@ -76,8 +76,8 @@ export class LibrarySelectorDialog implements OnInit, AfterViewInit, OnDestroy {
     const query = this.searchQuery().toLowerCase().trim();
     let branches = this.allBranches();
 
-    if (this.data.mode === 'availability' && this.data.availableBranches) {
-      const availableIds = new Set(this.data.availableBranches.map((b) => b.id));
+    if (this.data.mode === 'availability' && this.data.availableBranchIds) {
+      const availableIds = new Set(this.data.availableBranchIds);
       branches = branches.filter((b) => availableIds.has(b.id));
     }
 
@@ -145,18 +145,14 @@ export class LibrarySelectorDialog implements OnInit, AfterViewInit, OnDestroy {
       this.allBranches.set(this.data.allBranches);
       setTimeout(() => this.updateMapMarkers(), 100);
     } else {
-      this.branchService.getAllBranches().subscribe({
+      // Use loadBranches() which caches after first load
+      this.branchService.loadBranches().subscribe({
         next: (branches) => {
           this.allBranches.set(branches);
           setTimeout(() => this.updateMapMarkers(), 100);
         },
         error: (err) => {
           console.error('Failed to load branches:', err);
-          // If API fails and we have availableBranches, use those
-          if (this.data.availableBranches) {
-            this.allBranches.set(this.data.availableBranches);
-            setTimeout(() => this.updateMapMarkers(), 100);
-          }
         },
       });
     }
@@ -290,7 +286,7 @@ export class LibrarySelectorDialog implements OnInit, AfterViewInit, OnDestroy {
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
-    this.reservationService.createReservation({ libraryItemId: bookId, branchId }).subscribe({
+    this.reservationService.createReservation({ itemId: bookId, branchId }).subscribe({
       next: (reservation) => {
         this.isLoading.set(false);
         this.reservationExpiresAt.set(reservation.expiresAt);

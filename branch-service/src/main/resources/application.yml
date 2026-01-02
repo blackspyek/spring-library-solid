@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: branch-service
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/branch_db}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  port: ${SERVER_PORT:8083}
+
+# Inter-service communication
+services:
+  user:
+    url: ${USER_SERVICE_URL:http://user-service}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    org.pollub.branch: DEBUG
+
+jwt:
+  secret: ${JWT_SECRET:default-secret-key-for-development-only-change-in-production}

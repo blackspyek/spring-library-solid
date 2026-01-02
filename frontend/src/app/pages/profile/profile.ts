@@ -10,11 +10,11 @@ import { QrCodeComponent } from '../../components/qr-code/qr-code';
 import { UserReservationsContainer } from '../../components/user-reservations-container/user-reservations-container';
 import { UserRentalsContainer } from '../../components/user-rentals-container/user-rentals-container';
 import { RecentRentalsListComponent } from '../../components/recent-rentals-list/recent-rentals-list';
-import { UserService } from '../../services/user-service';
-import { RentalService } from '../../services/rental-service';
 import { LibraryBranch, LibrarySelectorDialogData } from '../../types';
 import { LibrarySelectorDialog } from '../../components/library-selector-dialog/library-selector-dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { UserService } from '../../services/user.service';
+import { LoanService } from '../../services/loan.service';
 
 @Component({
   selector: 'app-profile',
@@ -36,7 +36,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 export class Profile implements OnInit {
   dialog = inject(MatDialog);
   private userService = inject(UserService);
-  private rentalService = inject(RentalService);
+  private loanService = inject(LoanService);
 
   favouriteBranch = signal<LibraryBranch | null>(null);
   isLoadingBranch = signal(false);
@@ -171,7 +171,7 @@ export class Profile implements OnInit {
     }
 
     this.isExportingHistory.set(true);
-    this.rentalService.exportRentalHistory().subscribe({
+    this.loanService.exportRentalHistory().subscribe({
       next: (blob) => {
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');

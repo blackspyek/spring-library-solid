@@ -1,0 +1,10 @@
+# Shared ConfigMap for database credentials
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: library-config
+  namespace: library
+data:
+  DATABASE_USERNAME: "postgres"
+  JWT_EXPIRATION: "86400000"
+  SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE: "5"

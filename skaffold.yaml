@@ -1,0 +1,112 @@
+apiVersion: skaffold/v4beta6
+kind: Config
+metadata:
+  name: library-microservices
+
+build:
+  artifacts:
+    - image: k8libraryproject/user-service
+      context: user-service
+      docker:
+        dockerfile: Dockerfile
+    - image: k8libraryproject/auth-service
+      context: auth-service
+      docker:
+        dockerfile: Dockerfile
+    - image: k8libraryproject/branch-service
+      context: branch-service
+      docker:
+        dockerfile: Dockerfile
+    - image: k8libraryproject/catalog-service
+      context: catalog-service
+      docker:
+        dockerfile: Dockerfile
+    - image: k8libraryproject/rental-service
+      context: rental-service
+      docker:
+        dockerfile: Dockerfile
+    - image: k8libraryproject/reservation-service
+      context: reservation-service
+      docker:
+        dockerfile: Dockerfile
+    - image: k8libraryproject/feedback-service
+      context: feedback-service
+      docker:
+        dockerfile: Dockerfile
+    - image: k8libraryproject/frontend
+      context: frontend
+      docker:
+        dockerfile: Dockerfile
+  local:
+    push: true
+    useBuildkit: true
+
+manifests:
+  rawYaml:
+    - k8s/namespace.yaml
+    - k8s/configmap.yaml
+    - k8s/secrets.yaml
+    - k8s/postgres-init.yaml
+    - k8s/postgres.yaml
+    - k8s/postgres-service.yaml
+    - k8s/user-service.yaml
+    - k8s/auth-service.yaml
+    - k8s/branch-service.yaml
+    - k8s/catalog-service.yaml
+    - k8s/rental-service.yaml
+    - k8s/reservation-service.yaml
+    - k8s/feedback-service.yaml
+    - k8s/frontend.yaml
+    - k8s/frontend-service.yaml
+    - k8s/ingress.yaml
+
+deploy:
+  kubectl: {}
+
+profiles:
+  - name: dev
+    build:
+      local:
+        push: false
+
+portForward:
+  - resourceType: service
+    resourceName: user-service
+    namespace: library
+    port: 80
+    localPort: 8082
+  - resourceType: service
+    resourceName: auth-service
+    namespace: library
+    port: 80
+    localPort: 8081
+  - resourceType: service
+    resourceName: branch-service
+    namespace: library
+    port: 80
+    localPort: 8083
+  - resourceType: service
+    resourceName: catalog-service
+    namespace: library
+    port: 80
+    localPort: 8084
+  - resourceType: service
+    resourceName: rental-service
+    namespace: library
+    port: 80
+    localPort: 8085
+  - resourceType: service
+    resourceName: reservation-service
+    namespace: library
+    port: 80
+    localPort: 8086
+  - resourceType: service
+    resourceName: feedback-service
+    namespace: library
+    port: 80
+    localPort: 8087
+  - resourceType: service
+    resourceName: frontend
+    namespace: library
+    port: 80
+    localPort: 4200

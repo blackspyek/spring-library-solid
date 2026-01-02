@@ -3,7 +3,7 @@ import { MatIcon } from '@angular/material/icon';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { NgOptimizedImage, isPlatformBrowser } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
-import { AuthService } from '../../services/auth-service';
+import { AuthService } from '../../services/auth.service';
 import { FeedbackDialog } from '../feedback-dialog/feedback-dialog';
 export interface NavItem {
   label: string;

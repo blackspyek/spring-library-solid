@@ -5,7 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { LibrarySelectorDialog } from '../../components/library-selector-dialog/library-selector-dialog';
 import { LibraryBranch, LibrarySelectorDialogData } from '../../types';
-import { UserService } from '../../services/user-service';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-library-test',

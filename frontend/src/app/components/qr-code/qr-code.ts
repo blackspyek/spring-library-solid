@@ -11,9 +11,9 @@ import {
 
 import { UserProfile } from '../../types';
 import { Observable, Subscription } from 'rxjs';
-import { UserService } from '../../services/user-service';
 import QRCode from 'qrcode';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-qr-code',

@@ -26,24 +26,23 @@
 </div>
 
 <div class="px-6 p-2 mb-6 mr-6 h-[400px] overflow-y-auto">
-  @if (loading) {
-    <p class="text-center text-[color:var(--base-gray-lighter)] text-lg my-6">Ładowanie...</p>
-  } @else {
-    @for (item of activeItems; track item.id) {
+    @for (record of activeItems(); track record.id) {
       <app-profile-book-item
-        [itemId]="item.id"
-        [title]="item.title"
-        [author]="item.author"
-        [date]="item.dueDate || item.rentedAt || 'Brak daty'"
-        [coverText]="item.title"
-        [imageUrl]="item.imageUrl"
+        [itemId]="record.id"
+        [title]="record.item.title"
+        [author]="record.item.author || 'Nieznany autor'"
+        [coverText]="record.item.title"
+        [imageUrl]="record.item.imageUrl"
         [statusType]="dialogType === 'rent' ? 'rent' : 'reservation'"
-        (rentalExtended)="onRentalExtended($event)"
+        [date]="record.rentalDueDate || record.reservationExpiresAt || 'Brak daty'"
+        [branchId]="record.branchId"
+        [rentExtended]="record.isRentExtended || false"
+        (extendRental)="onRentalExtended($event)"
+        (cancelReservation)="openConfirmCancelReservationDialog($event)"
       ></app-profile-book-item>
     } @empty {
       <p class="text-[color:var(--base-gray-lighter)] text-lg text-center my-6">
         Brak aktywnych książek do wyświetlenia.
       </p>
     }
-  }
 </div>

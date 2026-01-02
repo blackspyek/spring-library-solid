@@ -47,6 +47,12 @@
       <p class="text-sm text-[color:var(--book-details-text)] mt-2">
         Termin zwrotu został przedłużony o 14 dni.
       </p>
+      <button
+          (click)="onNoClick()"
+          class="bg-[color:var(--base-green)] text-white py-2 px-6 rounded-md"
+        >
+          ZAMKNIJ
+      </button>
     </div>
   } @else {
     <div class="text-center">
@@ -57,7 +63,7 @@
         "{{ data.bookTitle }}"
       </p>
       <p class="text-sm text-[color:var(--book-details-text)] mb-6">
-        Termin zwrotu zostanie przedłużony o <strong>14 dni</strong>.<br />
+        Termin zwrotu zostanie przedłużony o <strong>7 dni</strong>.<br />
         <span class="text-[color:var(--base-red)]">Uwaga:</span> Wypożyczenie można przedłużyć tylko
         raz.
       </p>

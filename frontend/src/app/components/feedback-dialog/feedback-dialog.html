@@ -139,7 +139,9 @@
             <mat-spinner diameter="20" class="button-spinner"></mat-spinner>
             <span>WYSYŁAM...</span>
           } @else {
-            <mat-icon aria-hidden="true">send</mat-icon>
+            <ng-container matButtonIcon>
+              <mat-icon aria-hidden="true">send</mat-icon>
+            </ng-container>
             <span>WYŚLIJ</span>
           }
         </button>

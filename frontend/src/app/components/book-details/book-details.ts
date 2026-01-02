@@ -1,13 +1,18 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef, MatDialog } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+  MatDialog,
+} from '@angular/material/dialog';
 import { SingleBook, LibrarySelectorDialogData, LibraryBranch } from '../../types';
 import { MatIconModule } from '@angular/material/icon';
-import { UserService } from '../../services/user-service';
 import { BookService } from '../../services/book.service';
 import { LibrarySelectorDialog } from '../library-selector-dialog/library-selector-dialog';
-import { AuthService } from '../../services/auth-service';
+import { AuthService } from '../../services/auth.service';
 import { Router, RouterLink } from '@angular/router';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-book-details',
@@ -48,9 +53,8 @@ export class BookDetailsComponent implements OnInit {
 
         this.bookService.getBookAvailability(this.data.id).subscribe({
           next: (availability) => {
-            const isAvailable = availability.availableAtBranches?.some(
-              (b) => b.id === branch.id
-            ) ?? false;
+            const isAvailable =
+              availability.availableAtBranches?.includes(branch.id) ?? false;
             this.isAvailableAtFavourite.set(isAvailable && availability.status === 'AVAILABLE');
           },
           error: () => {
@@ -94,7 +98,7 @@ export class BookDetailsComponent implements OnInit {
           mode: 'availability',
           bookTitle: availability.title,
           bookId: availability.id,
-          availableBranches: availability.availableAtBranches,
+          availableBranchIds: availability.availableAtBranches,
         };
 
         const dialogRef = this.dialog.open(LibrarySelectorDialog, {
@@ -116,4 +120,3 @@ export class BookDetailsComponent implements OnInit {
     });
   }
 }
-
