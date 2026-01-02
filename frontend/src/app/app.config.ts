@@ -13,7 +13,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './interceptors/auth-interceptor';
 import { importProvidersFrom } from '@angular/core';
 import { MatDialogModule } from '@angular/material/dialog';
-import { AuthService } from './services/auth-service';
+import { AuthService } from './services/auth.service';
 import { firstValueFrom } from 'rxjs';
 
 function initializeAuth(): () => Promise<unknown> {

@@ -1,0 +1,68 @@
+package org.pollub.catalog.config;
+
+import org.pollub.common.security.JwtAuthFilter;
+import org.pollub.common.security.JwtTokenProvider;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.reactive.function.client.WebClient;
+
+@Configuration
+@EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
+public class SecurityConfig {
+    
+    @Value("${jwt.secret}")
+    private String jwtSecret;
+    
+    @org.springframework.beans.factory.annotation.Autowired
+    private org.pollub.common.security.JwtAuthenticationEntryPoint authEntryPoint;
+    
+    @Bean
+    public JwtTokenProvider jwtTokenProvider() {
+        return new JwtTokenProvider(jwtSecret);
+    }
+    
+    @Bean
+    public JwtAuthFilter jwtAuthFilter() {
+        return new JwtAuthFilter(jwtTokenProvider());
+    }
+    
+
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(AbstractHttpConfigurer::disable)
+            .exceptionHandling(ex -> ex.authenticationEntryPoint(authEntryPoint))
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                // Public: catalog queries (read only)
+                .requestMatchers(HttpMethod.GET, "/api/items/**").permitAll()
+                .requestMatchers("/actuator/**").permitAll()
+                // All other endpoints require authentication
+                .anyRequest().authenticated()
+            )
+            .addFilterBefore(internalAuthFilter(), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
+        
+        return http.build();
+    }
+
+    @Value("${internal.secret}")
+    private String internalSecret;
+    
+    @Bean
+    public org.pollub.common.security.InternalAuthFilter internalAuthFilter() {
+        return new org.pollub.common.security.InternalAuthFilter(internalSecret);
+    }
+}

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 
@@ -10,8 +10,8 @@ import {
   ValidationErrors,
   AbstractControl,
 } from '@angular/forms';
-import { ChangePasswordRequest, UserService } from '../../services/user-service';
 import { finalize } from 'rxjs';
+import { ChangePasswordRequest, UserService } from '../../services/user.service';
 
 function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
   const newPassword = control.get('newPassword');
@@ -40,7 +40,7 @@ export class PasswordChangeDialog {
   submitted = false;
 
   loading = false;
-  saveError: string | null = null;
+  saveError = signal('');
   saveSuccess: string | null = null;
 
   constructor() {
@@ -62,7 +62,7 @@ export class PasswordChangeDialog {
 
   onSaveClick(): void {
     this.submitted = true;
-    this.saveError = null;
+    this.saveError.set('');
     this.saveSuccess = null;
     this.passwordForm.markAllAsTouched();
 
@@ -96,6 +96,7 @@ export class PasswordChangeDialog {
 
             if (error.error) {
               const errorBody = error.error;
+              console.log('Error body:', errorBody);
 
               if (
                 errorBody.errors &&
@@ -105,12 +106,14 @@ export class PasswordChangeDialog {
                 errorMessage = errorBody.errors.error[0];
               } else if (typeof errorBody === 'string') {
                 errorMessage = errorBody;
+              } else if (typeof errorBody.error === 'string') {
+                errorMessage = errorBody.error;
               } else if (errorBody.message) {
                 errorMessage = errorBody.message;
               }
             }
 
-            this.saveError = errorMessage;
+            this.saveError.set(errorMessage);
           },
         });
     } else {

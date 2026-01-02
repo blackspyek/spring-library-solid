@@ -1,0 +1,129 @@
+# Auth Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service
+  namespace: library
+  labels:
+    app: auth-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-service
+  template:
+    metadata:
+      labels:
+        app: auth-service
+    spec:
+      containers:
+        - name: auth-service
+          image: k8libraryproject/auth-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8081
+          env:
+            - name: SERVER_PORT
+              value: "8081"
+            - name: DATABASE_URL
+              value: "jdbc:postgresql://postgres:5432/auth_db"
+            - name: DATABASE_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: library-config
+                  key: DATABASE_USERNAME
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: library-secrets
+                  key: DATABASE_PASSWORD
+            - name: USER_SERVICE_URL
+              value: "http://user-service"
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: library-secrets
+                  key: JWT_SECRET
+            - name: INTERNAL_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: library-secrets
+                  key: INTERNAL_SECRET
+            - name: JWT_EXPIRATION
+              valueFrom:
+                configMapKeyRef:
+                  name: library-config
+                  key: JWT_EXPIRATION
+            - name: SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE
+              valueFrom:
+                configMapKeyRef:
+                  name: library-config
+                  key: SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE
+            # Mail configuration from ConfigMap
+            - name: MAIL_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: library-config
+                  key: MAIL_HOST
+            - name: MAIL_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: library-config
+                  key: MAIL_PORT
+            - name: MAIL_FROM
+              valueFrom:
+                configMapKeyRef:
+                  name: library-config
+                  key: MAIL_FROM
+            - name: MAIL_SMTP_AUTH
+              valueFrom:
+                configMapKeyRef:
+                  name: library-config
+                  key: MAIL_SMTP_AUTH
+            - name: MAIL_SMTP_STARTTLS_ENABLE
+              valueFrom:
+                configMapKeyRef:
+                  name: library-config
+                  key: MAIL_SMTP_STARTTLS_ENABLE
+            - name: MAIL_SMTP_STARTTLS_REQUIRED
+              valueFrom:
+                configMapKeyRef:
+                  name: library-config
+                  key: MAIL_SMTP_STARTTLS_REQUIRED
+            # Mail credentials from Secrets
+            - name: MAIL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: library-secrets
+                  key: MAIL_USERNAME
+            - name: MAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: library-secrets
+                  key: MAIL_PASSWORD
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            initialDelaySeconds: 30
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+  namespace: library
+spec:
+  selector:
+    app: auth-service
+  ports:
+    - port: 80
+      targetPort: 8081
+  type: ClusterIP

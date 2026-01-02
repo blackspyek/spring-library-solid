@@ -1,0 +1,128 @@
+# Rental Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rental-service
+  namespace: library
+  labels:
+    app: rental-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rental-service
+  template:
+    metadata:
+      labels:
+        app: rental-service
+    spec:
+      containers:
+        - name: rental-service
+          image: k8libraryproject/rental-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8085
+          env:
+            - name: SERVER_PORT
+              value: "8085"
+            - name: DATABASE_URL
+              value: "jdbc:postgresql://postgres:5432/rental_db"
+            - name: DATABASE_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: library-config
+                  key: DATABASE_USERNAME
+            - name: SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE
+              valueFrom:
+                configMapKeyRef:
+                  name: library-config
+                  key: SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: library-secrets
+                  key: DATABASE_PASSWORD
+            - name: USER_SERVICE_URL
+              value: "http://user-service"
+            - name: CATALOG_SERVICE_URL
+              value: "http://catalog-service"
+            - name: BRANCH_SERVICE_URL
+              value: "http://branch-service"
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: library-secrets
+                  key: JWT_SECRET
+            - name: INTERNAL_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: library-secrets
+                  key: INTERNAL_SECRET
+            # Mail configuration from ConfigMap
+            - name: MAIL_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: library-config
+                  key: MAIL_HOST
+            - name: MAIL_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: library-config
+                  key: MAIL_PORT
+            - name: MAIL_FROM
+              valueFrom:
+                configMapKeyRef:
+                  name: library-config
+                  key: MAIL_FROM
+            - name: MAIL_SMTP_AUTH
+              valueFrom:
+                configMapKeyRef:
+                  name: library-config
+                  key: MAIL_SMTP_AUTH
+            - name: MAIL_SMTP_STARTTLS_ENABLE
+              valueFrom:
+                configMapKeyRef:
+                  name: library-config
+                  key: MAIL_SMTP_STARTTLS_ENABLE
+            - name: MAIL_SMTP_STARTTLS_REQUIRED
+              valueFrom:
+                configMapKeyRef:
+                  name: library-config
+                  key: MAIL_SMTP_STARTTLS_REQUIRED
+            # Mail credentials from Secrets
+            - name: MAIL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: library-secrets
+                  key: MAIL_USERNAME
+            - name: MAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: library-secrets
+                  key: MAIL_PASSWORD
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8085
+            initialDelaySeconds: 30
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rental-service
+  namespace: library
+spec:
+  selector:
+    app: rental-service
+  ports:
+    - port: 80
+      targetPort: 8085
+  type: ClusterIP

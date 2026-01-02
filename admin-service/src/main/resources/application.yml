@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: admin-service
+  boot:
+    admin:
+      client:
+        enabled: false  # Disable client - admin-service is the server, not a client
+
+server:
+  port: ${SERVER_PORT:8088}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    de.codecentric.boot.admin: INFO

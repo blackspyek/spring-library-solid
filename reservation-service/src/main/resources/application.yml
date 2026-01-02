@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: reservation-service
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/reservation_db}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  port: ${SERVER_PORT:8086}
+
+# Inter-service communication
+services:
+  user:
+    url: ${USER_SERVICE_URL:http://user-service}
+  catalog:
+    url: ${CATALOG_SERVICE_URL:http://catalog-service}
+  branch:
+    url: ${BRANCH_SERVICE_URL:http://branch-service}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    org.pollub.reservation: DEBUG
+
+jwt:
+  secret: ${JWT_SECRET:default-secret-key-for-development-only-change-in-production}
+
+---
+# Job profile for Kubernetes CronJob
+spring:
+  config:
+    activate:
+      on-profile: job
+  main:
+    web-application-type: none  # Disable web server for job execution
+

@@ -91,7 +91,7 @@ export class FeedbackDialog implements OnInit {
 
     const categoryValue = this.feedbackForm.get('category')?.value as string;
     const request = {
-      category: categoryValue.toUpperCase() as FeedbackCategory,
+      category: categoryValue as FeedbackCategory,
       message: this.feedbackForm.get('message')?.value,
       pageUrl: this.currentPageUrl,
     };

@@ -1,25 +1,15 @@
-import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
-  computed,
-  ChangeDetectionStrategy,
-  inject,
-} from '@angular/core';
-import { CommonModule, DatePipe, NgOptimizedImage } from '@angular/common';
+import { Component, input, computed, ChangeDetectionStrategy, inject, output } from '@angular/core';
+import { DatePipe, NgOptimizedImage } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import {
-  ExtendRentalDialog,
-  ExtendRentalDialogData,
-} from '../extend-rental-dialog/extend-rental-dialog';
+
+import { ExtendDialogResponse } from '../../types';
 
 type ItemStatus = 'rent' | 'reservation';
 
 @Component({
   selector: 'app-profile-book-item',
   standalone: true,
-  imports: [CommonModule, DatePipe, NgOptimizedImage, MatDialogModule],
+  imports: [DatePipe, NgOptimizedImage, MatDialogModule],
   templateUrl: './profile-book-item.html',
   styleUrl: './profile-book-item.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,36 +17,47 @@ type ItemStatus = 'rent' | 'reservation';
 export class ProfileBookItemComponent {
   private dialog = inject(MatDialog);
 
-  @Input() itemId!: number;
-  @Input() title!: string;
-  @Input() author!: string;
-  @Input() date!: string;
-  @Input() coverText!: string;
-  @Input() imageUrl?: string;
-  @Input() statusType: ItemStatus = 'rent';
+  itemId = input.required<number>();
+  title = input.required<string>();
+  author = input.required<string>();
+  date = input.required<string>();
+  coverText = input.required<string>();
+  imageUrl = input<string>();
+  statusType = input<ItemStatus>('rent');
+  branchId = input.required<number>();
+  rentExtended = input<boolean>(false);
 
-  @Output() rentalExtended = new EventEmitter<number>();
+  // Outputs remain the same
+  extendRental = output<ExtendDialogResponse>();
+  cancelReservation = output<number>();
 
+  // Computed signals now reference signal inputs
   coverColor = computed(() => {
-    return this.statusType === 'rent' ? 'var(--base-green)' : 'var(--base-purple)';
+    return this.statusType() === 'rent' ? 'var(--base-green)' : 'var(--base-purple)';
   });
 
   statusTextColorClass = computed(() => {
-    return this.statusType === 'rent'
+    return this.statusType() === 'rent'
       ? 'text-[color:var(--base-green)]'
       : 'text-[color:var(--base-red)]';
   });
 
   statusLabel = computed(() => {
-    return this.statusType === 'rent' ? 'Data zwrotu' : 'Gotowa do odbioru od';
+    return this.statusType() === 'rent' ? 'Data zwrotu' : 'Gotowa do odbioru od';
   });
 
   buttonLabel = computed(() => {
-    return this.statusType === 'rent' ? 'Prolonguj' : 'Anuluj';
+    if (this.statusType() === 'rent') {
+      return this.rentExtended() ? 'Przedłużono' : 'Prolonguj';
+    }
+    return 'Anuluj';
   });
 
   buttonClasses = computed(() => {
-    if (this.statusType === 'rent') {
+    if (this.statusType() === 'rent') {
+      if (this.rentExtended()) {
+        return 'bg-gray-400 text-white border-gray-400 cursor-not-allowed opacity-60';
+      }
       return 'bg-[color:var(--base-green)] text-white hover:bg-[color:var(--base-green-darker)] border-[color:var(--base-green)]';
     } else {
       return 'bg-[color:var(--cancel-button)] text-[color:var(--base-red)] hover:bg-[color:var(--base-red-light)] border-[color:var(--base-red)]';
@@ -64,31 +65,14 @@ export class ProfileBookItemComponent {
   });
 
   onButtonClick() {
-    if (this.statusType === 'rent') {
-      this.openExtendRentalDialog();
+    if (this.statusType() === 'rent') {
+      if (this.rentExtended()) return;
+      this.extendRental.emit({
+        itemId: this.itemId(),
+        branchId: this.branchId(),
+      } as ExtendDialogResponse);
     } else {
-      // TODO: anuluj rezerwację
-      console.log(`Anuluj dla: ${this.title}`);
+      this.cancelReservation.emit(this.itemId());
     }
-  }
-
-  private openExtendRentalDialog(): void {
-    const dialogData: ExtendRentalDialogData = {
-      itemId: this.itemId,
-      bookTitle: this.title,
-    };
-
-    const dialogRef = this.dialog.open(ExtendRentalDialog, {
-      width: '500px',
-      panelClass: 'extend-rental-dialog',
-      autoFocus: true,
-      data: dialogData,
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === true) {
-        this.rentalExtended.emit(this.itemId);
-      }
-    });
   }
 }

@@ -1,12 +1,13 @@
 import { Component, inject, signal } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
-import { RentalService } from '../../services/rental-service';
+import { LoanService } from '../../services/loan.service';
 import { finalize } from 'rxjs';
 
 export interface ExtendRentalDialogData {
   itemId: number;
   bookTitle: string;
+  branchId: number;
 }
 
 @Component({
@@ -14,11 +15,10 @@ export interface ExtendRentalDialogData {
   standalone: true,
   imports: [MatButtonModule],
   templateUrl: './extend-rental-dialog.html',
-  styleUrl: './extend-rental-dialog.scss',
 })
 export class ExtendRentalDialog {
   private dialogRef = inject(MatDialogRef<ExtendRentalDialog>);
-  private rentalService = inject(RentalService);
+  private loanService = inject(LoanService);
   public data: ExtendRentalDialogData = inject(MAT_DIALOG_DATA);
 
   loading = signal(false);
@@ -26,7 +26,7 @@ export class ExtendRentalDialog {
   success = signal(false);
 
   onNoClick(): void {
-    this.dialogRef.close(false);
+    this.dialogRef.close(this.success());
   }
 
   onConfirmClick(): void {
@@ -35,13 +35,12 @@ export class ExtendRentalDialog {
     this.loading.set(true);
     this.error.set(null);
 
-    this.rentalService
-      .extendRental(this.data.itemId)
+    this.loanService
+      .extendLoan(this.data.itemId, this.data.branchId, 7)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: () => {
           this.success.set(true);
-
         },
         error: (err) => {
           console.error('Błąd przedłużenia wypożyczenia:', err);

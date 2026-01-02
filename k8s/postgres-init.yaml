@@ -1,0 +1,15 @@
+# ConfigMap with init SQL to create all databases
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init
+  namespace: library
+data:
+  init.sql: |
+    CREATE DATABASE user_db;
+    CREATE DATABASE auth_db;
+    CREATE DATABASE branch_db;
+    CREATE DATABASE catalog_db;
+    CREATE DATABASE rental_db;
+    CREATE DATABASE reservation_db;
+    CREATE DATABASE feedback_db;

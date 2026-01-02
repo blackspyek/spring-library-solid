@@ -2,8 +2,8 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
 import { UserProfile } from '../../types';
-import { UserService } from '../../services/user-service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-profile-card',

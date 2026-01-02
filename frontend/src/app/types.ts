@@ -37,7 +37,6 @@ export enum Role {
   ROLE_LIBRARIAN = 'ROLE_LIBRARIAN',
 }
 
-
 export interface AuthResponse {
   token: string;
   user: User;
@@ -57,7 +56,7 @@ export interface LibrarySelectorDialogData {
   mode: LibrarySelectorMode;
   bookTitle?: string;
   bookId?: number;
-  availableBranches?: LibraryBranch[];
+  availableBranchIds?: number[]; // Branch IDs from API
   currentFavouriteBranchId?: number;
   allBranches?: LibraryBranch[];
 }
@@ -69,7 +68,7 @@ export interface BookAvailability {
   status: string;
   imageUrl: string;
   daysUntilDue?: number;
-  availableAtBranches: LibraryBranch[];
+  availableAtBranches: number[]; // Array of branch IDs from API
 }
 
 export interface UserProfile {
@@ -81,10 +80,30 @@ export interface UserProfile {
   readerId: string;
   qrCode: string;
 }
-
+export interface ExtendDialogResponse {
+  itemId: number;
+  branchId: number;
+}
 export interface ApiTextResponse {
   success: boolean;
   message: string;
+}
+export type ItemStatus = 'rent' | 'reservation';
+export interface ProfileBookItem {
+  id: number;
+  branchId: number;
+  statusType: ItemStatus;
+  reservationExpiresAt?: string;
+  rentalDueDate?: string;
+  isRentExtended?: boolean;
+
+  item: {
+    itemId?: number;
+    title: string;
+    imageUrl?: string;
+    author?: string;
+    coverText?: string;
+  };
 }
 
 export interface SingleBook {
@@ -107,6 +126,8 @@ export interface SingleBook {
   libraryLocation?: string;
   bestseller?: boolean;
   availableAtBranches?: LibraryBranch[];
+  rentedFromBranchId?: number; // Branch where the item was rented from
+  rentExtended?: boolean; // If rental has already been extended
 }
 
 export interface PageResponse<T> {
@@ -155,4 +176,10 @@ export interface FeedbackCategoryOption {
   value: FeedbackCategory;
   label: string;
   icon: string;
+}
+
+export interface RentRequest {
+  libraryItemId: number;
+  userId: number;
+  branchId: number;
 }

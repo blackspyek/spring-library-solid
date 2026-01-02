@@ -1,0 +1,61 @@
+# CronJob for cleaning up expired reservations
+# Runs every hour using the same reservation-service image with 'job' profile
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: reservation-cleanup
+  namespace: library
+spec:
+  schedule: "0 * * * *"  # Every hour at minute 0
+  concurrencyPolicy: Forbid  # Prevent concurrent executions
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 3  # Retry up to 3 times on failure
+      activeDeadlineSeconds: 300  # Timeout after 5 minutes
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: reservation-cleanup
+              image: k8libraryproject/reservation-service:latest
+              imagePullPolicy: IfNotPresent
+              command: ["java", "org.springframework.boot.loader.launch.JarLauncher", "--spring.profiles.active=job"]
+              env:
+                - name: DATABASE_URL
+                  value: "jdbc:postgresql://postgres:5432/reservation_db"
+                - name: DATABASE_USERNAME
+                  valueFrom:
+                    configMapKeyRef:
+                      name: library-config
+                      key: DATABASE_USERNAME
+                - name: SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE
+                  valueFrom:
+                    configMapKeyRef:
+                      name: library-config
+                      key: SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE
+                - name: DATABASE_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: library-secrets
+                      key: DATABASE_PASSWORD
+                - name: CATALOG_SERVICE_URL
+                  value: "http://catalog-service"
+                - name: JWT_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      name: library-secrets
+                      key: JWT_SECRET
+                - name: INTERNAL_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      name: library-secrets
+                      key: INTERNAL_SECRET
+              resources:
+                requests:
+                  memory: "256Mi"
+                  cpu: "100m"
+                limits:
+                  memory: "512Mi"
+                  cpu: "250m"

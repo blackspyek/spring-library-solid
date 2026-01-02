@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { AuthService } from '../../services/auth-service';
+import { AuthService } from '../../services/auth.service';
 import { NgOptimizedImage } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
@@ -36,7 +36,12 @@ export class Login {
     if (this.loginForm.valid) {
       this.isLoading.set(true);
 
-      this.authService.login(this.loginForm.value).subscribe({
+      const loginData = {
+        usernameOrEmail: this.loginForm.get('email')?.value,
+        password: this.loginForm.get('password')?.value,
+      };
+
+      this.authService.login(loginData).subscribe({
         next: () => {
           this.isLoading.set(false);
         },

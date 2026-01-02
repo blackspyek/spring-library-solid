@@ -1,0 +1,7 @@
+# Library Microservices - Kubernetes Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: library
+  labels:
+    app.kubernetes.io/name: library-microservices

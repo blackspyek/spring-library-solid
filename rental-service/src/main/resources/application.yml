@@ -1,0 +1,69 @@
+spring:
+  application:
+    name: rental-service
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/rental_db}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:1025}
+    username: ${MAIL_USERNAME:test}
+    password: ${MAIL_PASSWORD:test}
+    properties:
+      mail:
+        smtp:
+          auth: ${MAIL_SMTP_AUTH:true}
+          starttls:
+            enable: ${MAIL_SMTP_STARTTLS_ENABLE:true}
+            required: ${MAIL_SMTP_STARTTLS_REQUIRED:false}
+
+server:
+  port: ${SERVER_PORT:8085}
+
+# Inter-service communication
+services:
+  user:
+    url: ${USER_SERVICE_URL:http://user-service}
+  catalog:
+    url: ${CATALOG_SERVICE_URL:http://catalog-service}
+  branch:
+    url: ${BRANCH_SERVICE_URL:http://branch-service}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    org.pollub.rental: DEBUG
+
+jwt:
+  secret: ${JWT_SECRET:default-secret-key-for-development-only-change-in-production}
+
+mail:
+  from: ${MAIL_FROM:noreply@library.local}
+
+---
+# Job profile for Kubernetes CronJob
+spring:
+  config:
+    activate:
+      on-profile: job
+  main:
+    web-application-type: none
+
+
