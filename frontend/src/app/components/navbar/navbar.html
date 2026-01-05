@@ -1,23 +1,99 @@
+
+@if (showMobileA11yMenu) {
+  <div
+    class="fixed inset-0 bg-black/50 z-20 md:hidden"
+    (click)="toggleMobileA11yMenu()"
+  ></div>
+}
+
 <footer
-  class="md:hidden bg-[var(--base-blue-dark)] h-16 flex items-center justify-around fixed bottom-0 left-0 right-0 z-10"
+  class="md:hidden bg-[var(--base-blue-dark)] h-16 flex items-center justify-around fixed bottom-0 left-0 right-0 z-30"
 >
-  <div class="absolute inset-x-0 -top-8 flex justify-center">
+  <div
+    class="mobile-a11y-panel absolute bottom-full left-0 right-0 bg-[color:var(--base-blue-dark)] text-[color:var(--base-input-bg)] p-4 rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.3)] transition-transform duration-300 transform origin-bottom"
+    [class.translate-y-0]="showMobileA11yMenu"
+    [class.translate-y-[120%]]]="!showMobileA11yMenu"
+    [class.invisible]="!showMobileA11yMenu"
+  >
+    <div class="flex flex-col gap-4">
+      <h3 class="text-center text-sm uppercase tracking-widest font-bold text-[color:var(--base-input-bg)] mb-2">Ułatwienia dostępu</h3>
+
+      <div class="flex items-center justify-between bg-[color:var(--base-white-transparent)] p-3 rounded-lg">
+        <span class="flex items-center gap-2">
+          <mat-icon fontIcon="contrast"></mat-icon>
+          Wysoki kontrast
+        </span>
+        <button
+          class="contrast-toggle w-12 h-6 rounded-full relative transition-colors duration-200"
+          [class.bg-green-500]="highContrast"
+          [style.background-color]="!highContrast ? 'var(--gray-400-to-black)' : null"
+          (click)="toggleHighContrast()"
+        >
+          <span
+            class="absolute top-1 left-1 bg-[color:var(--base-input-bg)] w-4 h-4 rounded-full transition-transform duration-200"
+            [class.translate-x-6]="highContrast"
+          ></span>
+        </button>
+      </div>
+
+      <div class="flex items-center justify-between bg-[color:var(--base-white-transparent)]  p-3 rounded-lg">
+        <span class="flex items-center gap-2">
+          <mat-icon fontIcon="format_size"></mat-icon>
+          Rozmiar tekstu
+        </span>
+        <div class="flex gap-2">
+          <button (click)="decreaseRootFontSize()" class="w-8 h-8 flex items-center justify-center bg-[color:var(--base-white-transparent)]  rounded active:bg-white/30">A-</button>
+          <button (click)="increaseRootFontSize()" class="w-8 h-8 flex items-center justify-center bg-[color:var(--base-white-transparent)]  rounded active:bg-white/30">A+</button>
+        </div>
+      </div>
+
+      <button
+        (click)="openFeedbackDialog()"
+        class="flex items-center justify-center gap-2 w-full bg-[color:var(--base-white-transparent)] hover:bg-[color:var(--base-white-transparent)] p-3 rounded-lg text-[color:var(--base-input-bg)] transition-colors mt-1"
+      >
+        <mat-icon fontIcon="error_outline"></mat-icon>
+        Zgłoś uwagę / błąd
+      </button>
+    </div>
+  </div>
+  <div class="absolute inset-x-0 -top-8 flex flex-col items-center justify-center z-40 pointer-events-none">
     <button
-      class="w-[65px] h-[65px] bg-[#173152] text-white rounded-full flex items-center justify-center cursor-pointer shadow-lg"
+      (click)="openQrDialog()"
+      class="w-[65px] h-[65px] bg-[color:var(--base-blue-dark-to-black)] text-[color:var(--search-bar-catalog)] rounded-full flex items-center justify-center cursor-pointer shadow-lg pointer-events-auto transition-transform active:scale-95"
     >
       <mat-icon class="scale-[1.875]" fontIcon="qr_code" aria-hidden="true"></mat-icon>
     </button>
+    <span class="mt-1 text-xs text-[color:var(--base-input-bg)] font-normal pointer-events-none drop-shadow-md ">
+      Moja karta
+    </span>
   </div>
+
+
   @for (item of mobileNavItems(); track item.label) {
-    <a
-      [routerLink]="[item.link]"
-      class="flex flex-col items-center text-xs text-white p-2 transition duration-150 cursor-pointer"
-      routerLinkActive="active-mobile-link"
-      [routerLinkActiveOptions]="{ exact: item.link === '/' }"
-    >
-      <mat-icon fontIcon="{{ item.icon }}" aria-hidden="true"></mat-icon>
-      <span class="mt-1">{{ item.label }}</span>
-    </a>
+    @if (item.label === '') {
+      <div class="w-10"></div> }
+    @else if (item.action) {
+      <button
+        type="button"
+        (click)="item.action()"
+        class="flex flex-col items-center text-xs text-[color:var(--base-input-bg)] p-2 transition duration-150 cursor-pointer min-w-[64px]"
+        [class.active-mobile-link]="showMobileA11yMenu"
+      >
+        <mat-icon fontIcon="{{ item.icon }}" aria-hidden="true"></mat-icon>
+        <span class="mt-1">{{ item.label }}</span>
+      </button>
+    }
+    @else {
+      <a
+        [routerLink]="[item.link]"
+        class="flex flex-col items-center text-xs text-[color:var(--base-input-bg)] p-2 transition duration-150 cursor-pointer min-w-[64px]"
+        routerLinkActive="active-mobile-link"
+        [routerLinkActiveOptions]="{ exact: item.link === '/' }"
+      >
+        <mat-icon fontIcon="{{ item.icon }}" aria-hidden="true"></mat-icon>
+        <span class="mt-1">{{ item.label }}</span>
+      </a>
+    }
   }
 </footer>
 
@@ -43,7 +119,7 @@
       @for (item of desktopNavItems; track item.label) {
         <a
           [routerLink]="[item.link]"
-          class="flex flex-col justify-center cursor-pointer hover:text-blue-300 transition duration-150 text-base font-light font-[Inter] tracking-wide"
+          class="flex flex-col justify-center cursor-pointer hover:text-[color:var(--base-input-bg)] transition duration-150 text-base font-light font-[Inter] tracking-wide"
           routerLinkActive="active-link"
           [routerLinkActiveOptions]="{ exact: item.link === '/' }"
         >
@@ -53,7 +129,7 @@
       @if (isLibrarian()) {
         <a
           [routerLink]="['/zarzadzanie-wypozyczeniami']"
-          class="flex items-center hover:text-blue-300 transition duration-150 text-base font-light font-[Inter] tracking-wide gap-1"
+          class="flex items-center hover:text-[color:var(--base-input-bg)] transition duration-150 text-base font-light font-[Inter] tracking-wide gap-1"
           routerLinkActive="active-link"
         >
           <span>Zarządzanie</span>
@@ -67,7 +143,7 @@
     <div class="flex items-center gap-4 text-sm font-medium">
       <button
         type="button"
-        class="flex items-center cursor-pointer hover:text-gray-300 transition-colors bg-transparent border-none text-inherit"
+        class="flex items-center cursor-pointer hover:text-[color:var(--gray-300-to-darkyellow)] transition-colors bg-transparent border-none text-inherit"
         (click)="openFeedbackDialog()"
         aria-haspopup="dialog"
         aria-label="Zgłoś uwagę dotyczącą dostępności lub funkcjonalności"
@@ -79,7 +155,7 @@
       <div class="flex items-center gap-3 border-l border-white/20 pl-4">
         <button
           type="button"
-          class="contrast-toggle flex items-center cursor-pointer hover:text-gray-300 transition-colors"
+          class="contrast-toggle flex items-center cursor-pointer hover:text-[color:var(--gray-300-to-darkyellow)] transition-colors"
           (click)="toggleHighContrast()"
           [attr.aria-pressed]="highContrast"
           aria-label="Przełącz wysoki kontrast"
@@ -91,7 +167,7 @@
           type="button"
           (click)="decreaseRootFontSize()"
           aria-label="Zmniejsz czcionkę"
-          class="hover:text-gray-300 transition-colors font-bold px-1"
+          class="hover:text-[color:var(--gray-300-to-darkyellow)] transition-colors font-bold px-1"
         >
           A-
         </button>
@@ -100,7 +176,7 @@
           type="button"
           (click)="increaseRootFontSize()"
           aria-label="Zwiększ czcionkę"
-          class="hover:text-gray-300 transition-colors font-bold px-1"
+          class="hover:text-[color:var(--gray-300-to-darkyellow)] transition-colors font-bold px-1"
         >
           A+
         </button>
@@ -146,7 +222,7 @@
     } @else {
       <a
         [routerLink]="['/zaloguj-sie']"
-        class="flex items-center hover:text-blue-300 transition duration-150 text-base font-light font-[Inter] tracking-wide gap-1 cursor-pointer ml-2"
+        class="flex items-center hover:text-[color:var(--gray-300-to-darkyellow)] transition duration-150 text-base font-light font-[Inter] tracking-wide gap-1 cursor-pointer ml-2"
       >
         <mat-icon
           class="material-icons-outlined scale-[0.85]"

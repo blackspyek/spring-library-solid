@@ -44,7 +44,6 @@ export class LoanManagement implements OnInit {
   isAdmin = computed(() => this.authService.hasRole(Role.ROLE_ADMIN));
   isLibrarian = computed(() => this.authService.isLibrarian());
 
-  // Employee branch comes from AuthService (populated on login/session check)
   employeeBranch = computed(() => this.authService.employeeOfBranch());
   employeeBranchError = computed(() => {
     if (this.isLibrarian() && !this.isAdmin() && !this.employeeBranch()) {
@@ -81,6 +80,12 @@ export class LoanManagement implements OnInit {
   } | null>(null);
   showEditRoleModal = signal(false);
   showDeleteConfirmModal = signal(false);
+
+  branchDisplayName = computed(() => {
+    const branch = this.employeeBranch();
+    if (!branch) return '';
+    return `Miejska Biblioteka Publiczna im. H. Łopacińskiego ${branch.name}`;
+  });
 
   constructor() {
     // log from authstate

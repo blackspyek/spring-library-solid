@@ -1,4 +1,4 @@
-<div class="p-6 w-[850px] max-w-[90vw] box-border">
+<div class="bg-[color:var(--white-to-yellow)] p-6 w-[850px] max-w-[90vw] box-border">
   @if (showSuccess()) {
     <div class="flex flex-col items-center justify-center min-h-[400px]">
       <mat-icon class="text-6xl text-green-500 mb-4">check_circle</mat-icon>
@@ -13,7 +13,9 @@
       </p>
       <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6 text-center">
         <p class="text-sm text-amber-800">
-          <mat-icon class="text-amber-600 align-middle mr-1" style="font-size: 18px; width: 18px; height: 18px;">schedule</mat-icon>
+          <mat-icon class="text-amber-600 align-middle mr-1" style="font-size: 18px; width: 18px; height: 18px;">
+            schedule
+          </mat-icon>
           Odbierz książkę do: <span class="font-bold">{{ reservationExpiresAt() | date: 'dd.MM.yyyy HH:mm' }}</span>
         </p>
         <p class="text-xs text-amber-700 mt-1">
@@ -35,21 +37,21 @@
         <p class="text-lg text-[color:var(--base-gray-darker-catalog)]">Rezerwuję książkę...</p>
       } @else {
         <mat-icon class="text-6xl text-[color:var(--edit-button-bg)] mb-4">help_outline</mat-icon>
-        <h3 class="text-xl font-semibold mb-2 text-[color:var(--base-gray-darker-catalog)]">
+        <h3 class="text-xl font-semibold mb-2 text-[color:var(--base-gray-darker-catalog)] text-center">
           Czy na pewno chcesz zarezerwować?
         </h3>
-        <p class="text-base font-medium text-[color:var(--base-gray-darker-catalog)] mb-2">
+        <p class="text-base font-medium text-[color:var(--base-gray-darker-catalog)] mb-2 text-center">
           „{{ data.bookTitle }}"
         </p>
         <p class="text-sm text-[color:var(--base-gray-darker-catalog)] mb-4">
           {{ getSelectedBranchName() }}
         </p>
-        <p class="text-xs text-[color:var(--placeholder-gray)] mb-6">
+        <p class="text-xs text-[color:var(--placeholder-gray-black)] mb-6">
           Rezerwacja jest ważna przez 2 dni od momentu utworzenia.
         </p>
 
         @if (errorMessage()) {
-          <p class="text-sm text-red-500 mb-4">{{ errorMessage() }}</p>
+          <p class="text-sm text-[color:var(--red-600-to-black)] mb-4 text-center">{{ errorMessage() }}</p>
         }
 
         <div class="flex justify-center gap-3">
@@ -63,7 +65,7 @@
           <button
             mat-flat-button
             (click)="onConfirmReservation()"
-            class="!px-6 !py-2 !font-medium !rounded-md cursor-pointer !bg-[color:var(--edit-button-bg)] !text-white"
+            class="!px-6 !py-2 !font-medium !rounded-md cursor-pointer !bg-[color:var(--edit-button-bg)] !text-[color:var(--white-to-yellow)]"
           >
             TAK, REZERWUJĘ
           </button>
@@ -96,7 +98,7 @@
     </div>
 
     <div class="pb-5 pe-60">
-      <hr class="border-[color:var(--base-gray-light)]" />
+      <hr class="border-[color:var(--base-gray-light)]"/>
     </div>
 
     <p class="text-[color:var(--base-gray-darker-catalog)] mb-5 text-[0.95rem]">
@@ -143,7 +145,7 @@
         </h3>
         <div
           #branchListContainer
-          class="max-h-[200px] md:max-h-[300px] overflow-y-auto border border-[color:var(--branch-border)] rounded-lg"
+          class="max-h-[200px] md:max-h-[300px] overflow-y-auto border border-[color:var(--branch-border)] rounded-lg custom-scrollbar"
           role="listbox"
         >
           @for (branch of filteredBranches(); track branch.id) {
@@ -161,14 +163,8 @@
               [class.border-l-[color:var(--branch-border-left)]]="isBranchSelected(branch)"
             >
               <mat-radio-button
-                class="w-full pointer-events-none"
+                class="w-full pointer-events-none custom-branch-radio"
                 [checked]="isBranchSelected(branch)"
-                style="
-                  --mdc-radio-selected-icon-color: var(--branch-border-left);
-                  --mdc-radio-selected-hover-icon-color: var(--branch-border-left);
-                  --mdc-radio-selected-pressed-icon-color: var(--branch-border-left);
-                  --mat-radio-checked-ripple-color: var(--branch-border-left);
-                "
               >
                 <div class="flex flex-col gap-[2px] ml-2">
                   <span class="font-semibold text-[0.95rem] text-[color:var(--branch-border-left)]">

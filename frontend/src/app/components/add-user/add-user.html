@@ -3,18 +3,19 @@
   role="dialog"
   aria-modal="true"
   aria-labelledby="add-user-title"
+  (click)="cancel.emit()"
 >
   @if (!showSuccessStep()) {
     <div
       class="bg-[color:var(--base-form-bg)] rounded-xl shadow-2xl w-full max-w-2xl p-8 max-h-[90vh] overflow-y-auto"
+      (click)="$event.stopPropagation()"
     >
-      <!-- Header -->
       <div class="mb-8">
         <div class="flex items-center gap-3 mb-2">
           <div
             class="w-10 h-10 rounded-full bg-[color:var(--base-blue-dark)] flex items-center justify-center"
           >
-            <mat-icon class="text-[color:var(--base-form-bg)]">person_add</mat-icon>
+            <mat-icon class="!text-[color:var(--base-form-bg)]">person_add</mat-icon>
           </div>
           <h2 id="add-user-title" class="text-2xl font-bold text-[color:var(--base-blue-dark)]">
             Dodaj nowego czytelnika
@@ -26,7 +27,6 @@
       </div>
 
       <div class="flex flex-col gap-6">
-        <!-- Section 1: Dane logowania -->
         <div
           class="bg-[color:var(--gray-to-black)] bg-opacity-40 rounded-lg p-5 border border-[color:var(--gray-300-to-yellow)] border-opacity-50"
         >
@@ -36,13 +36,12 @@
           </div>
 
           <div class="flex flex-col gap-4">
-            <!-- Email -->
             <div>
               <label
                 for="new-user-email"
                 class="block text-sm font-medium text-[color:var(--base-gray-darker)] mb-2"
               >
-                <span class="text-red-500">*</span> Email
+                <span class="text-[color:var(--delete-red)]">*</span> Email
               </label>
               <div class="relative">
                 <div
@@ -55,25 +54,23 @@
                   name="email"
                   type="email"
                   [(ngModel)]="email"
-                  [class.border-red-500]="fieldErrors()['email']"
+                  [class.border-[color:var(--delete-red)]]="fieldErrors()['email']"
                   [class.border-2]="fieldErrors()['email']"
                   class="w-full border text-[color:var(--gray-dark)] border-[color:var(--gray-300-to-yellow)] rounded-lg pl-10 pr-3 py-2.5 outline-none focus:border-[color:var(--base-blue-dark)] focus:border-2"
                   placeholder="jan.kowalski@example.com"
                 />
               </div>
               @if (fieldErrors()['email']) {
-                <p class="text-xs text-red-600 mt-1.5 flex items-center gap-1">
+                <p class="text-xs text-[color:var(--delete-red)] mt-1.5 flex items-center gap-1">
                   <mat-icon class="text-sm">error_outline</mat-icon>
                   {{ fieldErrors()['email'][0] }}
                 </p>
               }
             </div>
 
-            <!-- Hasło - USUNIĘTE: hasło generowane po stronie serwera i wysyłane emailem -->
           </div>
         </div>
 
-        <!-- Section 2: Dane osobiste -->
         <div
           class="bg-[color:var(--gray-to-black)] bg-opacity-40 rounded-lg p-5 border border-[color:var(--gray-300-to-yellow)] border-opacity-50"
         >
@@ -83,13 +80,12 @@
           </div>
 
           <div class="flex flex-col gap-4">
-            <!-- PESEL -->
             <div>
               <label
                 for="new-user-pesel"
                 class="block text-sm font-medium text-[color:var(--base-gray-darker)] mb-2"
               >
-                <span class="text-red-500">*</span> PESEL (11 cyfr)
+                <span class="text-[color:var(--delete-red)]">*</span> PESEL (11 cyfr)
               </label>
               <div class="relative">
                 <div
@@ -102,7 +98,7 @@
                   name="pesel"
                   type="text"
                   [(ngModel)]="pesel"
-                  [class.border-red-500]="fieldErrors()['pesel']"
+                  [class.border-[color:var(--delete-red)]]="fieldErrors()['pesel']"
                   [class.border-2]="fieldErrors()['pesel']"
                   class="w-full border text-[color:var(--gray-dark)] border-[color:var(--gray-300-to-yellow)] rounded-lg pl-10 pr-3 py-2.5 outline-none focus:border-[color:var(--base-blue-dark)] focus:border-2"
                   placeholder="12345678901"
@@ -110,34 +106,33 @@
                 />
               </div>
               @if (fieldErrors()['pesel']) {
-                <p class="text-xs text-red-600 mt-1.5 flex items-center gap-1">
+                <p class="text-xs text-[color:var(--delete-red)] mt-1.5 flex items-center gap-1">
                   <mat-icon class="text-sm">error_outline</mat-icon>
                   {{ fieldErrors()['pesel'][0] }}
                 </p>
               }
             </div>
 
-            <!-- Imię i Nazwisko -->
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <label
                   for="new-user-fname"
                   class="block text-sm font-medium text-[color:var(--base-gray-darker)] mb-2"
                 >
-                  <span class="text-red-500">*</span> Imię
+                  <span class="text-[color:var(--delete-red)]">*</span> Imię
                 </label>
                 <input
                   id="new-user-fname"
                   name="firstName"
                   type="text"
                   [(ngModel)]="firstName"
-                  [class.border-red-500]="fieldErrors()['firstName']"
+                  [class.border-[color:var(--delete-red)]]="fieldErrors()['firstName']"
                   [class.border-2]="fieldErrors()['firstName']"
                   class="w-full border text-[color:var(--gray-dark)] border-[color:var(--gray-300-to-yellow)] rounded-lg px-3 py-2.5 outline-none focus:border-[color:var(--base-blue-dark)] focus:border-2"
                   placeholder="Jan"
                 />
                 @if (fieldErrors()['firstName']) {
-                  <p class="text-xs text-red-600 mt-1.5 flex items-center gap-1">
+                  <p class="text-xs text-[color:var(--delete-red)] mt-1.5 flex items-center gap-1">
                     <mat-icon class="text-sm">error_outline</mat-icon>
                     {{ fieldErrors()['firstName'][0] }}
                   </p>
@@ -148,20 +143,20 @@
                   for="new-user-lname"
                   class="block text-sm font-medium text-[color:var(--base-gray-darker)] mb-2"
                 >
-                  <span class="text-red-500">*</span> Nazwisko
+                  <span class="text-[color:var(--delete-red)]">*</span> Nazwisko
                 </label>
                 <input
                   id="new-user-lname"
                   name="lastName"
                   type="text"
                   [(ngModel)]="lastName"
-                  [class.border-red-500]="fieldErrors()['lastName']"
+                  [class.border-[color:var(--delete-red)]]="fieldErrors()['lastName']"
                   [class.border-2]="fieldErrors()['lastName']"
                   class="w-full border text-[color:var(--gray-dark)] border-[color:var(--gray-300-to-yellow)] rounded-lg px-3 py-2.5 outline-none focus:border-[color:var(--base-blue-dark)] focus:border-2"
                   placeholder="Kowalski"
                 />
                 @if (fieldErrors()['lastName']) {
-                  <p class="text-xs text-red-600 mt-1.5 flex items-center gap-1">
+                  <p class="text-xs text-[color:var(--delete-red)] mt-1.5 flex items-center gap-1">
                     <mat-icon class="text-sm">error_outline</mat-icon>
                     {{ fieldErrors()['lastName'][0] }}
                   </p>
@@ -169,13 +164,12 @@
               </div>
             </div>
 
-            <!-- Telefon -->
             <div>
               <label
                 for="new-user-phone"
                 class="block text-sm font-medium text-[color:var(--base-gray-darker)] mb-2"
               >
-                <span class="text-red-500">*</span> Telefon
+                <span class="text-[color:var(--delete-red)]">*</span> Telefon
               </label>
               <div class="relative">
                 <div
@@ -188,14 +182,14 @@
                   name="phone"
                   type="tel"
                   [(ngModel)]="phone"
-                  [class.border-red-500]="fieldErrors()['phone']"
+                  [class.border-[color:var(--delete-red)]]="fieldErrors()['phone']"
                   [class.border-2]="fieldErrors()['phone']"
                   class="w-full border text-[color:var(--gray-dark)] border-[color:var(--gray-300-to-yellow)] rounded-lg pl-10 pr-3 py-2.5 outline-none focus:border-[color:var(--base-blue-dark)] focus:border-2"
                   placeholder="+48 123 456 789"
                 />
               </div>
               @if (fieldErrors()['phone']) {
-                <p class="text-xs text-red-600 mt-1.5 flex items-center gap-1">
+                <p class="text-xs text-[color:var(--delete-red)] mt-1.5 flex items-center gap-1">
                   <mat-icon class="text-sm">error_outline</mat-icon>
                   {{ fieldErrors()['phone'][0] }}
                 </p>
@@ -204,7 +198,6 @@
           </div>
         </div>
 
-        <!-- Section 3: Adres -->
         <div
           class="bg-[color:var(--gray-to-black)] bg-opacity-40 rounded-lg p-5 border border-[color:var(--gray-300-to-yellow)] border-opacity-50"
         >
@@ -220,7 +213,7 @@
                 for="new-user-street"
                 class="block text-sm font-medium text-[color:var(--base-gray-darker)] mb-2"
               >
-                <span class="text-red-500">*</span> Ulica
+                <span class="text-[color:var(--delete-red)]">*</span> Ulica
               </label>
               <div class="relative">
                 <div
@@ -233,41 +226,40 @@
                   name="street"
                   type="text"
                   [(ngModel)]="street"
-                  [class.border-red-500]="fieldErrors()['street']"
+                  [class.border-[color:var(--delete-red)]]="fieldErrors()['street']"
                   [class.border-2]="fieldErrors()['street']"
                   class="w-full border text-[color:var(--gray-dark)] border-[color:var(--gray-300-to-yellow)] rounded-lg pl-10 pr-3 py-2.5 outline-none focus:border-[color:var(--base-blue-dark)] focus:border-2"
                   placeholder="ul. Główna"
                 />
               </div>
               @if (fieldErrors()['street']) {
-                <p class="text-xs text-red-600 mt-1.5 flex items-center gap-1">
+                <p class="text-xs text-[color:var(--delete-red)] 0 mt-1.5 flex items-center gap-1">
                   <mat-icon class="text-sm">error_outline</mat-icon>
                   {{ fieldErrors()['street'][0] }}
                 </p>
               }
             </div>
 
-            <!-- Numer budynku i mieszkania -->
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <label
                   for="new-user-building"
                   class="block text-sm font-medium text-[color:var(--base-gray-darker)] mb-2"
                 >
-                  <span class="text-red-500">*</span> Numer budynku
+                  <span class="text-[color:var(--delete-red)]">*</span> Numer budynku
                 </label>
                 <input
                   id="new-user-building"
                   name="buildingNumber"
                   type="text"
                   [(ngModel)]="buildingNumber"
-                  [class.border-red-500]="fieldErrors()['buildingNumber']"
+                  [class.border-[color:var(--delete-red)]]="fieldErrors()['buildingNumber']"
                   [class.border-2]="fieldErrors()['buildingNumber']"
                   class="w-full border text-[color:var(--gray-dark)] border-[color:var(--gray-300-to-yellow)] rounded-lg px-3 py-2.5 outline-none focus:border-[color:var(--base-blue-dark)] focus:ring-1 focus:ring-[color:var(--base-blue-dark)]"
                   placeholder="42"
                 />
                 @if (fieldErrors()['buildingNumber']) {
-                  <p class="text-xs text-red-600 mt-1.5 flex items-center gap-1">
+                  <p class="text-xs text-[color:var(--delete-red)] mt-1.5 flex items-center gap-1">
                     <mat-icon class="text-sm">error_outline</mat-icon>
                     {{ fieldErrors()['buildingNumber'][0] }}
                   </p>
@@ -290,27 +282,26 @@
               </div>
             </div>
 
-            <!-- Kod pocztowy i Miasto -->
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <label
                   for="new-user-postal"
                   class="block text-sm font-medium text-[color:var(--base-gray-darker)] mb-2"
                 >
-                  <span class="text-red-500">*</span> Kod pocztowy
+                  <span class="text-[color:var(--delete-red)]">*</span> Kod pocztowy
                 </label>
                 <input
                   id="new-user-postal"
                   name="postalCode"
                   type="text"
                   [(ngModel)]="postalCode"
-                  [class.border-red-500]="fieldErrors()['postalCode']"
+                  [class.border-[color:var(--delete-red)]]="fieldErrors()['postalCode']"
                   [class.border-2]="fieldErrors()['postalCode']"
                   class="w-full border text-[color:var(--gray-dark)] border-[color:var(--gray-300-to-yellow)] rounded-lg px-3 py-2.5 outline-none focus:border-[color:var(--base-blue-dark)] focus:ring-1 focus:ring-[color:var(--base-blue-dark)]"
                   placeholder="12-345"
                 />
                 @if (fieldErrors()['postalCode']) {
-                  <p class="text-xs text-red-600 mt-1.5 flex items-center gap-1">
+                  <p class="text-xs text-[color:var(--delete-red)] mt-1.5 flex items-center gap-1">
                     <mat-icon class="text-sm">error_outline</mat-icon>
                     {{ fieldErrors()['postalCode'][0] }}
                   </p>
@@ -321,20 +312,20 @@
                   for="new-user-city"
                   class="block text-sm font-medium text-[color:var(--base-gray-darker)] mb-2"
                 >
-                  <span class="text-red-500">*</span> Miasto
+                  <span class="text-[color:var(--delete-red)]">*</span> Miasto
                 </label>
                 <input
                   id="new-user-city"
                   name="city"
                   type="text"
                   [(ngModel)]="city"
-                  [class.border-red-500]="fieldErrors()['city']"
+                  [class.border-[color:var(--delete-red)]]="fieldErrors()['city']"
                   [class.border-2]="fieldErrors()['city']"
                   class="w-full border text-[color:var(--gray-dark)] border-[color:var(--gray-300-to-yellow)] rounded-lg px-3 py-2.5 outline-none focus:border-[color:var(--base-blue-dark)] focus:border-2"
                   placeholder="Warszawa"
                 />
                 @if (fieldErrors()['city']) {
-                  <p class="text-xs text-red-600 mt-1.5 flex items-center gap-1">
+                  <p class="text-xs text-[color:var(--delete-red)] mt-1.5 flex items-center gap-1">
                     <mat-icon class="text-sm">error_outline</mat-icon>
                     {{ fieldErrors()['city'][0] }}
                   </p>
@@ -342,26 +333,25 @@
               </div>
             </div>
 
-            <!-- Kraj -->
             <div>
               <label
                 for="new-user-country"
                 class="block text-sm font-medium text-[color:var(--base-gray-darker)] mb-2"
               >
-                <span class="text-red-500">*</span> Kraj
+                <span class="text-[color:var(--delete-red)]">*</span> Kraj
               </label>
               <input
                 id="new-user-country"
                 name="country"
                 type="text"
                 [(ngModel)]="country"
-                [class.border-red-500]="fieldErrors()['country']"
+                [class.border-[color:var(--delete-red)]]="fieldErrors()['country']"
                 [class.border-2]="fieldErrors()['country']"
                 class="w-full border text-[color:var(--gray-dark)] border-[color:var(--gray-300-to-yellow)] rounded-lg px-3 py-2.5 outline-none focus:border-[color:var(--base-blue-dark)] focus:border-2"
                 placeholder="Polska"
               />
               @if (fieldErrors()['country']) {
-                <p class="text-xs text-red-600 mt-1.5 flex items-center gap-1">
+                <p class="text-xs text-[color:var(--delete-red)] mt-1.5 flex items-center gap-1">
                   <mat-icon class="text-sm">error_outline</mat-icon>
                   {{ fieldErrors()['country'][0] }}
                 </p>
@@ -371,10 +361,9 @@
         </div>
       </div>
 
-      <!-- Error Alert -->
       @if (errorMessage()) {
         <div
-          class="mt-6 p-4 bg-red-50 text-red-700 text-sm rounded-lg border border-red-300 flex items-start gap-3"
+          class="mt-6 p-4 bg-[color:var(--red-50-to-yellow)] text-[color:var(--red-600-to-black)] text-sm rounded-lg border border-[color:var(--delete-red)] flex items-start gap-3"
           role="alert"
         >
           <mat-icon class="text-lg flex-shrink-0 mt-0.5">warning</mat-icon>
@@ -382,7 +371,6 @@
         </div>
       }
 
-      <!-- Action Buttons -->
       <div
         class="flex justify-end gap-3 mt-8 pt-6 border-t border-[color:var(--gray-300-to-yellow)]"
       >
@@ -409,17 +397,18 @@
       </div>
     </div>
   } @else {
-    <div class="bg-[color:var(--base-form-bg)] rounded-xl shadow-xl w-full max-w-md p-6">
+    <div class="bg-[color:var(--base-form-bg)] rounded-xl shadow-xl w-full max-w-md p-6"
+         (click)="$event.stopPropagation()">
       <div class="flex items-center gap-3 mb-4">
-        <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
-          <mat-icon class="text-green-600 text-2xl">mark_email_read</mat-icon>
+        <div class="w-12 h-12 rounded-full bg-[color:var(--red-200-to-yellow)] flex items-center justify-center">
+          <mat-icon class="text-[color:var(--green-600-to-yellow)] text-2xl">mark_email_read</mat-icon>
         </div>
         <h2 id="add-user-title" class="text-xl font-bold text-[color:var(--base-gray-darker)]">
           Czytelnik dodany!
         </h2>
       </div>
 
-      <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+      <div class="bg-[color:var(--blue-50)] border border-[colro:var(--blue-200)] rounded-lg p-4 mb-4">
         <p class="text-sm text-[color:var(--base-gray-darker)] mb-2">
           <strong>Email wysłany na adres:</strong>
         </p>

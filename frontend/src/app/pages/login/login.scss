@@ -51,3 +51,12 @@
     box-shadow 160ms ease-in-out,
     border-color 160ms ease-in-out;
 }
+
+.adaptive-logo {
+  filter: brightness(0) invert(1);
+  transition: filter 0.2s ease-in-out;
+}
+
+:host-context(html.high-contrast) .adaptive-logo {
+  filter: brightness(1) invert(1);
+}

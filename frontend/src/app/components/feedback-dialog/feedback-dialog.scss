@@ -1,8 +1,12 @@
 .feedback-dialog-container {
   padding: 1.5rem;
-  min-width: 450px;
+  width: 100%;
   max-width: 550px;
   box-sizing: border-box;
+
+  @media (min-width: 600px) {
+    min-width: 450px;
+  }
 }
 
 // Header
@@ -26,6 +30,7 @@
     font-size: 1.75rem;
     width: 1.75rem;
     height: 1.75rem;
+    flex-shrink: 0;
   }
 }
 
@@ -40,6 +45,7 @@
   color: var(--gray-to-yellow);
   cursor: pointer;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 
   &:hover {
     color: var(--base-gray-darker-catalog);
@@ -68,7 +74,7 @@
 // Error Banner
 .error-banner {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.5rem;
   padding: 0.75rem 1rem;
   margin-bottom: 1rem;
@@ -80,6 +86,10 @@
   mat-icon {
     font-size: 1.25rem;
     flex-shrink: 0;
+  }
+
+  span {
+    word-break: break-word;
   }
 
   &.rate-limited {
@@ -99,6 +109,7 @@
 .form-field {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .field-label {
@@ -126,6 +137,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
   margin-top: -0.5rem;
 }
 
@@ -161,6 +173,7 @@
   border-radius: 0.5rem;
   font-size: 0.85rem;
   color: var(--base-gray-darker-catalog);
+  min-width: 0;
 
   mat-icon {
     font-size: 1rem;
@@ -203,7 +216,8 @@
 .submit-button {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: center;
+  gap: 1rem;
   min-width: 140px;
   padding: 0.5rem 1.5rem;
   font-weight: 500;
@@ -223,9 +237,16 @@
   }
 
   mat-icon {
-    font-size: 1.25rem;
-    width: 1.25rem;
-    height: 1.25rem;
+    font-size: 1.125rem;    // Zmniejszone z 1.25rem (ok. 18px) - lepsza proporcja
+    width: 1.125rem;        // Dopasowanie szerokości kontenera ikony
+    height: 1.125rem;       // Dopasowanie wysokości kontenera ikony
+    line-height: 1;         // Usunięcie zbędnych odstępów linii
+    margin: 0;              // Reset marginesów (jeśli matButtonIcon coś dodaje)
+  }
+
+  span {
+    line-height: 1;         // Wyrównanie linii tekstu do ikony
+    display: inline-block;  // Zapewnia poprawne renderowanie wysokości
   }
 }
 
@@ -303,5 +324,58 @@
 
   .mat-mdc-select-panel {
     background-color: var(--white-to-yellow) !important;
+  }
+
+  .mat-mdc-dialog-surface {
+    max-width: 100vw !important;
+  }
+}
+
+@media (max-width: 599px) {
+  .feedback-dialog-container {
+    padding: 1rem;
+    min-width: auto;
+    width: 100%;
+  }
+
+  .dialog-title {
+    font-size: 1.25rem;
+
+    mat-icon {
+      font-size: 1.5rem;
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+
+  .dialog-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+
+    .cancel-button,
+    .submit-button {
+      width: 100%;
+      margin: 0;
+      min-width: 0;
+      padding: 0.75rem;
+    }
+
+  }
+
+  .page-info {
+    font-size: 0.75rem;
+  }
+
+  .success-view {
+    min-height: auto;
+    padding: 1rem 0;
+  }
+
+  .success-title {
+    font-size: 1.25rem;
+  }
+
+  .close-button {
+    width: 100%;
   }
 }

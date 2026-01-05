@@ -30,15 +30,19 @@
     transform: translateX(-50%);
     width: 50%;
     height: 3px;
-    background-color: #6e9fe0;
+    background-color: var(--navbar-blue-underline);
   }
 }
 
 .active-mobile-link {
   position: relative;
   border-radius: 9999px;
-  padding: 0.25rem 0.5rem;
-  background-color: rgba(255, 255, 255, 0.1); /* Subtelne tło */
+  padding: 0.25rem 0.75rem;
+  background-color: var(--base-white-transparent); /* Subtelne tło */
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 
@@ -69,7 +73,7 @@
 
 
 .contrast-toggle {
-  background: transparent;
+  background-color: var(--gray-400-to-yellow);
   border: 1px solid rgba(255, 255, 255, 0.12);
   color: inherit;
   padding: 0.25rem 0.5rem;
