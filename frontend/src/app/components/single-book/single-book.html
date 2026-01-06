@@ -1,12 +1,17 @@
-<div
+<article
   class="bg-[color:var(--book-bg)] rounded-lg shadow p-2 flex flex-col items-center w-full"
   style="max-width: 180px; min-height: 270px"
+  [attr.aria-label]="title + ' autorstwa ' + author"
 >
   <div class="overflow-hidden w-full rounded-lg mb-1 aspect-[8/10] relative bg-gray-200">
 
     @if (isLoading) {
-      <div class="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center z-10">
-        <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div
+        class="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center z-10"
+        aria-hidden="true"
+        role="presentation"
+      >
+        <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -19,7 +24,7 @@
 
     <img
       [ngSrc]="currentImgSrc"
-      [alt]="title"
+      [alt]="'Okładka książki: ' + title + ' - ' + author"
       fill
       class="object-cover"
       (load)="handleImageLoad()"
@@ -28,31 +33,34 @@
   </div>
 
   <div class="flex flex-col flex-grow w-full items-center">
-    <div
+    <p
       class="text-xs font-semibold mb-1 text-[color:var(--base-gray-darker)] text-center truncate w-full"
-      [title]="title"
     >
       {{ title }}
-    </div>
-    <div class="text-xs text-[color:var(--base-gray-darker)] mb-1 text-center truncate w-full">
+    </p>
+    <p class="text-xs text-[color:var(--base-gray-darker)] mb-1 text-center truncate w-full">
       {{ author }}
-    </div>
+    </p>
   </div>
 
   <div class="flex gap-2 justify-center w-full mt-auto m-1">
 
     <button
+      type="button"
       class="px-2 py-1 rounded bg-[color:var(--details-bt)] text-[color:var(--book-bg)] text-xs font-semibold shadow cursor-pointer hover:opacity-90 transition-opacity"
       (click)="openDetails()"
+      [attr.aria-label]="'Zobacz szczegóły książki ' + title"
     >
       Szczegóły
     </button>
 
     <button
+      type="button"
       class="px-2 py-1 rounded bg-[color:var(--availability-bt)] text-[color:var(--base-blue-lighter)] border border-[color:var(--base-blue-lighter)] box-border text-xs font-semibold shadow cursor-pointer hover:brightness-95 transition-all"
       (click)="openAvailabilityDialog()"
+      [attr.aria-label]="'Sprawdź dostępność książki ' + title"
     >
       Dostępność
     </button>
   </div>
-</div>
+</article>

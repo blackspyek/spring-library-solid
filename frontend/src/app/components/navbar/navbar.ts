@@ -33,13 +33,12 @@ export class Navbar implements OnInit {
   mobileNavItems = computed<NavItem[]>(() => [
     { label: 'Start', icon: 'home', link: '/' },
     { label: 'Katalog', icon: 'list', link: '/katalog' },
-    { label: 'Moja karta', icon: 'none', link: '/moja-karta' },
+    { label: 'Moja karta', icon: 'credit_card', link: '/moja-karta' },
     {
       label: this.isLoggedIn() ? 'Konto' : 'Zaloguj',
       icon: 'person',
       link: this.isLoggedIn() ? '/profil' : '/zaloguj-sie',
     },
-    { label: '', icon: '' },
   ]);
 
   desktopNavItems = [

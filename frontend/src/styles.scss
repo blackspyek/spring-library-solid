@@ -250,3 +250,27 @@ body {
 .feedback-dialog .mat-mdc-dialog-surface {
   background-color: var(--white-to-yellow) !important;
 }
+
+// Angular CDK Accessibility - wizualnie ukryty element dla czytników ekranu
+.cdk-visually-hidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+  white-space: nowrap;
+  outline: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  left: 0;
+
+  // Dodatkowe zabezpieczenie - nie pokazuj nawet gdy element jest focusowany
+  &:not(:focus):not(:active) {
+    clip-path: inset(100%);
+  }
+}
+
