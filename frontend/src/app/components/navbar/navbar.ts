@@ -1,20 +1,22 @@
 import { Component, computed, inject, PLATFORM_ID, OnInit } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { NgOptimizedImage, isPlatformBrowser } from '@angular/common';
+import { NgOptimizedImage, isPlatformBrowser, NgClass } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from '../../services/auth.service';
 import { FeedbackDialog } from '../feedback-dialog/feedback-dialog';
+import { QrDialog } from '../qr-dialog/qr-dialog';
 export interface NavItem {
   label: string;
   icon?: string;
   link?: string;
+  action?: () => void;
 }
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [MatIcon, RouterLink, RouterLinkActive, NgOptimizedImage],
+  imports: [MatIcon, RouterLink, RouterLinkActive, NgOptimizedImage, NgClass],
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss',
 })
@@ -26,6 +28,7 @@ export class Navbar implements OnInit {
   isLoggedIn = this.authService.isLoggedIn;
 
   highContrast = false;
+  showMobileA11yMenu = false;
   private currentScale = 100;
   private minScale = 50;
   private maxScale = 200;
@@ -33,19 +36,32 @@ export class Navbar implements OnInit {
   mobileNavItems = computed<NavItem[]>(() => [
     { label: 'Start', icon: 'home', link: '/' },
     { label: 'Katalog', icon: 'list', link: '/katalog' },
-    { label: 'Moja karta', icon: 'none', link: '/moja-karta' },
+    { label: '', icon: '', link: '' },
     {
       label: this.isLoggedIn() ? 'Konto' : 'Zaloguj',
       icon: 'person',
       link: this.isLoggedIn() ? '/profil' : '/zaloguj-sie',
     },
-    { label: '', icon: '' },
+    {
+      label: 'Dostępność',
+      icon: 'accessibility_new',
+      action: () => this.toggleMobileA11yMenu()
+    },
   ]);
 
   desktopNavItems = [
     { label: 'Strona główna', link: '/' },
     { label: 'Katalog', link: '/katalog' },
   ];
+
+  openQrDialog(): void {
+    this.dialog.open(QrDialog, {
+      panelClass: 'qr-dialog-container',
+      autoFocus: false,
+      width: '90vw',
+      maxWidth: '400px'
+    });
+  }
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
@@ -61,6 +77,10 @@ export class Navbar implements OnInit {
 
   logout(): void {
     this.authService.logout();
+  }
+
+  toggleMobileA11yMenu(): void {
+    this.showMobileA11yMenu = !this.showMobileA11yMenu;
   }
 
   toggleHighContrast(): void {
@@ -109,6 +129,7 @@ export class Navbar implements OnInit {
   isLibrarian = computed(() => this.authService.isLibrarian());
 
   openFeedbackDialog(): void {
+    this.showMobileA11yMenu = false;
     this.dialog.open(FeedbackDialog, {
       panelClass: 'feedback-dialog',
       autoFocus: 'first-tabbable',

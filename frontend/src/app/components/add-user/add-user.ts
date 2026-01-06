@@ -70,6 +70,12 @@ export class AddUser {
     return /^(\+48)?\d{9}$/.test(cleaned);
   }
 
+  validateTextOnly(value: string): boolean {
+    if (!value) return false;
+    // Regex dopuszcza: a-z, A-Z, polskie znaki, spację i myślnik
+    return /^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s-]+$/.test(value);
+  }
+
   submit() {
     this.fieldErrors.set({});
     this.errorMessage.set(null);
@@ -85,10 +91,14 @@ export class AddUser {
 
     if (!this.firstName()) {
       errors['firstName'] = ['Imię jest wymagane'];
+    } else if (!this.validateTextOnly(this.firstName())) {
+      errors['firstName'] = ['Imię może zawierać tylko litery'];
     }
 
     if (!this.lastName()) {
       errors['lastName'] = ['Nazwisko jest wymagane'];
+    } else if (!this.validateTextOnly(this.lastName())) {
+      errors['lastName'] = ['Nazwisko może zawierać tylko litery'];
     }
 
     if (!this.phone()) {
@@ -105,10 +115,14 @@ export class AddUser {
 
     if (!this.street()) {
       errors['street'] = ['Ulica jest wymagana'];
+    } else if (!this.validateTextOnly(this.street())) {
+      errors['street'] = ['Nazwa ulicy może zawierać tylko litery'];
     }
 
     if (!this.city()) {
       errors['city'] = ['Miasto jest wymagane'];
+    } else if (!this.validateTextOnly(this.city())) {
+      errors['city'] = ['Nazwa miasta może zawierać tylko litery'];
     }
 
     if (!this.postalCode()) {
@@ -119,6 +133,8 @@ export class AddUser {
 
     if (!this.country()) {
       errors['country'] = ['Kraj jest wymagany'];
+    } else if (!this.validateTextOnly(this.country())) {
+      errors['country'] = ['Nazwa kraju może zawierać tylko litery'];
     }
 
     if (!this.buildingNumber()) {

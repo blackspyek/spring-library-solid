@@ -6,11 +6,12 @@
       <img
         ngSrc="/logo.svg"
         alt="Logo w kształcie książki"
-        class="h-auto object-cover w-20 md:w-24"
+        class="adaptive-logo h-auto object-cover w-20 md:w-24"
         height="109"
         width="80"
+        priority
       />
-      <span class="text-white text-base font-bold tracking-widest font-[Inter]">BIBLIOTEKA</span>
+      <span class="text-[color:var(--base-white)] text-base font-bold tracking-widest font-[Inter]">BIBLIOTEKA</span>
     </a>
   </div>
 
@@ -24,8 +25,8 @@
   </div>
 
   @if (errorMessage()) {
-    <div class="w-full mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-      <p class="text-red-600 text-sm font-medium text-center">{{ errorMessage() }}</p>
+    <div class="w-full mt-4 p-3 bg-[color:var(--base-red-light)] border border-[color:var(--base-red)] rounded-lg">
+      <p class="text-[color:var(--base-red)] text-sm font-medium text-center">{{ errorMessage() }}</p>
     </div>
   }
 
@@ -44,7 +45,7 @@
       />
 
       @if (email?.invalid && (email?.dirty || email?.touched)) {
-        <div class="text-red-600 text-xs mt-1">
+        <div class="text-[color:var(--red--700-to-darkyellow)] text-xs mt-1">
           @if (email?.errors?.['required']) {
             <div>Adres email jest wymagany.</div>
           }
@@ -80,7 +81,7 @@
         [class.border-red-500]="password?.invalid && (password?.dirty || password?.touched)"
       />
       @if (password?.invalid && (password?.dirty || password?.touched)) {
-        <div class="text-red-600 text-xs mt-1">
+        <div class="text-[color:var(--red--700-to-darkyellow)] text-xs mt-1">
           @if (password?.errors?.['required']) {
             <div>Hasło jest wymagane.</div>
           }
