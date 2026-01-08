@@ -1,37 +1,69 @@
+# 📚 System Biblioteczny (Microservices)
+
+System zarządzania biblioteką oparty na architekturze mikroserwisów (Spring Boot) oraz Angularze, wdrażany na platformę Kubernetes.
+
+## 🛠️ Wymagania wstępne (Prerequisites)
+Przed rozpoczęciem upewnij się, że masz zainstalowane następujące narzędzia:
+1. **Docker Desktop** (lub inny silnik kontenerowy).
+2. **Minikube** (Lokalny klaster Kubernetes).
+3. **Skaffold** (Narzędzie do automatyzacji cyklu wdrożeniowego).
+4. **Kubectl** (CLI do Kubernetesa).
+5. **Ingress** (dostępny jako dodatek w Minikube).
+
 # Jak włączyć aplikację
 ## 🛠️ Kroki przygotowawcze
 Zanim uruchomisz terminale, upewnij się, że:
 1. W pliku `hosts` (`C:\Windows\System32\drivers\etc\hosts`) masz wpis: 
    `127.0.0.1 library.local`.
-2. Masz zainstalowane narzędzie **Skaffold**. 
+   * **Windows:** `C:\Windows\System32\drivers\etc\hosts` (uruchom Notatnik jako Administrator).
+   * **Linux/macOS:** `/etc/hosts` (użyj `sudo nano /etc/hosts`).
+2. UZUPEŁNIJ na bazie plilku `sectets.example`: 
+W pliku `k8s/secrets.yaml` znajdują się placeholdery dla haseł. Upewnij się, że są uzupełnione.
+   * DATABASE_PASSWORD
+   * JWT_SECRET
+   * MAIL_PASSWORD
 
-3. UZUPEŁNIJ: W pliku `k8s/secrets.yaml` uzupełnij wartości sekretów (hasła, klucze itp.) zgodnie z Twoimi potrzebami.
+# 🚀 Uruchomienie aplikacji (krok po kroku)
+Potrzebujesz dwóch okien terminala.
 
-5. minikube addons enable ingress
-### Terminal 1:
-## minbikube start
+1. Krok 1: Start klastra i Ingress (Terminal 1)
+> minikube start --docker-opt dns=8.8.8.8 --dns-proxy=true 
 
-# 1️⃣ Utwórz namespace
-kubectl apply -f k8s/namespace.yaml
+> minikube addons enable ingress
 
-# 2️⃣ Utwórz ConfigMap i Secrets
-kubectl apply -f k8s/configmap.yaml
-kubectl apply -f k8s/secrets.yaml
+W tym samym terminalu uruchom Skaffold. Narzędzie to automatycznie:
 
-# 3️⃣ Utwórz Postgresa i inicjalizację bazy
-kubectl apply -f k8s/postgres.yaml
-kubectl apply -f k8s/postgres-init.yaml
-kubectl apply -f k8s/postgres-service.yaml
+* Zbuduje obrazy Dockerowe.
+* Utworzy Namespace, ConfigMapy i Sekrety.
+* Uruchomi bazę danych i mikroserwisy w odpowiedniej kolejności.
 
-## minikube addons enable ingress
-## minikube docker-env | Invoke-Expression 
-## skaffold dev -p dev
+> skaffold dev -p dev
 
-### Terminal 2: kubectl port-forward svc/postgres 5432:5432 -n library
+Poczekaj, aż wszystkie serwisy (postgres, auth, user, frontend...) uzyskają status "Running".
 
-### Terminal 3: minikube tunnel
+2. Krok 2: Tunelowanie sieci (Terminal 2)
 
->> wsl --shutdown 
->> diskpart
-> DISKPART> select vdisk file="<path to vhdx file>"
-> DISKPART> compact vdisk
+Ingress w Minikube wymaga tunelu, aby być dostępnym pod lokalnym IP. Otwórz nowe okno terminala i wpisz:
+
+>minikube tunnel
+
+⚠️ Ważne: Nie zamykaj tego terminala! Musi on działać w tle, aby strona się ładowała.
+
+# 🌐 Dostęp do aplikacji
+Gdy system działa (Skaffold i Tunnel są aktywne), możesz korzystać z usług:
+
+| Usługa | Adres URL | Opis |
+| :--- | :--- | :--- |
+| **Aplikacja Frontend** | [http://library.local](http://library.local) | Główny interfejs dla czytelników i pracowników |
+| **Admin Dashboard** | [http://localhost:8088](http://localhost:8088) | Monitoring statusu mikroserwisów (Spring Boot Admin) |
+| **API Gateway** | `http://library.local/api/` | Punkt wejścia dla zapytań backendowych |
+
+# 🧹 Zatrzymywanie projektu
+Aby poprawnie wyłączyć system i zwolnić zasoby:
+
+1. W terminalu ze Skaffold wciśnij Ctrl + C (automatycznie usunie wdrożone pody i serwisy).
+
+2. W terminalu z Tunnel wciśnij Ctrl + C.
+
+3. Zatrzymaj klaster Minikube:
+> minikube stop
