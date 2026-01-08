@@ -42,6 +42,9 @@ logging:
 jwt:
   secret: ${JWT_SECRET:default-secret-key-for-development-only-change-in-production}
 
+internal:
+  secret: ${INTERNAL_SECRET:default-internal-secret-key-for-development-only}
+
 ---
 # Job profile for Kubernetes CronJob
 spring:
@@ -49,5 +52,5 @@ spring:
     activate:
       on-profile: job
   main:
-    web-application-type: none  # Disable web server for job execution
+    web-application-type: none # Disable web server for job execution
 

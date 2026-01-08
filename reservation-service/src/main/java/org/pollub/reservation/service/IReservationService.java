@@ -14,4 +14,10 @@ public interface IReservationService {
     List<ReservationItemDto> getReservationsByUsername(Long userId);
 
     void cancelReservation(Long id, Long userId) throws AccessDeniedException;
+    
+    /**
+     * Mark a reservation as fulfilled when the reserved book is rented.
+     * Called by catalog-service when a reserved book is being rented.
+     */
+    void fulfillReservation(Long itemId, Long branchId, Long userId);
 }

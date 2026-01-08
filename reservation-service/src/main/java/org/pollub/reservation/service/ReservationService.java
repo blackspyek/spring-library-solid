@@ -160,5 +160,17 @@ public class ReservationService implements  IReservationService {
         log.info("Processed {} expired reservations", expired.size());
     }
 
+    @Override
+    @Transactional
+    public void fulfillReservation(Long itemId, Long branchId, Long userId) {
+        reservationRepository.findByItemIdAndBranchIdAndUserIdAndStatus(itemId, branchId, userId, ReservationStatus.ACTIVE)
+                .ifPresent(reservation -> {
+                    reservation.setStatus(ReservationStatus.FULFILLED);
+                    reservation.setResolvedAt(LocalDateTime.now());
+                    reservationRepository.save(reservation);
+                    log.info("Reservation {} fulfilled for itemId: {}, branchId: {}, userId: {}", 
+                            reservation.getId(), itemId, branchId, userId);
+                });
+    }
 
 }

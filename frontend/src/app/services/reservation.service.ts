@@ -71,6 +71,14 @@ export class ReservationService {
   }
 
   /**
+   * Get active reservations for a specific user (for librarian use).
+   * Used in loan-management to display user's reservations and allow loaning reserved books.
+   */
+  getUserReservations(userId: number): Observable<ReservationHistory[]> {
+    return this.http.get<ReservationHistory[]>(`${this.API_URL}/user/${userId}`);
+  }
+
+  /**
    * Get count of current user's active reservations.
    */
   getReservationCount(): Observable<number> {

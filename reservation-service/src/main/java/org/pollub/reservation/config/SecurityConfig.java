@@ -46,11 +46,20 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/actuator/**").permitAll()
-                // All reservation operations require authentication
+                // All reservation operations require authentication (JWT or Internal Token)
                 .anyRequest().authenticated()
             )
+            .addFilterBefore(internalAuthFilter(), UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
         
         return http.build();
+    }
+
+    @Value("${internal.secret}")
+    private String internalSecret;
+    
+    @Bean
+    public org.pollub.common.security.InternalAuthFilter internalAuthFilter() {
+        return new org.pollub.common.security.InternalAuthFilter(internalSecret);
     }
 }

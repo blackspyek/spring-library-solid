@@ -19,6 +19,7 @@ import { EditUserRoleComponent } from '../../components/edit-user/edit-user';
 import { AuthService } from '../../services/auth.service';
 import { AddUser } from '../../components/add-user/add-user';
 import { BranchService } from '../../services/branch.service';
+import { ReservationService, ReservationHistory } from '../../services/reservation.service';
 
 @Component({
   selector: 'app-loan-management',
@@ -40,6 +41,7 @@ export class LoanManagement implements OnInit {
   private loanService = inject(LoanService);
   private userService = inject(UserService);
   private authService = inject(AuthService);
+  private reservationService = inject(ReservationService);
 
   isAdmin = computed(() => this.authService.hasRole(Role.ROLE_ADMIN));
   isLibrarian = computed(() => this.authService.isLibrarian());
@@ -61,7 +63,16 @@ export class LoanManagement implements OnInit {
 
   selectedUser = signal<User | null>(null);
   userLoans = signal<SingleBook[]>([]);
+  userReservations = signal<ReservationHistory[]>([]);
   isAddingUser = signal(false);
+
+  // Filter reservations to only show those from the librarian's branch
+  filteredReservations = computed(() => {
+    const branch = this.employeeBranch();
+    const reservations = this.userReservations();
+    if (!branch) return reservations;
+    return reservations.filter((r) => r.branchId === branch.id);
+  });
 
   bookSearchQuery = '';
   availableBooks = signal<SingleBook[]>([]);
@@ -141,14 +152,14 @@ export class LoanManagement implements OnInit {
         (u.last_name && u.last_name.toLowerCase().includes(q)) ||
         (u.name && u.name.toLowerCase().includes(q)) || // Obsługa starego pola
         (u.surname && u.surname.toLowerCase().includes(q)) || // Obsługa starego pola
-        u.id.toString() === q
+        u.id.toString() === q,
     );
     this.filteredUsers.set(filtered);
   }
 
   selectUser(user: User) {
     this.selectedUser.set(user);
-    this.loadUserLoans(user.id);
+    this.refreshUserData(user.id);
     this.userSearchQuery = '';
     this.filterUsers('');
   }
@@ -156,12 +167,25 @@ export class LoanManagement implements OnInit {
   clearUser() {
     this.selectedUser.set(null);
     this.userLoans.set([]);
+    this.userReservations.set([]);
+  }
+
+  refreshUserData(userId: number) {
+    this.loadUserLoans(userId);
+    this.loadUserReservations(userId);
   }
 
   loadUserLoans(userId: number) {
     this.loanService.getUserLoans(userId).subscribe({
       next: (loans) => this.userLoans.set(loans),
       error: () => this.userLoans.set([]),
+    });
+  }
+
+  loadUserReservations(userId: number) {
+    this.reservationService.getUserReservations(userId).subscribe({
+      next: (reservations) => this.userReservations.set(reservations),
+      error: () => this.userReservations.set([]),
     });
   }
 
@@ -173,7 +197,7 @@ export class LoanManagement implements OnInit {
       'success',
       'Użytkownik został pomyślnie utworzony',
       'bg-[color:var(--green-600-to-yellow)]',
-      'text-[color:var(--green-800-to-black)]'
+      'text-[color:var(--green-800-to-black)]',
     );
     this.isAddingUser.set(false);
     this.loadAllUsers();
@@ -263,7 +287,7 @@ export class LoanManagement implements OnInit {
       (b) =>
         b.title.toLowerCase().includes(lowerQuery) ||
         b.author.toLowerCase().includes(lowerQuery) ||
-        b.isbn?.toLowerCase().includes(lowerQuery)
+        b.isbn?.toLowerCase().includes(lowerQuery),
     );
     this.filteredBooks.set(filtered);
   }
@@ -292,7 +316,40 @@ export class LoanManagement implements OnInit {
         this.isProcessing.set(false);
         this.showMessage('success', 'Książka wypożyczona');
         this.loadAvailableBooks();
-        this.loadUserLoans(user.id);
+        this.refreshUserData(user.id);
+      },
+      error: (err) => {
+        this.isProcessing.set(false);
+        this.showMessage('error', this.extractErrorMessage(err));
+      },
+    });
+  }
+
+  rentReservedBook(reservation: ReservationHistory) {
+    const user = this.selectedUser();
+    const branch = this.employeeBranch();
+
+    if (!user) {
+      this.showMessage('error', 'Wybierz użytkownika');
+      return;
+    }
+
+    if (!reservation.item?.id) {
+      this.showMessage('error', 'Błąd: Brak ID książki w rezerwacji');
+      return;
+    }
+
+    this.isProcessing.set(true);
+
+    // Use reservation's branchId since the book is reserved at that branch
+    const branchId = reservation.branchId;
+
+    this.loanService.rentItem(reservation.item.id, user.id, branchId).subscribe({
+      next: () => {
+        this.isProcessing.set(false);
+        this.showMessage('success', 'Zarezerwowana książka wypożyczona');
+        this.loadAvailableBooks();
+        this.refreshUserData(user.id);
       },
       error: (err) => {
         this.isProcessing.set(false);

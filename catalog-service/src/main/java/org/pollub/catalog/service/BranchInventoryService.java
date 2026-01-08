@@ -3,6 +3,7 @@ package org.pollub.catalog.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.pollub.catalog.client.ReservationServiceClient;
 import org.pollub.catalog.model.BranchInventory;
 import org.pollub.catalog.model.CopyStatus;
 import org.pollub.catalog.model.dto.BranchInventoryDto;
@@ -26,6 +27,7 @@ import java.util.List;
 public class BranchInventoryService implements IBranchInventoryService {
 
     private final IBranchInventoryRepository inventoryRepository;
+    private final ReservationServiceClient reservationServiceClient;
 
     @Override
     public ReservationResponse rentCopy(Long itemId, RentalHistoryDto rentalHistoryDto) {
@@ -37,12 +39,21 @@ public class BranchInventoryService implements IBranchInventoryService {
         validateReservationOwnership(inventory, userId);
         validateAvailabilityForRent(inventory);
 
+        // Check if the book was reserved before we clear the reservation info
+        boolean wasReserved = inventory.getStatus() == CopyStatus.RESERVED;
+
         updateInventoryRecordWithRentData(inventory, CopyStatus.RENTED, userId, rentalHistoryDto.getRentedAt(), rentalHistoryDto.getDueDate());
 
         clearReservationInfo(inventory);
 
         try{
             inventoryRepository.save(inventory);
+            
+            // If the book was reserved, mark the reservation as fulfilled in reservation-service
+            if (wasReserved) {
+                reservationServiceClient.fulfillReservation(itemId, branchId, userId);
+            }
+            
             return ReservationResponse.builder()
                     .itemId(itemId)
                     .branchId(branchId)

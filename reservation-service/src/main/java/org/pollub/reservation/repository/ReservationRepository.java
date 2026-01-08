@@ -30,4 +30,6 @@ public interface ReservationRepository extends JpaRepository<ReservationHistory,
     
     List<ReservationHistory> findByUserIdAndStatusOrderByReservedAtDesc(Long userId, ReservationStatus status);
 
+    Optional<ReservationHistory> findByItemIdAndBranchIdAndUserIdAndStatus(Long itemId, Long branchId, Long userId, ReservationStatus status);
+
 }

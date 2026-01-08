@@ -47,7 +47,31 @@ public class ReservationController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Get active reservations for a specific user (for librarian use).
+     * Used in loan-management to display user's reservations and allow loaning reserved books.
+     */
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<ReservationItemDto>> getUserReservations(
+            @PathVariable Long userId
+    ) {
+        List<ReservationItemDto> reservations = reservationService.getReservationsByUsername(userId);
+        return ResponseEntity.ok(reservations);
+    }
 
+    /**
+     * Mark a reservation as fulfilled when the reserved book is rented.
+     * Called by catalog-service when a reserved book is being rented.
+     */
+    @PutMapping("/fulfill")
+    public ResponseEntity<Void> fulfillReservation(
+            @RequestParam Long itemId,
+            @RequestParam Long branchId,
+            @RequestParam Long userId
+    ) {
+        reservationService.fulfillReservation(itemId, branchId, userId);
+        return ResponseEntity.ok().build();
+    }
 }
 
 

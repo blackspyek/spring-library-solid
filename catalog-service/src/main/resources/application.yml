@@ -20,7 +20,9 @@ server:
 # Inter-service communication
 services:
   branch:
-    url: ${BRANCH_SERVICE_URL:http://branch-service}
+    url: ${BRANCH_SERVICE_URL:http://localhost:8083}
+  reservation:
+    url: ${RESERVATION_SERVICE_URL:http://localhost:8086}
 
 management:
   endpoints:
@@ -36,3 +38,6 @@ logging:
     org.pollub.catalog: DEBUG
 jwt:
   secret: ${JWT_SECRET:default-secret-key-for-development-only-change-in-production}
+
+internal:
+  secret: ${INTERNAL_SECRET:default-internal-secret-key-for-development-only}

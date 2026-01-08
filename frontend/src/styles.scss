@@ -21,17 +21,17 @@
   --placeholder-gray: #8b8989;
   --placeholder-gray-black: #8b8989;
   --base-blue-lighter80: rgb(31, 84, 154, 0.8);
-  --qr-gray-light: #F7F7F7;
+  --qr-gray-light: #f7f7f7;
   --gray-dark: #262727;
-  --base-border-gray: #4A4A4A14;
+  --base-border-gray: #4a4a4a14;
   --base-white: #ffffff;
-  --base-green: #0F7E03;
-  --base-green-darker: #11532D;
-  --base-green-lighter: #DBFCE7;
-  --base-red: #DB1F1F;
-  --base-red-light: #FFC9C9;
-  --base-purple: #5F4377;
-  --books-container-bg: #F7F7F7;
+  --base-green: #0f7e03;
+  --base-green-darker: #11532d;
+  --base-green-lighter: #dbfce7;
+  --base-red: #db1f1f;
+  --base-red-light: #ffc9c9;
+  --base-purple: #5f4377;
+  --books-container-bg: #f7f7f7;
   --base-gray-darker-rgb: 74, 74, 74;
   --nav-base-color: white;
   --base-font-color: black;
@@ -42,10 +42,10 @@
   --base-form-lighter-text: #4a4a4a;
   --book-details-text-darker: #4a4a4a;
   --base-eye-catching-link: #1d4ed8;
-  --blue-hover: #1447E6;
+  --blue-hover: #1447e6;
   --gray-to-yellow: #4a4a4a;
   --switch-button-off: #8b8989;
-  --switch-button-on: #0F7E03;
+  --switch-button-on: #0f7e03;
   --gray-library-details: #4a4a4a;
   --blue-50: #eff6ff;
   --blue-100: #dbeafe;
@@ -54,7 +54,7 @@
   --blue-800: #1e40af;
   --search-bar-catalog: white;
   --base-gray-darker-catalog: #4a4a4a;
-  --branch-background-color:  #e3f2fd;
+  --branch-background-color: #e3f2fd;
   --branch-border-left: #1a365b;
   --branch-border: #e0e0e0;
   --branch-hover: #f5f5f5;
@@ -76,7 +76,7 @@
   --cancel-button: #f2f2f2;
   --bg-x: #ffffff80;
   --white-to-yellow: white;
-  --light-gray-to-light-yellow: #F3F4F6;
+  --light-gray-to-light-yellow: #f3f4f6;
   --nav-underline-active: #6e9fe0;
   --form-btn-hover: #2a368a;
   --white-to-dark-gray: white;
@@ -84,8 +84,8 @@
   --gray-to-black: #e5e7eb;
   --text-gray-to-black: #6a7282;
   --light-gray-to-darkgray: #f3f4f6;
-  --gray-50-to-darkyellow:  #f9fafb;
-  --gray-50-to-gray:  #f9fafb;
+  --gray-50-to-darkyellow: #f9fafb;
+  --gray-50-to-gray: #f9fafb;
   --gray-100-to-yellow: #f3f4f6;
   --gray-300-to-yellow: #d1d5dc;
   --gray-300-to-darkyellow: #d1d5dc;
@@ -101,10 +101,10 @@
   --gray-300-to-black: #d1d5dc;
   --gray-400-to-black: #99a1af;
   --green-50-to-yellow: #f0fdf4;
-  --green-200-to-yellow:   #b9f8cf;
+  --green-200-to-yellow: #b9f8cf;
   --green-800-to-black: #016630;
   --red-50-to-yellow: #fef2f2;
-  --red-200-to-yellow:  oklch(88.5% 0.062 18.334);
+  --red-200-to-yellow: oklch(88.5% 0.062 18.334);
   --green-600-to-yellow: oklch(62.7% 0.194 149.214);
   --green-700-to-yellow: oklch(56.9% 0.213 142.859);
   --red-600-to-black: oklch(57.7% 0.245 27.325);
@@ -139,7 +139,7 @@ html.high-contrast {
   --blue-200: black;
   --blue-500: #ffed00;
   --blue-800: #ffed00;
-  --search-bar-catalog: #FFED00;
+  --search-bar-catalog: #ffed00;
   --base-gray-darker-catalog: #0b1016;
   --purple-50: #bdbd71;
   --purple-700: #0b1016;
@@ -149,11 +149,11 @@ html.high-contrast {
   --edit-button-hover: #262727;
   --base-separator: rgba(255, 237, 0, 0.12);
   --details-bt: rgba(255, 237, 0, 0.76);
-  --availability-bt: rgba(11,16,22,0.76);
-  --branch-background-color:  #E7D802;
+  --availability-bt: rgba(11, 16, 22, 0.76);
+  --branch-background-color: #e7d802;
   --branch-border-left: black;
   --branch-border: black;
-  --branch-hover: #F5E502;
+  --branch-hover: #f5e502;
   --base-blue-lighter-catalog: #0b1016;
   --qr-gray-light: #ffed00;
   --gray-library-info: #ffed00;
@@ -164,16 +164,16 @@ html.high-contrast {
   --availability-orange: #0b1016;
   --hover-pagination: #bdbd71;
   --hover-reserve: #bdbd71;
-  --light-gray-to-light-yellow: #F6EC6D;
-  --mobile-bg: #FFED00;
+  --light-gray-to-light-yellow: #f6ec6d;
+  --mobile-bg: #ffed00;
   --bg-x: rgba(227, 220, 95, 0);
-  --white-to-yellow: #FFED00;
-  --gray-to-yellow: #FFED00;
+  --white-to-yellow: #ffed00;
+  --gray-to-yellow: #ffed00;
   --nav-underline-active: black;
-  --blue-hover: #3D3D3D;
+  --blue-hover: #3d3d3d;
   --form-btn-hover: #40403d;
-  --base-green: #305CDE;
-  --base-green-darker: #38529E;
+  --base-green: #305cde;
+  --base-green-darker: #38529e;
   --base-red: #784008;
   --base-purple: #784008;
   --base-red-light: #ffed00;
@@ -197,8 +197,8 @@ html.high-contrast {
   --gray-50-to-gray: #262727;
   --red--700-to-darkyellow: #c6c411;
   --gray-50-to-black: black;
-  --green-50-to-yellow:  #ffed00;
-  --green-200-to-yellow:  #ffed00;
+  --green-50-to-yellow: #ffed00;
+  --green-200-to-yellow: #ffed00;
   --green-800-to-black: black;
   --red-50-to-yellow: #ffed00;
   --red-200-to-yellow: #ffed00;
@@ -258,4 +258,8 @@ body {
 .extend-rental-dialog .mat-mdc-dialog-surface,
 .feedback-dialog .mat-mdc-dialog-surface {
   background-color: var(--white-to-yellow) !important;
+}
+
+.button {
+  cursor: pointer;
 }
