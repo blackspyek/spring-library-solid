@@ -17,11 +17,10 @@ Zanim uruchomisz terminale, upewnij się, że:
    `127.0.0.1 library.local`.
    * **Windows:** `C:\Windows\System32\drivers\etc\hosts` (uruchom Notatnik jako Administrator).
    * **Linux/macOS:** `/etc/hosts` (użyj `sudo nano /etc/hosts`).
-2. UZUPEŁNIJ na bazie plilku `sectets.example`: 
-W pliku `k8s/secrets.yaml` znajdują się placeholdery dla haseł. Upewnij się, że są uzupełnione.
-   * DATABASE_PASSWORD
-   * JWT_SECRET
-   * MAIL_PASSWORD
+2. UZUPEŁNIJ: 
+W pliku `sectets.example` znajdują się placeholdery dla haseł uzupełnij plik `k8/secrets`.
+* Upewnij się plik został uzupełniony i zapisany jako `secrets.yaml` w katalogu `k8/`.
+
 
 # 🚀 Uruchomienie aplikacji (krok po kroku)
 Potrzebujesz dwóch okien terminala.
