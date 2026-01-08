@@ -20,9 +20,9 @@ server:
 # Inter-service communication
 services:
   branch:
-    url: ${BRANCH_SERVICE_URL:http://localhost:8083}
+    url: ${BRANCH_SERVICE_URL:http://branch-service:8083}
   reservation:
-    url: ${RESERVATION_SERVICE_URL:http://localhost:8086}
+    url: ${RESERVATION_SERVICE_URL:http://reservation-service}
 
 management:
   endpoints:

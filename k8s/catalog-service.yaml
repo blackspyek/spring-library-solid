@@ -43,6 +43,8 @@ spec:
                   key: DATABASE_PASSWORD
             - name: BRANCH_SERVICE_URL
               value: "http://branch-service"
+            - name: RESERVATION_SERVICE_URL
+              value: "http://reservation-service"
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:

@@ -49,8 +49,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(FavouriteLibraryNotSetException.class)
     public ResponseEntity<Map<String, Object>> handleFavouriteLibraryNotSet(FavouriteLibraryNotSetException ex) {
-        log.error(ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.OK)
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(buildResponse(
                         HttpStatus.NOT_FOUND,
                         ex.getMessage()

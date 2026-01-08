@@ -1,6 +1,7 @@
 package org.pollub.user.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.pollub.common.dto.BranchDto;
 import org.pollub.common.dto.UserAddressDto;
 import org.pollub.common.exception.FavouriteLibraryNotSetException;
@@ -26,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService implements  IUserService {
@@ -147,6 +149,7 @@ public class UserService implements  IUserService {
         Long branchId = user.getFavouriteBranchId();
 
         if (branchId == null) {
+            log.error("User with id {} does not have a favourite library set", userId);
             throw new FavouriteLibraryNotSetException(
                     userId
             );

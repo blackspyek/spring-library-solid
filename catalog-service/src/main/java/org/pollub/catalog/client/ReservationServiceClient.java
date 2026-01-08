@@ -38,9 +38,9 @@ public class ReservationServiceClient {
                     .block();
             log.info("Reservation fulfilled for itemId: {}, branchId: {}, userId: {}", itemId, branchId, userId);
         } catch (Exception e) {
-            // Log but don't fail the rental - reservation fulfillment is not critical
-            log.warn("Failed to fulfill reservation for itemId: {}, branchId: {}, userId: {}. Error: {}", 
+            log.error("Failed to fulfill reservation for itemId: {}, branchId: {}, userId: {}. Error: {}", 
                     itemId, branchId, userId, e.getMessage());
+            throw new RuntimeException("Reservation fulfillment failed: " + e.getMessage(), e);
         }
     }
 }
