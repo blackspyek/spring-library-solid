@@ -29,12 +29,17 @@ Potrzebujesz dwóch okien terminala.
 > minikube start --docker-opt dns=8.8.8.8 --dns-proxy=true 
 
 > minikube addons enable ingress
+Prewencyjnie aby baza miała więcej czasu na start, oraz dlatego że nie raz skaffold może wyrzucić error z braku namespace:
+> kubectl apply -f k8s/namespace.yaml -f k8s/configmap.yaml -f k8s/secrets.yaml -f k8s/postgres.yaml -f k8s/postgres-init.yaml -f k8s/postgres-service.yaml
+
+W głównym katalogu musimy zbudować projekt:
+> ./mvnw clean package -DskipTests 
 
 W tym samym terminalu uruchom Skaffold. Narzędzie to automatycznie:
 
 * Zbuduje obrazy Dockerowe.
 * Utworzy Namespace, ConfigMapy i Sekrety.
-* Uruchomi bazę danych i mikroserwisy w odpowiedniej kolejności.
+* Uruchomi bazę danych i mikroserwisy.
 
 > skaffold dev -p dev
 
