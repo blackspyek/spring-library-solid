@@ -1,4 +1,3 @@
-# Ingress Controller Configuration for API Gateway
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -14,7 +13,6 @@ spec:
     - host: library.local
       http:
         paths:
-          # Auth endpoints
           - path: /api/auth
             pathType: Prefix
             backend:
@@ -22,7 +20,6 @@ spec:
                 name: auth-service
                 port:
                   number: 80
-          # User endpoints
           - path: /api/users
             pathType: Prefix
             backend:
@@ -30,7 +27,6 @@ spec:
                 name: user-service
                 port:
                   number: 80
-          # Branch endpoints
           - path: /api/branches
             pathType: Prefix
             backend:
@@ -38,7 +34,6 @@ spec:
                 name: branch-service
                 port:
                   number: 80
-          # Catalog/Item endpoints
           - path: /api/items
             pathType: Prefix
             backend:
@@ -60,7 +55,6 @@ spec:
                 name: catalog-service
                 port:
                   number: 80
-          # Rental endpoints
           - path: /api/rentals
             pathType: Prefix
             backend:
@@ -68,7 +62,6 @@ spec:
                 name: rental-service
                 port:
                   number: 80
-          # Reservation endpoints
           - path: /api/reservations
             pathType: Prefix
             backend:
@@ -76,7 +69,6 @@ spec:
                 name: reservation-service
                 port:
                   number: 80
-          # Feedback endpoints
           - path: /api/feedback
             pathType: Prefix
             backend:
@@ -84,7 +76,6 @@ spec:
                 name: feedback-service
                 port:
                   number: 80
-          # Frontend - catch all other routes (must be last!)
           - path: /
             pathType: Prefix
             backend:

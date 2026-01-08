@@ -5,6 +5,10 @@ metadata:
 
 build:
   artifacts:
+    - image: k8libraryproject/admin-service
+      context: admin-service
+      docker:
+        dockerfile: Dockerfile
     - image: k8libraryproject/user-service
       context: user-service
       docker:
@@ -45,6 +49,7 @@ manifests:
   rawYaml:
     - k8s/namespace.yaml
     - k8s/configmap.yaml
+    - k8s/rbac-library.yaml
     - k8s/secrets.yaml
     - k8s/postgres-init.yaml
     - k8s/postgres.yaml
@@ -61,9 +66,26 @@ manifests:
     - k8s/frontend.yaml
     - k8s/frontend-service.yaml
     - k8s/ingress.yaml
+    - k8s/admin-service.yaml
+    - k8s/dev-role-binding.yaml
+    - k8s/intern-role-binding.yaml
 
 deploy:
-  kubectl: {}
+  kubectl:
+    hooks:
+      before:
+        - host:
+            command: ["kubectl", "apply", "-f", "k8s/namespace.yaml"]
+        - host:
+            command: ["kubectl", "apply", "-f", "k8s/secrets.yaml"]
+        - host:
+            command: ["kubectl", "apply", "-f", "k8s/configmap.yaml"]
+        - host:
+            command: ["kubectl", "apply", "-f", "k8s/rbac-library.yaml"]
+        - host:
+            command: ["kubectl", "apply", "-f", "k8s/dev-role-binding.yaml"]
+        - host:
+            command: ["kubectl", "apply", "-f", "k8s/intern-role-binding.yaml"]
 
 profiles:
   - name: dev
@@ -73,42 +95,7 @@ profiles:
 
 portForward:
   - resourceType: service
-    resourceName: user-service
+    resourceName: admin-service
     namespace: library
     port: 80
-    localPort: 8082
-  - resourceType: service
-    resourceName: auth-service
-    namespace: library
-    port: 80
-    localPort: 8081
-  - resourceType: service
-    resourceName: branch-service
-    namespace: library
-    port: 80
-    localPort: 8083
-  - resourceType: service
-    resourceName: catalog-service
-    namespace: library
-    port: 80
-    localPort: 8084
-  - resourceType: service
-    resourceName: rental-service
-    namespace: library
-    port: 80
-    localPort: 8085
-  - resourceType: service
-    resourceName: reservation-service
-    namespace: library
-    port: 80
-    localPort: 8086
-  - resourceType: service
-    resourceName: feedback-service
-    namespace: library
-    port: 80
-    localPort: 8087
-  - resourceType: service
-    resourceName: frontend
-    namespace: library
-    port: 80
-    localPort: 4200
+    localPort: 8088

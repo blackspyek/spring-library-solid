@@ -16,9 +16,47 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    /* =========================
-       VALIDATION (@Valid)
-       ========================= */
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<Map<String, Object>> handleUserAlreadyExists(UserAlreadyExistsException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                buildResponse(
+                        HttpStatus.CONFLICT,
+                        ex.getMessage()
+                )
+        );
+
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleUserNotFound(UserNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                buildResponse(
+                        HttpStatus.NOT_FOUND,
+                        ex.getMessage()
+                )
+        );
+    }
+
+    @ExceptionHandler(DisabledUserException.class)
+    public ResponseEntity<Map<String, Object>> handleDisabledUser(DisabledUserException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(buildResponse(
+                        HttpStatus.FORBIDDEN,
+                        ex.getMessage()
+                ));
+
+    }
+
+    @ExceptionHandler(FavouriteLibraryNotSetException.class)
+    public ResponseEntity<Map<String, Object>> handleFavouriteLibraryNotSet(FavouriteLibraryNotSetException ex) {
+        log.error(ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(buildResponse(
+                        HttpStatus.NOT_FOUND,
+                        ex.getMessage()
+                ));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidationErrors(
             MethodArgumentNotValidException ex
@@ -37,9 +75,7 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-    /* =========================
-       BAD REQUEST
-       ========================= */
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, Object>> handleIllegalArgument(
             IllegalArgumentException ex
@@ -51,9 +87,7 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-    /* =========================
-       SECURITY
-       ========================= */
+
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Map<String, Object>> handleAccessDenied(
             AccessDeniedException ex
@@ -65,9 +99,7 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-    /* =========================
-       FALLBACK
-       ========================= */
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleAllExceptions(Exception ex) {
         log.error(ex.getMessage(), ex);
@@ -78,9 +110,8 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-    /* =========================
-       COMMON RESPONSE BUILDER
-       ========================= */
+
+
     private Map<String, Object> buildResponse(
             HttpStatus status,
             String message
@@ -95,7 +126,7 @@ public class GlobalExceptionHandler {
     ) {
         Map<String, Object> response = new HashMap<>();
         response.put("timestamp", LocalDateTime.now());
-        response.put("status", status.value());
+        response.put("statustest", status.value());
         response.put("error", message);
 
         if (details != null) {

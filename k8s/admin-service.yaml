@@ -1,9 +1,10 @@
-# Admin Service Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: admin-service
   namespace: library
+  labels:
+    app: admin-service
 spec:
   replicas: 1
   selector:
@@ -16,7 +17,7 @@ spec:
     spec:
       containers:
         - name: admin-service
-          image: k8libraryproject/admin-service
+          image: k8libraryproject/admin-service:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8088
@@ -30,18 +31,30 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "500m"
-          # Simpler health check - just hit root actuator
           livenessProbe:
             httpGet:
               path: /actuator/health
               port: 8088
-            initialDelaySeconds: 90
+            initialDelaySeconds: 60
             periodSeconds: 20
-            failureThreshold: 10
+            failureThreshold: 5
           readinessProbe:
             httpGet:
               path: /actuator/health
               port: 8088
-            initialDelaySeconds: 60
+            initialDelaySeconds: 30
             periodSeconds: 15
-            failureThreshold: 10
+            failureThreshold: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-service
+  namespace: library
+spec:
+  selector:
+    app: admin-service
+  ports:
+    - port: 80
+      targetPort: 8088
+  type: ClusterIP

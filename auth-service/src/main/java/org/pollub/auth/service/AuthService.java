@@ -3,11 +3,7 @@ package org.pollub.auth.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pollub.auth.client.UserServiceClient;
-import org.pollub.auth.dto.AuthResponse;
-import org.pollub.auth.dto.LoginUserDto;
-import org.pollub.auth.dto.RegisterUserDto;
-import org.pollub.auth.dto.ResetPasswordRequestDto;
-import org.pollub.auth.dto.ResetPasswordResponseDto;
+import org.pollub.auth.dto.*;
 import org.pollub.auth.security.JwtTokenProvider;
 import org.pollub.auth.util.PasswordGenerator;
 import org.pollub.common.dto.UserAddressDto;
@@ -84,12 +80,6 @@ public class AuthService implements IAuthService {
                 .apartmentNumber(request.getAddress().getApartmentNumber())
                 .build();
 
-        log.info("Creating user in user-service: {}", request.getFirstName() + " " + request.getLastName());
-        log.debug("=== DEBUG AuthService.register() ===");
-        log.debug("RegisterUserDto.firstName = '{}'", request.getFirstName());
-        log.debug("RegisterUserDto.lastName = '{}'", request.getLastName());
-        log.debug("RegisterUserDto.email = '{}'", request.getEmail());
-        log.debug("RegisterUserDto.pesel = '{}'", request.getPesel());
         
         UserDto newUser = UserDto.builder()
                 .username(request.getEmail())
@@ -101,33 +91,19 @@ public class AuthService implements IAuthService {
                 .phone(request.getPhone())
                 .address(addressDto)
                 .build();
-        
-        log.debug("=== DEBUG UserDto przed wysłaniem do user-service ===");
-        log.debug("UserDto.firstName = '{}'", newUser.getFirstName());
-        log.debug("UserDto.lastName = '{}'", newUser.getLastName());
-        log.debug("UserDto.username = '{}'", newUser.getUsername());
-        log.debug("UserDto.email = '{}'", newUser.getEmail());
+
         
         UserDto createdUser = userServiceClient.createUser(newUser);
         
-        log.debug("=== DEBUG UserDto po utworzeniu w user-service ===");
-        log.debug("createdUser.name = '{}'", createdUser.getName());
-        log.debug("createdUser.surname = '{}'", createdUser.getSurname());
-        log.debug("createdUser.firstName = '{}'", createdUser.getFirstName());
-        log.debug("createdUser.lastName = '{}'", createdUser.getLastName());
-        
-        // Send temporary password email
+
         emailService.sendTemporaryPasswordEmail(createdUser.getEmail(), temporaryPassword);
-        
-        // Generate JWT token
+
         String token = jwtTokenProvider.generateToken(
                 createdUser.getId(),
                 createdUser.getUsername(),
                 createdUser.getRoles()
         );
 
-        log.info("Registration successful for user: {}", createdUser.getUsername());
-        
         return AuthResponse.builder()
                 .accessToken(token)
                 .tokenType("Bearer")
@@ -136,7 +112,7 @@ public class AuthService implements IAuthService {
                 .username(createdUser.getUsername())
                 .email(createdUser.getEmail())
                 .roles(createdUser.getRoles())
-                .mustChangePassword(true)  // Nowy użytkownik musi zmienić hasło
+                .mustChangePassword(true)
                 .build();
     }
     

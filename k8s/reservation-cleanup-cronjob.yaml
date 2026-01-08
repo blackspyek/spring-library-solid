@@ -1,19 +1,17 @@
-# CronJob for cleaning up expired reservations
-# Runs every hour using the same reservation-service image with 'job' profile
 apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: reservation-cleanup
   namespace: library
 spec:
-  schedule: "0 * * * *"  # Every hour at minute 0
-  concurrencyPolicy: Forbid  # Prevent concurrent executions
+  schedule: "0 * * * *"
+  concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 3
   jobTemplate:
     spec:
-      backoffLimit: 3  # Retry up to 3 times on failure
-      activeDeadlineSeconds: 300  # Timeout after 5 minutes
+      backoffLimit: 3
+      activeDeadlineSeconds: 300
       template:
         spec:
           restartPolicy: OnFailure

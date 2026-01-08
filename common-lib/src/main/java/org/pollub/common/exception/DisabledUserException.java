@@ -1,4 +1,4 @@
-package org.pollub.user.exception;
+package org.pollub.common.exception;
 
 public class DisabledUserException extends RuntimeException {
     public DisabledUserException(String username) {

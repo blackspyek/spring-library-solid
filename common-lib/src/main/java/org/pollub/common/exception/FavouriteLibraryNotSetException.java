@@ -1,4 +1,4 @@
-package org.pollub.user.exception;
+package org.pollub.common.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

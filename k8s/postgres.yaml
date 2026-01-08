@@ -1,4 +1,3 @@
-# PostgreSQL StatefulSet for all services (one DB per service)
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:

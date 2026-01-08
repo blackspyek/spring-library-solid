@@ -5,8 +5,11 @@ Zanim uruchomisz terminale, upewnij się, że:
    `127.0.0.1 library.local`.
 2. Masz zainstalowane narzędzie **Skaffold**. 
 
+3. UZUPEŁNIJ: W pliku `k8s/secrets.yaml` uzupełnij wartości sekretów (hasła, klucze itp.) zgodnie z Twoimi potrzebami.
 
 5. minikube addons enable ingress
+### Terminal 1:
+## minbikube start
 
 # 1️⃣ Utwórz namespace
 kubectl apply -f k8s/namespace.yaml
@@ -20,9 +23,7 @@ kubectl apply -f k8s/postgres.yaml
 kubectl apply -f k8s/postgres-init.yaml
 kubectl apply -f k8s/postgres-service.yaml
 
-
-### Terminal 1: 
-## minbikube start
+## minikube addons enable ingress
 ## minikube docker-env | Invoke-Expression 
 ## skaffold dev -p dev
 

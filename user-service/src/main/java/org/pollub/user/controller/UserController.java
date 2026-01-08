@@ -5,11 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.pollub.common.dto.BranchDto;
 import org.pollub.common.dto.UserAddressDto;
 import org.pollub.common.dto.UserDto;
-import org.pollub.user.dto.ApiTextResponse;
-import org.pollub.user.dto.ChangePasswordDto;
-import org.pollub.user.dto.CredentialsDto;
-import org.pollub.user.dto.ResetPasswordRequestDto;
-import org.pollub.user.dto.ResetPasswordResponseDto;
+import org.pollub.user.dto.*;
 import org.pollub.user.model.Role;
 import org.pollub.user.model.User;
 import org.pollub.user.model.UserAddress;
@@ -201,13 +197,10 @@ public class UserController {
                     credentials.getUsernameOrEmail(), 
                     credentials.getPassword()
             );
-            System.out.println("=== DEBUG /validate endpoint ===");
-            System.out.println("User from DB: " + user.getEmail());
-            System.out.println("user.isMustChangePassword() = " + user.isMustChangePassword());
+
             
             UserDto dto = toDto(user);
-            System.out.println("UserDto.mustChangePassword = " + dto.isMustChangePassword());
-            
+
             return ResponseEntity.ok(dto);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(401).build();
@@ -219,13 +212,6 @@ public class UserController {
      */
     @PostMapping
     public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
-        System.out.println("=== DEBUG UserController.createUser() ===");
-        System.out.println("Received UserDto.firstName = '" + userDto.getFirstName() + "'");
-        System.out.println("Received UserDto.lastName = '" + userDto.getLastName() + "'");
-        System.out.println("Received UserDto.name = '" + userDto.getName() + "'");
-        System.out.println("Received UserDto.surname = '" + userDto.getSurname() + "'");
-        System.out.println("Received UserDto.email = '" + userDto.getEmail() + "'");
-        System.out.println("Received UserDto.pesel = '" + userDto.getPesel() + "'");
         try {
             UserAddress address = null;
             if (userDto.getAddress() != null) {
@@ -252,17 +238,10 @@ public class UserController {
                     .enabled(true)
                     .build();
             
-            System.out.println("=== DEBUG User entity przed zapisem ===");
-            System.out.println("User.name = '" + user.getName() + "'");
-            System.out.println("User.surname = '" + user.getSurname() + "'");
-            
+
             User created = userService.createUser(user);
             
-            System.out.println("=== DEBUG User entity po zapisie ===");
-            System.out.println("created.name = '" + created.getName() + "'");
-            System.out.println("created.surname = '" + created.getSurname() + "'");
-            System.out.println("created.id = " + created.getId());
-            
+
             return ResponseEntity.ok(toDto(created));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();

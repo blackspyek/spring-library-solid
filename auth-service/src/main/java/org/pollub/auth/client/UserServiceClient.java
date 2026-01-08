@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.pollub.common.dto.BranchDto;
 import org.pollub.common.dto.UserDto;
 import org.pollub.common.exception.ServiceException;
+import org.pollub.common.exception.UserAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -60,20 +61,20 @@ public class UserServiceClient {
             throw new ServiceException("user-service", "Failed to fetch user by username", e);
         }
     }
-    
+
     public UserDto createUser(UserDto userDto) {
-        try {
-            return webClientBuilder.build()
-                    .post()
-                    .uri(userServiceUrl + "/api/users")
-                    .bodyValue(userDto)
-                    .retrieve()
-                    .bodyToMono(UserDto.class)
-                    .block();
-        } catch (Exception e) {
-            log.error("Error creating user", e);
-            throw new ServiceException("user-service", "Failed to create user", e);
-        }
+        return webClientBuilder.build()
+                .post()
+                .uri(userServiceUrl + "/api/users")
+                .bodyValue(userDto)
+                .retrieve()
+                .onStatus(
+                        status -> status.isSameCodeAs(HttpStatus.CONFLICT),
+                        clientResponse -> clientResponse.bodyToMono(String.class)
+                                .flatMap(errorMessage -> Mono.error(new UserAlreadyExistsException(errorMessage)))
+                )
+                .bodyToMono(UserDto.class)
+                .block();
     }
     
     public Optional<UserDto> validateCredentials(String usernameOrEmail, String password) {

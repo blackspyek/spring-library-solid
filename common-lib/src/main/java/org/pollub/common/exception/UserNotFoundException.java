@@ -1,6 +1,4 @@
-package org.pollub.user.exception;
-
-import org.pollub.common.exception.ResourceNotFoundException;
+package org.pollub.common.exception;
 
 public class UserNotFoundException extends ResourceNotFoundException {
     public UserNotFoundException(String message) {

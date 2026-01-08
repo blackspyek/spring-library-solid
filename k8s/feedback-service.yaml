@@ -1,4 +1,3 @@
-# Feedback Service
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -54,6 +53,26 @@ spec:
                 secretKeyRef:
                   name: library-secrets
                   key: INTERNAL_SECRET
+            - name: SPRING_BOOT_ADMIN_CLIENT_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: library-config
+                  key: SPRING_BOOT_ADMIN_CLIENT_URL
+            - name: MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE
+              valueFrom:
+                configMapKeyRef:
+                  name: library-config
+                  key: MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE
+            - name: MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS
+              valueFrom:
+                configMapKeyRef:
+                  name: library-config
+                  key: MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS
+            - name: SPRING_BOOT_ADMIN_CLIENT_INSTANCE_PREFER_IP
+              valueFrom:
+                configMapKeyRef:
+                  name: library-config
+                  key: SPRING_BOOT_ADMIN_CLIENT_INSTANCE_PREFER_IP
           resources:
             requests:
               memory: "256Mi"

@@ -1,5 +1,3 @@
-# CronJob for sending rental reminder emails
-# Runs daily at 8:00 AM to notify users about rentals expiring in 3 days
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -7,13 +5,13 @@ metadata:
   namespace: library
 spec:
   schedule: "0 8 * * *"  # Every day at 8:00 AM
-  concurrencyPolicy: Forbid  # Prevent concurrent executions
+  concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 3
   jobTemplate:
     spec:
-      backoffLimit: 3  # Retry up to 3 times on failure
-      activeDeadlineSeconds: 600  # Timeout after 10 minutes
+      backoffLimit: 3
+      activeDeadlineSeconds: 600
       template:
         spec:
           restartPolicy: OnFailure
@@ -54,7 +52,6 @@ spec:
                     secretKeyRef:
                       name: library-secrets
                       key: INTERNAL_SECRET
-                # Mail configuration from ConfigMap
                 - name: MAIL_HOST
                   valueFrom:
                     configMapKeyRef:
@@ -85,7 +82,6 @@ spec:
                     configMapKeyRef:
                       name: library-config
                       key: MAIL_SMTP_STARTTLS_REQUIRED
-                # Mail credentials from Secrets
                 - name: MAIL_USERNAME
                   valueFrom:
                     secretKeyRef:
