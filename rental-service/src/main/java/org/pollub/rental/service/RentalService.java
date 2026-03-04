@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.pollub.common.dto.ItemDto;
 import org.pollub.common.dto.RentalHistoryDto;
 import org.pollub.common.dto.ReservationResponse;
+import org.pollub.rental.bridge.IValidationBridge;
 import org.pollub.rental.client.CatalogServiceClient;
 import org.pollub.rental.model.RentalHistory;
 import org.pollub.rental.model.RentalStatus;
@@ -26,6 +27,7 @@ public class RentalService implements IRentalService {
     private final IRentalHistoryRepository rentalHistoryRepository;
     private final CatalogServiceClient catalogServiceClient;
     private final IRentalValidator rentalValidator;
+    private final IValidationBridge validationBridge;
 
     public List<ItemDto> getActiveRentals(Long userId) {
         return catalogServiceClient.getItemsByUser(userId);
@@ -42,7 +44,8 @@ public class RentalService implements IRentalService {
     @Override
     @Transactional
     public ReservationResponse rentItem(Long itemId, Long userId, Long branchId) {
-        this.rentalValidator.validateAbilityToRentOrThrow(userId, itemId);
+//        this.rentalValidator.validateAbilityToRentOrThrow(userId, itemId);
+        validationBridge.validateAbilityToRentOrThrow(userId, itemId);
 
         RentalHistory rentalHistory = RentalHistory.builder()
                 .itemId(itemId)

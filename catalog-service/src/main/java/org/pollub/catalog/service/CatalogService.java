@@ -3,6 +3,7 @@ package org.pollub.catalog.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.pollub.catalog.bridge.IDataSourceBridge;
 import org.pollub.catalog.client.BranchServiceClient;
 import org.pollub.catalog.model.Book;
 import org.pollub.catalog.model.BranchInventory;
@@ -29,11 +30,12 @@ public class CatalogService implements ICatalogService {
     private final IBranchInventoryRepository branchInventoryRepository;
     private final IBranchInventoryService branchInventoryService;
     private final BranchServiceClient branchServiceClient;
+    private final IDataSourceBridge dataSourceBridge;
 
     @Override
     public List<LibraryItem> findAll() {
-        return libraryItemRepository.findAll();
-    }
+        return dataSourceBridge.findAll();
+    } //L2 Bridge delegation
 
     @Override
     public LibraryItem findById(Long id) {
@@ -41,50 +43,35 @@ public class CatalogService implements ICatalogService {
                 .orElseThrow(() -> new NoSuchElementException("Item not found: " + id));
     }
 
+//    @Override
+//    public List<LibraryItem> findAvailable() {
+//        // An item is considered available if it has at least one available copy
+//        List<Long> availableItemIds = branchInventoryRepository.findAll().stream()
+//                .filter(inv -> inv.getStatus() == CopyStatus.AVAILABLE)
+//                .map(BranchInventory::getItemId)
+//                .distinct()
+//                .toList();
+//
+//        return libraryItemRepository.findAllById(availableItemIds);
+//    }
     @Override
     public List<LibraryItem> findAvailable() {
-        // An item is considered available if it has at least one available copy
-        List<Long> availableItemIds = branchInventoryRepository.findAll().stream()
-                .filter(inv -> inv.getStatus() == CopyStatus.AVAILABLE)
-                .map(BranchInventory::getItemId)
-                .distinct()
-                .toList();
-        
-        return libraryItemRepository.findAllById(availableItemIds);
+        return dataSourceBridge.findAvailable();  //L2 Bridge delegation
     }
 
     @Override
     public List<LibraryItem> findRented() {
-        List<Long> rentedItemIds = branchInventoryRepository.findAll().stream()
-                .filter(inv -> inv.getStatus() == CopyStatus.RENTED)
-                .map(BranchInventory::getItemId)
-                .distinct()
-                .toList();
-        
-        return libraryItemRepository.findAllById(rentedItemIds);
+        return dataSourceBridge.findRented();  //L2 Bridge delegation
     }
 
     @Override
     public List<LibraryItem> findByUserId(Long userId) {
-        // Find items rented by this user (from inventory)
-        List<Long> itemIds = branchInventoryRepository.findByRentedByUserId(userId).stream()
-                .map(BranchInventory::getItemId)
-                .distinct()
-                .toList();
-        
-        return libraryItemRepository.findAllById(itemIds);
+        return dataSourceBridge.findByUserId(userId);  //L2 Bridge delegation
     }
 
     @Override
     public List<LibraryItem> findByBranchId(Long branchId) {
-        // Find items that have inventory at this branch
-        List<Long> itemIds = branchInventoryRepository.findAll().stream()
-                .filter(inv -> inv.getBranchId().equals(branchId))
-                .map(BranchInventory::getItemId)
-                .distinct()
-                .toList();
-        
-        return libraryItemRepository.findAllById(itemIds);
+        return dataSourceBridge.findByBranchId(branchId);  //L2 Bridge delegation
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.pollub.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.pollub.common.adapter.IPasswordGenerator;
 import org.pollub.common.dto.BranchDto;
 import org.pollub.common.dto.UserAddressDto;
 import org.pollub.common.exception.FavouriteLibraryNotSetException;
@@ -39,6 +40,7 @@ public class UserService implements  IUserService {
     // End Factory Method
     private final UserValidator userValidator;
     private final BranchServiceClient branchServiceClient;
+    private final IPasswordGenerator passwordGenerator;
 
     public User findById(Long id) {
         return userRepository.findById(id)
@@ -243,7 +245,7 @@ public class UserService implements  IUserService {
         }
         
         // Generate new temporary password
-        String temporaryPassword = PasswordGenerator.generatePassword();
+        String temporaryPassword = passwordGenerator.generate(); // Lab2 Adapter usage
         
         // Encode and save new password
         String encodedPassword = passwordEncoder.encode(temporaryPassword);

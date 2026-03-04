@@ -2,6 +2,7 @@ package org.pollub.auth.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.pollub.auth.adapter.IMailAdapter;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -14,20 +15,21 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class EmailService {
     
-    private final JavaMailSender mailSender;
+//    private final JavaMailSender mailSender;
+    private final IMailAdapter mailAdapter; //L2 Adapter
     
     /**
      * Sends a temporary password email to the user.
      */
     public void sendTemporaryPasswordEmail(String email, String password) {
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(email);
-            message.setSubject("Rejestracja w bibliotece - tymczasowe hasło");
-            message.setText(buildPasswordEmailBody(email, password));
-            message.setFrom("library-system@library.local");
-            
-            mailSender.send(message);
+            String body = buildPasswordEmailBody(email, password); //L2 Adapter
+            mailAdapter.sendEmail(
+                    email,
+                    "Rejestracja w bibliotece - tymczasowe hasło",
+                    body,
+                    "library-system@library.local"
+            );
             log.info("Temporary password email sent to: {}", email);
         } catch (Exception e) {
             log.error("Failed to send temporary password email to: {}", email, e);
@@ -40,13 +42,13 @@ public class EmailService {
      */
     public void sendPasswordResetEmail(String email, String newPassword) {
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(email);
-            message.setSubject("Resetowanie hasła - System Biblioteczny");
-            message.setText(buildPasswordResetEmailBody(email, newPassword));
-            message.setFrom("library-system@library.local");
-            
-            mailSender.send(message);
+            String body = buildPasswordResetEmailBody(email, newPassword); //L2 Adapter
+            mailAdapter.sendEmail(
+                    email,
+                    "Resetowanie hasła - System Biblioteczny",
+                    body,
+                    "library-system@library.local"
+            );
             log.info("Password reset email sent to: {}", email);
         } catch (Exception e) {
             log.error("Failed to send password reset email to: {}", email, e);

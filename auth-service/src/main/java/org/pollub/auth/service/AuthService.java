@@ -6,6 +6,7 @@ import org.pollub.auth.client.UserServiceClient;
 import org.pollub.auth.dto.*;
 import org.pollub.auth.security.JwtTokenProvider;
 import org.pollub.auth.util.PasswordGenerator;
+import org.pollub.common.adapter.IPasswordGenerator;
 import org.pollub.common.dto.UserAddressDto;
 import org.pollub.common.dto.UserDto;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,6 +23,7 @@ public class AuthService implements IAuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
+    private final IPasswordGenerator passwordGenerator; //l2 Adapter injection
 
     @Override
     public AuthResponse login(LoginUserDto request) {
@@ -69,7 +71,7 @@ public class AuthService implements IAuthService {
         log.info("Registration attempt for: {}", request.getEmail());
         
         // Generate temporary password
-        String temporaryPassword = PasswordGenerator.generatePassword();
+        String temporaryPassword = passwordGenerator.generate(); //l2 Adapter usage
         
         UserAddressDto addressDto = UserAddressDto.builder()
                 .street(request.getAddress().getStreet())

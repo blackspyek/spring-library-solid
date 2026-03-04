@@ -2,6 +2,7 @@ package org.pollub.rental.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.pollub.rental.bridge.INotificationBridge;
 import org.pollub.rental.client.CatalogServiceClient;
 import org.pollub.rental.client.UserServiceClient;
 import org.pollub.rental.model.RentalHistory;
@@ -29,6 +30,7 @@ public class RentalReminderService {
     private final UserServiceClient userServiceClient;
     private final CatalogServiceClient catalogServiceClient;
     private final EmailService emailService;
+    private final INotificationBridge notificationBridge; // L2 Bridge for sending notifications
 
     /**
      * Find all rentals expiring in 3 days and send reminder emails.
@@ -64,7 +66,7 @@ public class RentalReminderService {
                 String itemTitle = getItemTitle(rental.getItemId());
 
                 // Send reminder email
-                emailService.sendRentalReminderEmail(email, itemTitle, rental.getDueDate());
+                notificationBridge.sendRentalReminder(email, itemTitle, rental.getDueDate()); //L2 Bridge usage
                 successCount++;
 
             } catch (Exception e) {
