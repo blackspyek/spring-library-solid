@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-//Lab2 - Singleton 2 Start
+//Lab1 - Singleton 2 Start
 /**
  * Lazy Singleton (Double-Checked Locking) for managing banned IP addresses.
  * The list is loaded into memory only upon the first request to check an IP.
@@ -54,4 +54,4 @@ public class IpBlacklist {
         return bannedIps.contains(ipAddress);
     }
 }
-// End Singleton 2
+//Lab1 End Singleton 2

@@ -3,7 +3,7 @@ package org.pollub.catalog.cache;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-//Lab2 - Singleton 3 Start
+//Lab1 - Singleton 3 Start
 /**
  * Enum Singleton for catalog caching.
  */
@@ -28,4 +28,4 @@ public enum CatalogCacheManager {
         return cache.size();
     }
 }
-// End Singleton 3
+//Lab1 End Singleton 3

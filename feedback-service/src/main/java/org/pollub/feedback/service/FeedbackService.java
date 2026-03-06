@@ -3,13 +3,10 @@ package org.pollub.feedback.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pollub.common.exception.ResourceNotFoundException;
-import org.pollub.feedback.exception.IpAddressBannedException;
-import org.pollub.feedback.exception.RateLimitExceededException;
 import org.pollub.feedback.model.Feedback;
 import org.pollub.feedback.model.FeedbackStatus;
 import org.pollub.feedback.model.dto.FeedbackRequestDto;
 import org.pollub.feedback.repository.IFeedbackRepository;
-import org.pollub.feedback.utils.IpBlacklist;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,18 +38,6 @@ public class FeedbackService implements IFeedbackService {
     @Override
     @Transactional
     public Feedback submitFeedback(FeedbackRequestDto dto , String ipAddress) {
-        // Check rate limit
-        if (isRateLimitExceeded(ipAddress)) {
-            log.warn("Rate limit exceeded for IP: {}", maskIp(ipAddress));
-            throw new RateLimitExceededException();
-        }
-
-        // LAB2 - Singleton 2 START
-        if (IpBlacklist.getInstance().isBanned(ipAddress)) {
-            log.warn("Blocked banned IP address: {}", maskIp(ipAddress));
-            throw new IpAddressBannedException(ipAddress);
-        }
-        // LAB2 - Singleton 2 END
         Feedback feedback = Feedback.builder()
                 .category(dto.category())
                 .message(sanitizeMessage(dto.message()))
@@ -132,15 +117,5 @@ public class FeedbackService implements IFeedbackService {
                 .trim();
     }
 
-    /**
-     * Mask IP address for logging (privacy).
-     */
-    private String maskIp(String ip) {
-        if (ip == null) return "unknown";
-        int lastDot = ip.lastIndexOf('.');
-        if (lastDot > 0) {
-            return ip.substring(0, lastDot) + ".***";
-        }
-        return "***";
-    }
+
 }

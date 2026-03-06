@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
-//Lab2 - Factory 3 Method Start
+//Lab1 - Factory 3 Method Start
 public class UserFactory implements IUserFactory {
     private final PasswordEncoder passwordEncoder;
     private final UidGenerator uidGenerator;
@@ -30,8 +30,8 @@ public class UserFactory implements IUserFactory {
 
     @Override
     public User createUser(User userDto) {
-        //Lab2 - Prototype 3 Start
-        //Lab2 - Builder 4 Start
+        //Lab1 - Prototype 3 Start
+        //Lab1 - Builder 4 Start
         return templateUser.clone().toBuilder()
                 .username(userDto.getEmail())
                 .email(userDto.getEmail().toLowerCase())
@@ -44,14 +44,14 @@ public class UserFactory implements IUserFactory {
                 .surname(userDto.getSurname())
                 .mustChangePassword(true)
                 .build();
-        // End Builder 4
-        // End Prototype 3
+        //Lab1 End Builder 4
+        //Lab1 End Prototype 3
     }
 
     @Override
     public User createUser(String username, String email, String password, String name, String surname) {
-        //Lab2 - Prototype 3 Start
-        //Lab2 - Builder 4 Start
+        //Lab1 - Prototype 3 Start
+        //Lab1 - Builder 4 Start
         return templateUser.clone().toBuilder()
                 .username(username)
                 .email(email.toLowerCase())
@@ -61,8 +61,8 @@ public class UserFactory implements IUserFactory {
                 .surname(surname)
                 .mustChangePassword(false)
                 .build();
-        // End Builder 4
-        // End Prototype 3
+        //Lab1 End Builder 4
+        //Lab1 End Prototype 3
     }
 }
-// End Factory 3 Method
+//Lab1 End Factory 3 Method

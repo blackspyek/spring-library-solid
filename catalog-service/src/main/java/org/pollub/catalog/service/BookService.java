@@ -3,8 +3,8 @@ package org.pollub.catalog.service;
 import jakarta.persistence.PersistenceException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.pollub.catalog.cache.CatalogCacheManager;
-import org.pollub.catalog.factory.SortStrategyFactory;
+
+import org.pollub.catalog.flyweight.SortFlyweightFactory;
 import org.pollub.catalog.model.Book;
 import org.pollub.catalog.model.BranchInventory;
 import org.pollub.catalog.model.CopyStatus;
@@ -21,7 +21,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -115,9 +114,9 @@ public class BookService implements IBookService {
     @Override
     public Page<Book> searchBooks(SearchCriteria criteria) {
 
-        //Lab2 - Simple Factory 2 Start
-        Sort sortSpec = SortStrategyFactory.createSort(criteria.getSort());
-        // End Simple Factory 2
+        //Lab1 - Simple Factory 2 Start
+        Sort sortSpec = SortFlyweightFactory.getSort(criteria.getSort());
+        //Lab1 End Simple Factory 2
 
         Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize(), sortSpec);
 
@@ -130,28 +129,12 @@ public class BookService implements IBookService {
 
     @Override
     public List<String> getTopGenres() {
-        //Lab2 - Singleton 3 Start
-        List<String> cached = CatalogCacheManager.INSTANCE.get("topGenres", List.class);
-        if (cached != null) {
-            return cached;
-        }
-        List<String> genres = bookRepository.findTop4Genres();
-        CatalogCacheManager.INSTANCE.put("topGenres", genres);
-        // End Singleton 3
-        return genres;
+        return bookRepository.findTop4Genres();
     }
 
     @Override
     public List<String> getOtherGenres() {
-        //Lab2 - Singleton 3 Start
-        List<String> cached = CatalogCacheManager.INSTANCE.get("otherGenres", List.class);
-        if (cached != null) {
-            return cached;
-        }
-        List<String> genres = bookRepository.findOtherGenres();
-        CatalogCacheManager.INSTANCE.put("otherGenres", genres);
-        // End 3 Singleton
-        return genres;
+        return bookRepository.findOtherGenres();
     }
 
     @Override
@@ -161,10 +144,9 @@ public class BookService implements IBookService {
 
     @Override
     public List<String> getAllStatuses() {
-        return Arrays.stream(CopyStatus.values())
-                .map(Enum::name)
-                .sorted()
-                .collect(Collectors.toList());
+        //Lab1 - Flyweight 3 Method Start
+        return CopyStatus.ALL_NAMES;
+        //Lab1 - Flyweight 3 Method End
     }
 
     @Override

@@ -41,13 +41,13 @@ public class ReservationService implements  IReservationService {
             throw new IllegalStateException("User has reached the maximum number of active reservations");
         }
 
-        //Lab2 - Prototype 2 Start
+        //Lab1 - Prototype 2 Start
         // Create reservation from template clone with default values set in constructor
         ReservationHistory reservation = templateReservation.clone();
         reservation.setItemId(dto.getItemId());
         reservation.setBranchId(dto.getBranchId());
         reservation.setUserId(userId);
-        // End Prototype 2
+        //Lab1 End Prototype 2
 
         try {
             reservationRepository.save(reservation);

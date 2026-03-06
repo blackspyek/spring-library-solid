@@ -25,20 +25,20 @@ public class DataInitializer implements CommandLineRunner {
     private final IBookRepository bookRepository;
     private final IBranchInventoryRepository branchInventoryRepository;
 
-    //Lab2 - Factory 1 Method Start
+    //Lab1 - Factory 1 Method Start
     /**
      * Injecting LibraryItemFactory (Spring resolves to all implementations: BookFactory, MovieDiscFactory).
      * This allows initializing different item types via the same abstraction.
      */
     private final List<LibraryItemFactory> itemFactories;
-    // End Factory 1 Method
+    //Lab1 End Factory 1 Method
 
     @Override
     public void run(String... args) {
         if (bookRepository.count() == 0) {
             log.info("No items found. Populating catalog with legacy book data...");
 
-            //Lab2 - Factory 1 Method Start
+            //Lab1 - Factory 1 Method Start
             BookFactory bookFactory = (BookFactory) itemFactories.stream()
                     .filter(f -> f.getItemType() == ItemType.BOOK)
                     .findFirst()
@@ -76,7 +76,7 @@ public class DataInitializer implements CommandLineRunner {
                 bookFactory.createBook("Business and legal forms for authors and self-publishers", "Tad Crawford", "Forms", "1581153953", 159, "A4", "Allworth Press", 1, "Includes index.", "https://covers.openlibrary.org/b/id/841651-L.jpg", 2010, false),
                 bookFactory.createBook("The coast of Akron", "Adrienne Miller", "Fiction", "0374125120", 390, "A4", "Farrar, Straus and Giroux", 1, "Introduces the colorful members...", "https://covers.openlibrary.org/b/id/222828-L.jpg", 2016, false)
             );
-            // End Factory 1 Method
+            //Lab1 End Factory 1 Method
 
             List<Book> savedBooks = bookRepository.saveAll(books);
 

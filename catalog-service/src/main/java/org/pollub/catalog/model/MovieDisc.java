@@ -19,7 +19,7 @@ import org.pollub.common.config.DateTimeProvider;
 @AllArgsConstructor
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
-//Lab2 - Prototype Start
+//Lab1 - Prototype Start
 public class MovieDisc extends LibraryItem {
     
     @Column(nullable = false)
@@ -60,5 +60,5 @@ public class MovieDisc extends LibraryItem {
         return (MovieDisc) super.clone();
     }
 }
-// End Prototype
+//Lab1 End Prototype
 

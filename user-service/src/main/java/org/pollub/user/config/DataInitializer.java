@@ -15,17 +15,17 @@ import org.springframework.stereotype.Component;
 public class DataInitializer implements CommandLineRunner {
     
     private final IUserRepository IUserRepository;
-    //Lab2 - Factory Method Start
+    //Lab1 - Factory Method Start
     private final AdminUserFactory adminUserFactory;
     private final UserFactory userFactory;
-    // End Factory Method
+    //Lab1 End Factory Method
     
     @Override
     public void run(String... args) {
         if (IUserRepository.count() == 0) {
             log.info("No users found. Creating default admin and librarian...");
 
-            //Lab2 - Factory Method Start
+            //Lab1 - Factory Method Start
             User admin = adminUserFactory.createUser(
                     "admin", "admin@library.com", "admin123", "System", "Administrator"
             );
@@ -37,7 +37,7 @@ public class DataInitializer implements CommandLineRunner {
             );
             IUserRepository.save(librarian);
             log.info("Created librarian user: librarian@library.com / librarian123");
-            // End Factory Method
+            //Lab1 End Factory Method
             
             log.info("Default users created successfully!");
         } else {

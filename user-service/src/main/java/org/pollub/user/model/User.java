@@ -102,7 +102,7 @@ public class User implements UserDetails, Cloneable {
         return enabled;
     }
 
-    //Lab2 - Builder 4 Start
+    //Lab1 - Builder 4 Start
 
 
     public static Builder builder() {
@@ -163,7 +163,7 @@ public class User implements UserDetails, Cloneable {
         }
     }
 
-    //Lab2 - Prototype 3 Start
+    //Lab1 - Prototype 3 Start
     @Override
     public User clone() {
         try {
@@ -172,7 +172,7 @@ public class User implements UserDetails, Cloneable {
             throw new RuntimeException("Clone not supported for User", e);
         }
     }
-    // End Prototype 3
+    //Lab1 End Prototype 3
 
     public Builder toBuilder() {
         return new Builder()
@@ -192,6 +192,6 @@ public class User implements UserDetails, Cloneable {
                 .address(this.address)
                 .mustChangePassword(this.mustChangePassword);
     }
-    // End Builder 4
+    //Lab1 End Builder 4
 
 }

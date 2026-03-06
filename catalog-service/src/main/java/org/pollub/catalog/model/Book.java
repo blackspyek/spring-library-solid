@@ -43,9 +43,9 @@ public class Book extends LibraryItem {
     @Override
     @Deprecated
     public LocalDateTime calculateDueTime() {
-        //Lab2 - Singleton 1 Start
+        //Lab1 - Singleton 1 Start
         return DateTimeProvider.getInstance().now().plusDays(14);
-        //Lab2 - Singleton 1 End
+        //Lab1 - Singleton 1 End
     }
     
     @Override
@@ -53,13 +53,13 @@ public class Book extends LibraryItem {
         return 14;
     }
 
-    //Lab2 - Prototype Start
+    //Lab1 - Prototype Start
     @Override
     public Book clone() {
         return (Book) super.clone();
     }
-    // End Prototype
-    //Lab2 - Builder 1 Start
+    //Lab1 End Prototype
+    //Lab1 - Builder 1 Start
 
     public static Builder builder() {
         return new Builder();
@@ -190,6 +190,6 @@ public class Book extends LibraryItem {
         }
 
     }
-    // End Builder 1
+    //Lab1 End Builder 1
 
 }

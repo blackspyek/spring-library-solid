@@ -5,7 +5,7 @@ import org.pollub.catalog.model.LibraryItem;
 import org.pollub.catalog.model.MovieDisc;
 import org.springframework.stereotype.Component;
 
-//Lab2 - Factory Method Start
+//Lab1 - Factory Method Start
 /**
  * Factory Method implementation for creating MovieDisc objects.
  * Uses MovieDisc.builder() (Builder pattern) internally.
@@ -29,7 +29,7 @@ public class MovieDiscFactory implements LibraryItemFactory {
     @Override
     public LibraryItem createItem(String title, String director, String genre, String description,
                                   String imageUrl, Integer releaseYear, Boolean isBestseller) {
-        //Lab2 - Prototype Start
+        //Lab1 - Prototype Start
         MovieDisc clonedMovie = templateMovie.clone();
         clonedMovie.setTitle(title);
         clonedMovie.setDirector(director);
@@ -39,7 +39,7 @@ public class MovieDiscFactory implements LibraryItemFactory {
         clonedMovie.setReleaseYear(releaseYear);
         clonedMovie.setIsBestseller(isBestseller);
         return clonedMovie;
-        // End Prototype
+        //Lab1 End Prototype
     }
 
     @Override
@@ -47,4 +47,4 @@ public class MovieDiscFactory implements LibraryItemFactory {
         return ItemType.MOVIE;
     }
 }
-// End Factory Method
+//Lab1 End Factory Method

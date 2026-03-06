@@ -30,7 +30,7 @@ public class SearchCriteria {
     public int getPage() { return page; }
     public int getSize() { return size; }
     public String getSort() { return sort; }
-    //Lab2 - Builder 3 Start
+    //Lab1 - Builder 3 Start
 
     public static Builder builder() {
         return new Builder();
@@ -87,6 +87,6 @@ public class SearchCriteria {
             return new SearchCriteria(this);
         }
     }
-    // End Builder 3
+    //Lab1 End Builder 3
 
 }

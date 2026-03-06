@@ -8,7 +8,7 @@ import org.pollub.common.dto.UserAddressDto;
 import org.pollub.common.exception.FavouriteLibraryNotSetException;
 import org.pollub.common.exception.ResourceNotFoundException;
 import org.pollub.common.exception.UserNotFoundException;
-import org.pollub.user.client.BranchServiceClient;
+import org.pollub.user.client.IBranchServiceClient;
 import org.pollub.user.dto.ApiTextResponse;
 import org.pollub.user.dto.ChangePasswordDto;
 import org.pollub.user.dto.ResetPasswordRequestDto;
@@ -35,11 +35,11 @@ public class UserService implements  IUserService {
     
     private final IUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    //Lab2 - Factory Method Start
+    //Lab1 - Factory Method Start
     private final IUserFactory userFactory;
-    // End Factory Method
+    //Lab1 End Factory Method
     private final UserValidator userValidator;
-    private final BranchServiceClient branchServiceClient;
+    private final IBranchServiceClient branchServiceClient;
     private final IPasswordGenerator passwordGenerator;
 
     public User findById(Long id) {

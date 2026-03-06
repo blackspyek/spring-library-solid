@@ -12,7 +12,7 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class BranchServiceClient {
+public class BranchServiceClient implements IBranchServiceClient {
     
     private final WebClient.Builder webClientBuilder;
     

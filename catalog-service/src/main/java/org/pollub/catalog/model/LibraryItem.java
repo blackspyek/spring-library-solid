@@ -20,7 +20,7 @@ import org.pollub.common.config.DateTimeProvider;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-//Lab2 - Prototype Start
+//Lab1 - Prototype Start
 public abstract class LibraryItem implements Cloneable {
 
     @Id
@@ -77,5 +77,5 @@ public abstract class LibraryItem implements Cloneable {
         }
     }
 }
-// End Prototype
+//Lab1 End Prototype
 

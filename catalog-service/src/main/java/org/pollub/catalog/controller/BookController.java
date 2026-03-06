@@ -100,7 +100,7 @@ public class BookController {
             size = 16;
         }
 
-        //Lab2 - Builder 3 Start
+        //Lab1 - Builder 3 Start
         SearchCriteria criteria = SearchCriteria.builder()
                 .query(query)
                 .status(status)
@@ -110,7 +110,7 @@ public class BookController {
                 .size(size)
                 .sort(sort)
                 .build();
-        // End Builder 3
+        //Lab1 - Builder 3 End
 
         this.log.debug("Searching books with criteria: {}", criteria);
         return ResponseEntity.ok(bookService.searchBooks(criteria));
